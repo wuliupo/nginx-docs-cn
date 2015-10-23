@@ -1,0 +1,95 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>HttpSecureLink-Nginx中文文档</title>
+<link rel="stylesheet" type="text/css" media="all" href="../userguide.css" />
+<script type="text/javascript" src="../nav/nav.js"></script>
+<script type="text/javascript" src="../nav/prototype.lite.js"></script>
+<script type="text/javascript" src="../nav/moo.fx.js"></script>
+<script type="text/javascript" src="../nav/user_guide_menu.js"></script>
+<meta name="robots" content="all" />
+</head>
+<body>
+<!-- START NAVIGATION -->
+<div id="nav2"><a name="top"></a><a href="../index.html" ><img src="../images/nav_toggle_darker.jpg" width="154" height="43" border="0" /></a></div>
+<div id="masthead">
+<table cellpadding="0" cellspacing="0" border="0" style="width:100%">
+<tr>
+<td><span id="sitename">Nginx中文文档</span></td>
+<td id="breadcrumb_right"><a href="../index.html">目录首页</a></td>
+</tr>
+</table>
+</div>
+<!-- END NAVIGATION -->
+<table cellpadding="0" cellspacing="0" border="0" style="width:100%">
+<tr>
+<td id="breadcrumb">
+<a href="../index.html" >&nbsp;&#8250;&nbsp;HttpSecureLink
+</td>
+</tr>
+</table>
+<br clear="all" />
+<!-- START CONTENT -->
+<div id="content">
+<h1>HttpSecureLink</h1>
+<p>This module computes and checks request URLs for a required security token. 
+This module is not compiled by default and must be specified using the <br />
+这个模块计算和检测URL请求中必须的安全标识<br />
+这个模块没有默认编译，在编译Nginx时，必须使用明确的配置参数 
+</p>
+<pre>
+--with-http_secure_link_module
+</pre>
+<p>argument to configure when compiling Nginx. Note that this module is only supported in nginx version 0.7.18 and higher. <br />
+来说明配置.这个模块在Nginx 0.7.18及以上版本中被支持.
+</p>
+<h2> Example usage: </h2>
+<p><style>/* GeSHi (C) 2004 - 2007 Nigel McNie (http://qbnz.com/highlighter) */
+.code .imp {font-weight: bold; color: red;}
+.code .kw1 {color: #b1b100;}
+.code .kw2 {color: #000000; font-weight: bold;}
+.code .kw3 {color: #000066;}
+.code .kw4 {color: #993333;}
+.code .co1 {color: #808080; font-style: italic;}
+.code .coMULTI {color: #808080; font-style: italic;}
+.code .es0 {color: #000099; font-weight: bold;}
+.code .br0 {color: #66cc66;}
+.code .st0 {color: #ff0000;}
+.code .me1 {color: #202020;}
+.code .me2 {color: #202020;}
+</p>
+</style><pre class="code"><span class="kw3">location</span> /prefix/ <span class="br0">&#123;</span>
+    secure_link_secret   secret_word;
+&nbsp;
+    <span class="kw22">if</span> <span class="br0">&#40;</span><span class="re0">$secure_link</span> = <span class="st0">&quot;&quot;</span><span class="br0">&#41;</span> <span class="br0">&#123;</span>
+        <span class="kw22">return</span> <span class="nu0">403</span>;
+    <span class="br0">&#125;</span>
+<span class="br0">&#125;</span></pre>
+<h2>指令</h2>
+<p><b>syntax:</b> <i>secure_link_secret secret_word</i>
+</p><p><b>default:</b> <i>none</i>
+</p><p><b>context:</b> <i>location</i>
+</p><p>The directive specifies a secret word to verify requests. The full URL for a protected links follows this form: <br />
+这个指令明确一个安全关键字来审核请求。完整的被保护的URL如下表：
+</p><p>/<b>prefix</b>/<i>hash</i>/<b>reference</b>
+</p><p><i>hash</i> is computed as as 使用md5('参考','安全密码')函数计算</p>
+<pre>
+md5 (reference, secret_word);
+</pre>
+<p><b>prefix</b> is the scope of the location block, and must not be '/'. secure_link can only be used in non-root paths. <br />
+前缀是定位块的范围，绝对不能使用'/'。安全连接只能被用在非根目录路径。
+</p>
+<h2>变量 </h2>
+<h2> $secure_link</h2>
+<p>Automatically set to the reference component of the URL, isolated from the prefix and hash.  If the hash is incorrect, an empty string is returned instead. <br />
+自动设置模块到URL的关联,分开前缀和HASH。如果HASH不正确，将返回空字符串。
+</p>
+</div>
+<!-- END CONTENT -->
+<div id="footer">
+<p><a href="#top">顶端</a></p>
+<p>中文化: <a href="../index.html" >Nginx中文文档</a> &nbsp;&middot;&nbsp; 制作: nginx.cn  (整理及部分翻译 )</p>
+</div>
+ 
+</body></html>

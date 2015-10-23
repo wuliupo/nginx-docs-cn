@@ -1,0 +1,232 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>EmbeddedPerl-Nginx中文文档</title>
+<link rel="stylesheet" type="text/css" media="all" href="../userguide.css" />
+<script type="text/javascript" src="../nav/nav.js"></script>
+<script type="text/javascript" src="../nav/prototype.lite.js"></script>
+<script type="text/javascript" src="../nav/moo.fx.js"></script>
+<script type="text/javascript" src="../nav/user_guide_menu.js"></script>
+<meta name="robots" content="all" />
+</head>
+<body>
+<!-- START NAVIGATION -->
+<div id="nav2"><a name="top"></a><a href="../index.html" ><img src="../images/nav_toggle_darker.jpg" width="154" height="43" border="0" /></a></div>
+<div id="masthead">
+<table cellpadding="0" cellspacing="0" border="0" style="width:100%">
+<tr>
+<td><span id="sitename">Nginx中文文档</span></td>
+<td id="breadcrumb_right"><a href="../index.html">目录首页</a></td>
+</tr>
+</table>
+</div>
+<!-- END NAVIGATION -->
+<table cellpadding="0" cellspacing="0" border="0" style="width:100%">
+<tr>
+<td id="breadcrumb">
+<a href="../index.html" >&nbsp;&#8250;&nbsp;EmbeddedPerl
+</td>
+</tr>
+</table>
+<br clear="all" />
+<!-- START CONTENT -->
+<div id="content">
+<h1>EmbeddedPerl</h1>
+<p>This module makes it possible to execute Perl directly within Nginx and call Perl via SSI.
+</p>
+<h2> Building Module at Compile-time </h2>
+<p>Unless built at compile-time, the module is not available. The default is to not build this module.
+If you want to enable this module, is necessary to specify <b>--with-http_perl_module</b> when running <i>configure</i>.  
+</p><p>Your system must have Perl 5.6.1 or above.
+</p>
+<h2>Known Problems </h2>
+<p>This module is experimental; therefore anything is possible and bugs are likely.
+</p>
+<ol><li>  If a Perl module performs protracted operation, (for example DNS lookups, database queries, etc), then the worker process that is running the Perl script is completely tied up for the duration of script. Therefore embedded Perl scripts should be extremely careful to limit themselves to short, predictable operations.
+</li><li>  It's possible for Nginx to leak memory if you reload the configuration file (via 'kill -HUP &lt;pid&gt;').
+</li></ol>
+<p>Example:
+<style>/* GeSHi (C) 2004 - 2007 Nigel McNie (http://qbnz.com/highlighter) */
+.code .imp {font-weight: bold; color: red;}
+.code .kw1 {color: #b1b100;}
+.code .kw2 {color: #000000; font-weight: bold;}
+.code .kw3 {color: #000066;}
+.code .kw4 {color: #993333;}
+.code .co1 {color: #808080; font-style: italic;}
+.code .coMULTI {color: #808080; font-style: italic;}
+.code .es0 {color: #000099; font-weight: bold;}
+.code .br0 {color: #66cc66;}
+.code .st0 {color: #ff0000;}
+.code .me1 {color: #202020;}
+.code .me2 {color: #202020;}
+</p>
+</style><pre class="code"><span class="kw3">http</span> <span class="br0">&#123;</span>
+  <span class="kw26">perl_modules</span>  <span class="kw26">perl</span>/lib;
+  <span class="kw26">perl_require</span>  hello.pm;
+&nbsp;
+  <span class="kw26">perl_set</span>  <span class="re0">$msie6</span>  <span class="st0">'
+  sub {
+    my $r = shift;
+    my $ua = $r-&gt;header_in(&quot;User-Agent&quot;);
+    return &quot;&quot; if $ua =~ /Opera/;
+    return &quot;1&quot; if $ua =~ / MSIE [6-9] <span class="es0">\.</span><span class="es0">\d</span>+/;
+    return &quot;&quot;;
+  }
+ '</span>;
+&nbsp;
+  <span class="kw3">server</span> <span class="br0">&#123;</span>
+    <span class="kw3">location</span> / <span class="br0">&#123;</span>
+      <span class="kw26">perl</span>  hello::handler;
+    <span class="br0">&#125;</span>
+  <span class="br0">&#125;</span>
+<span class="br0">&#125;</span></pre>
+<p>perl/lib/hello.pm:
+<style>/* GeSHi (C) 2004 - 2007 Nigel McNie (http://qbnz.com/highlighter) */
+.code .imp {font-weight: bold; color: red;}
+.code .kw1 {color: #b1b100;}
+.code .kw2 {color: #000000; font-weight: bold;}
+.code .kw3 {color: #000066;}
+.code .co1 {color: #808080; font-style: italic;}
+.code .coMULTI {color: #808080; font-style: italic;}
+.code .es0 {color: #000099; font-weight: bold;}
+.code .br0 {color: #66cc66;}
+.code .st0 {color: #ff0000;}
+.code .nu0 {color: #cc66cc;}
+.code .me1 {color: #006600;}
+.code .me2 {color: #006600;}
+.code .re0 {color: #0000ff;}
+.code .re4 {color: #009999;}
+</p>
+</style><pre class="code"><a href="http://www.perldoc.com/perl5.6/pod/func/package.html"><span class="kw3">package</span></a> hello;
+<span class="kw2">use</span> nginx;
+&nbsp;
+<span class="kw2">sub</span> handler <span class="br0">&#123;</span>
+  <span class="kw1">my</span> <span class="re0">$r</span> = <a href="http://www.perldoc.com/perl5.6/pod/func/shift.html"><span class="kw3">shift</span></a>;
+  <span class="re0">$r</span>-&gt;<span class="me1">send_http_header</span><span class="br0">&#40;</span><span class="st0">&quot;text/html&quot;</span><span class="br0">&#41;</span>;
+  <a href="http://www.perldoc.com/perl5.6/pod/func/return.html"><span class="kw3">return</span></a> OK <span class="kw1">if</span> <span class="re0">$r</span>-&gt;<span class="me1">header_only</span>;
+&nbsp;
+  <span class="re0">$r</span>-&gt;<span class="me1">print</span><span class="br0">&#40;</span><span class="st0">&quot;hello!<span class="es0">\n</span>&lt;br/&gt;&quot;</span><span class="br0">&#41;</span>;
+  <span class="re0">$r</span>-&gt;<span class="me1">rflush</span>;
+&nbsp;
+  <span class="kw1">if</span> <span class="br0">&#40;</span>-f <span class="re0">$r</span>-&gt;<span class="me1">filename</span> <span class="kw1">or</span> -d _<span class="br0">&#41;</span> <span class="br0">&#123;</span>
+    <span class="re0">$r</span>-&gt;<span class="me1">print</span><span class="br0">&#40;</span><span class="re0">$r</span>-&gt;<span class="me1">uri</span>, <span class="st0">&quot; exists!<span class="es0">\n</span>&quot;</span><span class="br0">&#41;</span>;
+  <span class="br0">&#125;</span>
+&nbsp;
+  <a href="http://www.perldoc.com/perl5.6/pod/func/return.html"><span class="kw3">return</span></a> OK;
+<span class="br0">&#125;</span>
+&nbsp;
+<span class="nu0">1</span>;
+<span class="kw2">__END__</span></pre>
+<h2>指令</h2>
+<h2>perl  </h2>
+<p><b>syntax:</b> <i>perl module::function | 'sub {...}' </i>
+</p><p><b>default:</b> <i>no</i>
+</p><p><b>context:</b> <i>location</i>
+</p><p>Directive establishes a function for the data location.
+</p>
+<h2> perl_modules </h2>
+<p><b>syntax:</b> <i>perl_modules path</i>
+</p><p><b>default:</b> <i>no</i>
+</p><p><b>context:</b> <i>http</i>
+</p><p>Directive assigns additional path for Perl modules. Since version 0.6.7 this path is relative to directory of nginx configuration file nginx.conf, but not to nginx prefix directory.
+</p>
+<h2>perl_require </h2>
+<p><b>syntax:</b> <i>perl_require module</i>
+</p><p><b>default:</b> <i>no</i>
+</p><p><b>context:</b> <i>http</i>
+</p><p>There can be multiple perl_require directives.
+</p>
+<h2>perl_set </h2>
+<p><b>syntax:</b> <i>perl_set module::function | 'sub {...}' </i>
+</p><p><b>default:</b> <i>no</i>
+</p><p><b>context:</b> <i>http</i>
+</p><p>Directive establishes the function of variable&nbsp;???
+</p>
+<h2> Calling Perl from SSI </h2>
+<p>Instruction format is as follows:
+</p>
+<pre>
+&lt;!- # perl sub=&quot;module::function&quot; arg=&quot;parameter1&quot; arg=&quot;parameter2&quot;... &gt;
+</pre>
+<p>Methods of request object $r:
+</p>
+<ul><li> $r-&gt;args - method returns the arguments of request.
+</li><li> $r-&gt;filename - method returns the name of file, which corresponds to URI request.
+</li><li> $r-&gt;has_request_body(function) - method returns 0, if there is no request body. But if the request body exists, then the passed function is established and 1 returned. At the end of the body processing, nginx will call the established processor.    Example usage:
+</li></ul>
+<p><style>/* GeSHi (C) 2004 - 2007 Nigel McNie (http://qbnz.com/highlighter) */
+.code .imp {font-weight: bold; color: red;}
+.code .kw1 {color: #b1b100;}
+.code .kw2 {color: #000000; font-weight: bold;}
+.code .kw3 {color: #000066;}
+.code .co1 {color: #808080; font-style: italic;}
+.code .coMULTI {color: #808080; font-style: italic;}
+.code .es0 {color: #000099; font-weight: bold;}
+.code .br0 {color: #66cc66;}
+.code .st0 {color: #ff0000;}
+.code .nu0 {color: #cc66cc;}
+.code .me1 {color: #006600;}
+.code .me2 {color: #006600;}
+.code .re0 {color: #0000ff;}
+.code .re4 {color: #009999;}
+</p>
+</style><pre class="code"><a href="http://www.perldoc.com/perl5.6/pod/func/package.html"><span class="kw3">package</span></a> hello;
+&nbsp;
+<span class="kw2">use</span> nginx;
+&nbsp;
+<span class="kw2">sub</span> handler <span class="br0">&#123;</span>
+  <span class="kw1">my</span> <span class="re0">$r</span> = <a href="http://www.perldoc.com/perl5.6/pod/func/shift.html"><span class="kw3">shift</span></a>;
+&nbsp;
+  <span class="kw1">if</span> <span class="br0">&#40;</span><span class="re0">$r</span>-&gt;<span class="me1">request_method</span> <span class="kw1">ne</span> <span class="st0">&quot;POST&quot;</span><span class="br0">&#41;</span> <span class="br0">&#123;</span>
+    <a href="http://www.perldoc.com/perl5.6/pod/func/return.html"><span class="kw3">return</span></a> DECLINED;
+  <span class="br0">&#125;</span>
+&nbsp;
+  <span class="kw1">if</span> <span class="br0">&#40;</span><span class="re0">$r</span>-&gt;<span class="me1">has_request_body</span><span class="br0">&#40;</span>hello::<span class="me2">post</span><span class="br0">&#41;</span><span class="br0">&#41;</span> <span class="br0">&#123;</span>
+    <a href="http://www.perldoc.com/perl5.6/pod/func/return.html"><span class="kw3">return</span></a> OK;
+  <span class="br0">&#125;</span>
+&nbsp;
+  <a href="http://www.perldoc.com/perl5.6/pod/func/return.html"><span class="kw3">return</span></a> <span class="nu0">400</span>;
+<span class="br0">&#125;</span>
+&nbsp;
+<span class="kw2">sub</span> post <span class="br0">&#123;</span>
+  <span class="kw1">my</span> <span class="re0">$r</span> = <a href="http://www.perldoc.com/perl5.6/pod/func/shift.html"><span class="kw3">shift</span></a>;
+  <span class="re0">$r</span>-&gt;<span class="me1">send_http_header</span>;
+  <span class="re0">$r</span>-&gt;<span class="me1">print</span><span class="br0">&#40;</span><span class="st0">&quot;request_body: <span class="es0">\&quot;</span>&quot;</span>, <span class="re0">$r</span>-&gt;<span class="me1">request_body</span>, <span class="st0">&quot;<span class="es0">\&quot;</span>&lt;br/&gt;&quot;</span><span class="br0">&#41;</span>;
+  <span class="re0">$r</span>-&gt;<span class="me1">print</span><span class="br0">&#40;</span><span class="st0">&quot;request_body_file: <span class="es0">\&quot;</span>&quot;</span>, <span class="re0">$r</span>-&gt;<span class="me1">request_body_file</span>, <span class="st0">&quot;<span class="es0">\&quot;</span>&lt;br/&gt;<span class="es0">\n</span>&quot;</span><span class="br0">&#41;</span>;
+  <a href="http://www.perldoc.com/perl5.6/pod/func/return.html"><span class="kw3">return</span></a> OK;
+<span class="br0">&#125;</span>
+&nbsp;
+<span class="nu0">1</span>;
+&nbsp;
+<span class="kw2">__END__</span></pre>
+<ul><li> $r-&gt;header_in(header) - retrieve an HTTP request header.
+</li><li> $r-&gt;header_only - true if we only need to return a response header.
+</li><li> $r-&gt;header_out(header, value) - set a response header.
+</li><li> $r-&gt;internal_redirect(uri) - method makes internal redirect to the indicated uri. Redirect occurs only after the completion of Perl script.
+</li><li> $r-&gt;print(args, ...) - sends data to client.
+</li><li> $r-&gt;request_body - method returns the request body of client when the body is not recorded into the temporary file. 
+</li></ul>
+<dl><dd> So that the body of the demand of client is guaranteed to remain in memory, it is necessary to limit its size with the aid
+</dd><dd> of client_max_body_size and to assign sufficient size for the buffer using client_body_buffer_size.
+</dd></dl>
+<ul><li> $r-&gt;request_body_file — method returns the name of the file, in which is stored the body of the demand of client. The file must be removed on the completion of work. So that the body of the request would always be written to the file, it is necessary to indicate client_body_in_file_only on.
+</li><li> $r-&gt;request_method — method returns the HTTP method of the request.
+</li><li> $r-&gt;remote_addr - method returns IP address of client.
+</li><li> $r-&gt;rflush - method immediately transmits data to client.
+</li><li> $r-&gt;sendfile(file [, displacement [, length ]   ) - transfers to client contents of the file indicated. The optional parameters indicate initial offset and length of transmitted data. Strictly the transmission of data occurs only after the completion of the perl script.
+</li><li> $r-&gt;send_http_header(type) - adds header to response. The optional parameter "type" establishes the value of line "Content-Type" in the title of answer.
+</li><li> $r-&gt;unescape(text) - decodes the text, assigned in the form&nbsp;%XX.
+</li><li> $r-&gt;uri - returns request URI.
+</li></ul>
+<h2>References </h2>
+<p><a href="http://sysoev.ru/nginx/docs/http/ngx_http_perl_module.html" class="external text" title="http://sysoev.ru/nginx/docs/http/ngx_http_perl_module.html" rel="nofollow">Original Documentation</a>
+</p>
+</div>
+<!-- END CONTENT -->
+<div id="footer">
+<p><a href="#top">顶端</a></p>
+<p>中文化: <a href="../index.html" >Nginx中文文档</a> &nbsp;&middot;&nbsp; 制作: nginx.cn  (整理及部分翻译 )</p>
+</div>
+ 
+</body></html>

@@ -1,0 +1,472 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>HttpProxy模块-Nginx中文文档</title>
+<link rel="stylesheet" type="text/css" media="all" href="../userguide.css" />
+<script type="text/javascript" src="../nav/nav.js"></script>
+<script type="text/javascript" src="../nav/prototype.lite.js"></script>
+<script type="text/javascript" src="../nav/moo.fx.js"></script>
+<script type="text/javascript" src="../nav/user_guide_menu.js"></script>
+<meta name="robots" content="all" />
+</head>
+<body>
+<!-- START NAVIGATION -->
+<div id="nav2"><a name="top"></a><a href="../index.html" ><img src="../images/nav_toggle_darker.jpg" width="154" height="43" border="0" /></a></div>
+<div id="masthead">
+<table cellpadding="0" cellspacing="0" border="0" style="width:100%">
+<tr>
+<td><span id="sitename">Nginx中文文档</span></td>
+<td id="breadcrumb_right"><a href="../index.html">目录首页</a></td>
+</tr>
+</table>
+</div>
+<!-- END NAVIGATION -->
+<table cellpadding="0" cellspacing="0" border="0" style="width:100%">
+<tr>
+<td id="breadcrumb">
+<a href="../index.html" >&nbsp;&#8250;&nbsp;HttpProxy模块
+</td>
+</tr>
+</table>
+<br clear="all" />
+<!-- START CONTENT -->
+<div id="content">
+<h1>HttpProxy模块</h1>
+<p>This module makes it possible to transfer requests to another server.
+此模块专伺将请求导向其它服务.
+</p><p>It is an HTTP/1.0 proxy without the ability for keep-alive requests yet. 
+这是种 HTTP/1.0 版本的无请求保持代理.
+</p><p>(As a result, backend connections are created and destroyed on every request.) Nginx talks HTTP/1.1 to the browser and HTTP/1.0 to the backend server. As such it handles keep-alive to the browser.
+</p><p>(因为每个请求都是在后台连接中创建和销毁的) Nginx 和浏览器使用 HTTP/1.1 进行对话，而在后台服务中使用 HTTP/1.0;
+</p><p>__示例__
+</p>
+<pre>
+location / {
+: proxy_pass        http://localhost:8000;
+: proxy_set_header  X-Real-IP  $remote_addr;
+}
+</pre>
+<p>注意一点,当使用HTTP PROXY 模块时(或者甚至是使用FastCGI时),用户的整个请求会在nginx中缓冲直至传送给后端被代理的服务器.因此,上传进度的测算就会运作得不正确,如果它们通过测算后端服务器收到的数据来工作的话
+</p><p><br />
+</p>
+<h2>定向器. Directives </h2>
+<ul><li> [#proxy_buffer_size proxy_buffer_size] 
+</li><li> [#proxy_buffering proxy_buffering] 
+</li><li> [#proxy_buffers proxy_buffers] 
+</li><li> [#proxy_busy_buffers_size proxy_busy_buffers_size] 
+</li><li> [#proxy_connect_timeout proxy_connect_timeout] 
+</li><li> [#proxy_headers_hash_bucket_size proxy_headers_hash_bucket_size] 
+</li><li> [#proxy_headers_hash_max_size proxy_headers_hash_max_size] 
+</li><li> [#proxy_hide_header proxy_hide_header] 
+</li><li> [#proxy_ignore_client_abort proxy_ignore_client_abort] 
+</li><li> [#proxy_intercept_errors proxy_intercept_errors] 
+</li><li> [#proxy_max_temp_file_size proxy_max_temp_file_size] 
+</li><li> [#proxy_method proxy_method] 
+</li><li> [#proxy_next_upstream proxy_next_upstream] 
+</li><li> [#proxy_pass proxy_pass] 
+</li><li> [#proxy_pass_header proxy_pass_header] 
+</li><li> [#proxy_pass_request_body proxy_pass_request_body] 
+</li><li> [#proxy_pass_request_headers proxy_pass_request_headers] 
+</li><li> [#proxy_redirect proxy_redirect] 
+</li><li> [#proxy_read_timeout proxy_read_timeout] 
+</li><li> [#proxy_redirect_errors proxy_redirect_errors] 
+</li><li> [#proxy_send_lowat proxy_send_lowat] 
+</li><li> [#proxy_send_timeout proxy_send_timeout] 
+</li><li> [#proxy_set_body proxy_set_body] 
+</li><li> [#proxy_set_header proxy_set_header] 
+</li><li> [#proxy_store proxy_store] 
+</li><li> [#proxy_store_access proxy_store_access] 
+</li><li> [#proxy_temp_file_write_size proxy_temp_file_write_size] 
+</li><li> [#proxy_temp_path proxy_temp_path] 
+</li><li> [#proxy_upstream_fail_timeout proxy_upstream_fail_timeout] 
+</li><li> [#proxy_upstream_max_fails proxy_upstream_max_fails] 
+</li></ul>
+<h2> 参数.Variables </h2>
+<ul><li> [#var_proxy_host var_proxy_host] 
+</li><li> [#var_proxy_port var_proxy_port] 
+</li><li> [#var_proxy_add_x_forwarded_for var_proxy_add_x_forwarded_for] 
+</li><li> [#var_proxy_remote_addr var_proxy_remote_addr] 
+</li></ul>
+<h2> proxy_buffer_size </h2>
+<p><b>语法:</b> <i>proxy_buffer_size the_size</i>
+</p><p><b>默认值:</b> <i>proxy_buffer_size 4k/8k</i>
+</p><p><b>上下文:</b> <i>http, server, location</i>
+</p><p>该指令设置缓冲区大小,从被代理的后端服务器取得的响应内容,会先读取放置到这里.
+</p><p>小的响应header通常位于这部分响应内容里边.
+</p><p>默认来说,该缓冲区大小等于指令 <code>proxy_buffers</code>所设置的;但是,你可以把它设置得更小.
+</p><h2> proxy_buffering </h2>
+<p><b>语法:</b> <i>proxy_buffering on|off</i>
+</p><p><b>默认值:</b> <i>proxy_buffering on</i>
+</p><p><b>上下文:</b> <i>http, server, location</i>
+</p><p>该指令开启从后端被代理服务器的响应内容缓冲.
+</p><p>如果缓冲区开启,nginx假定被代理的后端服务器会以最快速度响应,并把内容保存在由指令<code>proxy_buffer_size</code> 和 <code>proxy_buffers</code>指定的缓冲区里边.
+</p><p>如果响应内容无法放在内存里边,那么部分内容会被写到磁盘上.
+</p><p>如果缓冲区被关闭了,那么响应内容会按照获取内容的多少立刻同步传送到客户端
+</p><p>nginx不尝试计算被代理服务器整个响应内容的大小,nginx能从服务器接受的最大数据,是由指令<code>proxy_buffer_size</code>指定的.
+</p><h2> proxy_buffers </h2>
+<p><b>语法:</b> <i>proxy_buffers the_number is_size;</i>
+</p><p><b>默认值:</b> <i>proxy_buffers 8 4k/8k;</i>
+</p><p><b>上下文:</b> <i>http, server, location</i>
+</p><p>该指令设置缓冲区的大小和数量,从被代理的后端服务器取得的响应内容,会放置到这里.
+默认情况下,一个缓冲区的大小等于页面大小,可能是4K也可能是8K,这取决于平台
+</p><h2> proxy_busy_buffers_size </h2>
+<p><b>语法:</b> <i>proxy_busy_buffers_size size;</i>
+</p><p><b>默认值:</b> <i>proxy_busy_buffers_size  proxy_buffer_size  * 2;</i>
+</p><p><b>上下文:</b> <i>http, server, location, if</i>
+</p><p>TODO: Description.
+</p><h2>proxy_connect_timeout </h2>
+<p><b>语法:</b> <i>proxy_connect_timeout timeout_in_seconds</i>
+</p><p><b>上下文:</b> <i>http, server, location</i>
+</p><p>This directive assigns a timeout for the connection to the proxyserver. This is not the time until the server returns the pages, this is the [#proxy_read_timeout proxy_read_timeout]  statement. If your proxyserver is up, but hanging (e.g. it does not have enough threads to process your request so it puts you in the pool of connections to deal with later), then this statement will not help as the connection to the server has been made. It is necessary to keep in mind that this time out cannot be more than 75 seconds.
+</p><h2>proxy_headers_hash_bucket_size </h2>
+<p><b>语法:</b> <i>proxy_headers_hash_bucket_size size;</i>
+</p><p><b>默认值:</b> <i>proxy_headers_hash_bucket_size 64;</i>
+</p><p><b>上下文:</b> <i>http, server, location, if</i>
+</p><p>This directive sets the bucket size of the hashtable.<br />
+TODO: Better description
+</p><h2> proxy_headers_hash_max_size</h2>
+<p><b>语法:</b> <i>proxy_headers_hash_max_size size;</i>
+</p><p><b>默认值:</b> <i>proxy_headers_hash_max_size 512;</i>
+</p><p><b>上下文:</b> <i>http, server, location, if</i>
+</p><p>This directive sets the maximum size of the hashtable.<br />
+TODO: Better description
+</p><h2> proxy_hide_header </h2>
+<p><b>语法:</b> <i>proxy_hide_header the_header</i>
+</p><p><b>上下文:</b> <i>http, server, location</i>
+</p><p>nginx does not transfer the "Date", "Server", "X-Pad" and "X-Accel-..." header lines from the proxied server response.
+The <code>proxy_hide_header</code> directive allows to hide some additional header lines.
+But if on the contrary the header lines must be passed, then the <code>proxy_pass_header</code> should be used.
+For example if you want to hide the MS-OfficeWebserver and the AspNet-Version:
+</p>
+<pre>
+location / {
+: proxy_hide_header X-AspNet-Version;
+: proxy_hide_header MicrosoftOfficeWebServer;
+}
+</pre>
+<p>This directive can also be very helpful when using X-Accel-Redirect. For example, you may have one set of backend servers which return the headers for a file download, which includes X-Accel-Redirect to the actual file, as well as the correct Content-Type. However, the Redirect URL points to a filleserver which hosts the actual file you wish to serve, and that server sends its own Content-Type header, which might be incorrect, and overrides the header sent by the original backend servers. You can avoid this by adding the proxy_hide_header directive to the fileserver. Example:
+</p>
+<pre>
+location / {
+: proxy_pass http://backend_servers;
+}
+location /files/ {
+: proxy_pass http://fileserver;
+: proxy_hide_header Content-Type;
+}
+</pre>
+<h2>proxy_ignore_client_abort </h2>
+<p><b>语法:</b> <i>proxy_ignore_client_abort [ on|off ] </i>
+</p><p><b>默认值:</b> <i>proxy_ignore_client_abort off</i>
+</p><p><b>上下文:</b> <i>http, server, location</i>
+</p><p>Available since: 0.3.36<br />
+如果客户端断开请求,也保持后端的下载
+</p><h2> proxy_intercept_errors </h2>
+<p><b>语法:</b> <i>proxy_intercept_errors [ on|off ] </i>
+</p><p><b>默认值:</b> <i>proxy_intercept_errors off</i>
+</p><p><b>上下文:</b> <i>http, server, location</i>
+</p><p>This directive decides if nginx will intercept responses with HTTP status codes of 400 and higher.
+</p><p>By default all responses will be sent as-is from the proxied server.
+</p><p>If you set this to <code>on</code> then nginx will intercept status codes that are explicitly handled by an <code>error_page</code> directive. Responses with status codes that do not match an <code>error_page</code> directive will be sent as-is from the proxied server.
+</p><h2> proxy_max_temp_file_size </h2>
+<p><b>语法:</b> <i>proxy_max_temp_file_size size;</i>
+</p><p><b>默认值:</b> <i>proxy_max_temp_file_size 1G;</i>
+</p><p><b>上下文:</b> <i>http, server, location, if</i>
+</p><p>Available since: 0.1.8<br />
+TODO: Description.
+</p><h2> proxy_method </h2>
+<p><b>语法:</b> <i>proxy_method [method] </i>
+</p><p><b>默认值:</b> <i>None</i>
+</p><p><b>上下文:</b> <i>http, server, location</i>
+</p><p>Used to allow the proxying of additional HTTP methods.
+</p><p>Note: at this time, Nginx only appears to allow a single instance of this directive and it only accepts a single argument (method) so it's not clear how useful this might be for proxying to things like Subversion.
+</p><p>Example:
+</p>
+<pre>
+: proxy_method PROPFIND;
+</pre>
+<h2> proxy_next_upstream </h2>
+<p><b>语法:</b> <i>proxy_next_upstream [error|timeout|invalid_header|http_500|http_503|http_404|off] </i>
+</p><p><b>默认值:</b> <i>proxy_next_upstream error timeout</i>
+</p><p><b>上下文:</b> <i>http, server, location</i>
+</p><p>Directive determines, in what cases the request will be transmitted to the next server:
+</p>
+<ul><li> error — an error has occurred while connecting to the server, sending a request to it, or reading its response;
+</li><li> timeout — occurred timeout during the connection with the server, transfer the requst or while reading response from the server;
+</li><li> invalid_header — server returned a empty or incorrect answer;
+</li><li> http_500 — server returned answer with code 500
+</li><li> http_503 — server returned answer with code 503
+</li><li> http_404 — server returned answer with code 404
+</li><li> off — it forbids the request transfer to the next server
+</li></ul>
+<p>Transferring the request to the next server is only possible when nothing has been transferred to the client -- that is, if an error or timeout arises in the middle of the transfer of the request, then it is not possible to retry the current request on a different server.
+</p><h2>proxy_pass </h2>
+<p><b>语法:</b> <i>proxy_pass URL</i>
+</p><p><b>默认值:</b> <i>no</i>
+</p><p><b>上下文:</b> <i>location, if in location</i>
+</p><p>This directive sets the port or socket, on which listens to the proxied server, and the URI, to which will be reflected location.
+</p><p>Port can be indicated in the form of the name of hostname or address and port, for example,
+</p>
+<pre>
+proxy_pass http://localhost:8000/uri /;
+</pre>
+<p>and socket -- in the form of unix of socket:
+</p>
+<pre>
+proxy_pass http://unix:/tmp/backend.socket:/uri /;
+</pre>
+<p>Path is indicated after the word <code>unix</code> and is concluded between two colons.
+</p><p>With the transfer of request to server part URI, which corresponds to location, is substituted to URI, indicated in directive proxy_pass.
+</p><p>But there are two exceptions to this rule, when it is not possible to determine that replaced location:
+</p>
+<ul><li> if the location is assigned by regular expression;
+</li><li> if inside proxied location with the help of directive rewrite changes URI and with this configuration will be precisely processed request (break):
+</li></ul>
+<pre>
+location  /name/ {
+: rewrite      /name/([^/] +)  /users?name=$1  break;
+: proxy_pass   http://127.0.0.1;
+}
+</pre>
+<p>For these cases of URI it is transferred without the mapping.
+</p><p>Furthermore, it is possible to indicate so that URI demand it would be transferred in the same form, as it sent client, but not v in the processed form.
+</p><p>During the working:
+</p>
+<ul><li> two or by more slashes are converted into one slash: "//" -- "/";
+</li><li> references to the current directory are removed: "/./" -- "/";
+</li><li> references to the previous catalog are removed: "/dir /../" -- "/".
+</li></ul>
+<p>If on server it is necessary to transmit URI in the unprocessed form, then for this in directive proxy_pass it is necessary
+to indicate URL server without URI:
+</p>
+<pre>
+location  /some/path/ {
+: proxy_pass   http://127.0.0.1;
+}
+</pre>
+<h2> proxy_pass_header</h2>
+<p><b>语法:</b> <i>proxy_pass_header the_name</i>
+</p><p><b>上下文:</b> <i>http, server, location</i>
+</p><p>This directive allows transferring header-lines forbidden for response.
+</p><p>For example:
+</p>
+<pre>
+location / {
+: proxy_pass_header Server;
+: proxy_pass_header X-MyHeader;
+}
+</pre>
+<h2> proxy_pass_request_body </h2>
+<p><b>语法:</b> <i>proxy_pass_request_body [ on | off ]&nbsp;;</i>
+</p><p><b>默认值:</b> <i>proxy_pass_request_body on;</i>
+</p><p><b>上下文:</b> <i>http, server, location</i>
+</p><p>Available since: 0.1.29<br />
+TODO: Description.
+</p><h2> proxy_pass_request_headers</h2>
+<p><b>语法:</b> <i>proxy_pass_request_headers [ on | off ]&nbsp;;</i>
+</p><p><b>默认值:</b> <i>proxy_pass_request_headers on;</i>
+</p><p><b>上下文:</b> <i>http, server, location</i>
+</p><p>Available since: 0.1.29<br />
+TODO: Description.
+</p><h2> proxy_redirect </h2>
+<p><b>语法:</b> <i>proxy_redirect [ default|off|redirect replacement ] </i>
+</p><p><b>默认值:</b> <i>proxy_redirect default</i>
+</p><p><b>上下文:</b> <i>http, server, location</i>
+</p><p>This directive sets the text, which must be changed in response-header "Location" and "Refresh" in the response of the proxied server.
+</p><p>Let us suppose the proxied server returned line <code>Location: http://localhost:8000/two/some/uri/</code>.
+</p><p>The directive
+</p>
+<pre>    
+proxy_redirect   http://localhost:8000/two/   http://frontend/one/;
+</pre>
+<p>will rewrite this line in the form <code>Location: http://frontend/one/some/uri/</code>.
+</p><p>In the replaceable line it is possible not to indicate the name of the server:
+</p>
+<pre>
+proxy_redirect http://localhost:8000/two/ /;
+</pre>
+<p>then the basic name of server and port is set, if it is different from 80.
+</p><p>The change by default, given by the parameter "default", uses the parameters of directives location and proxy_pass.
+</p><p>Therefore two following configurations are equivalent:
+</p>
+<pre>
+location /one/ {
+: proxy_pass       http://upstream:port/two/;
+: proxy_redirect   default;
+}
+location /one/ {
+: proxy_pass       http://upstream:port/two/;
+: proxy_redirect   http://upstream:port/two/   /one/;
+}
+</pre>
+<p>In the replace line, it is possible to use some variables:
+</p>
+<pre>
+proxy_redirect   http://localhost:8000/    http://$host:$server_port/;
+</pre>
+<p>This directive repeated some times:
+</p>
+<pre>
+: proxy_redirect   default;
+: proxy_redirect   http://localhost:8000/    /;
+: proxy_redirect   http://www.example.com/   /;
+</pre>
+<p>The parameter <code>off</code> forbids all <code>proxy_redirect</code> directives at this level:
+</p>
+<pre>
+: proxy_redirect   off;
+: proxy_redirect   default;
+: proxy_redirect   http://localhost:8000/    /;
+: proxy_redirect   http://www.example.com/   /;
+</pre>
+<p>With the help of this directive it is possible to add the name of host for relative redirect, issued by the proxied server:
+</p>
+<pre>
+proxy_redirect   /   /;
+</pre>
+<h2>proxy_read_timeout </h2>
+<p><b>语法:</b> <i>proxy_read_timeout the_time</i>
+</p><p><b>默认值:</b> <i>proxy_read_timeout 60</i>
+</p><p><b>上下文:</b> <i>http, server, location</i>
+</p><p>This directive sets the read timeout for the response of the proxied server. It determines how long NGINX will wait to get the response to a request. The timeout is established not for entire response, but only between two operations of reading.
+</p><p>In contrast to [#proxy_connect_timeout proxy_connect_timeout] , this timeout will catch a server that puts you in it's connection pool but does not respond to you with anything beyond that. Be careful though not to set this too low, as your proxyserver might take a longer time to respond to requests on purpose (e.g. when serving you a report page that takes some time to compute). You are able though to have a different setting per location, which enables you to have a higher proxy_read_timeout for the report page's location.
+</p><p>If the proxied server nothing will communicate after this time, then nginx is shut connection.
+</p><h2> proxy_redirect_errors </h2>
+<p>Deprecated. Use <code>proxy_intercept_errors</code>.
+</p><h2> proxy_send_lowat </h2>
+<p><b>语法:</b> <i>proxy_send_lowat [ on | off ] </i>
+</p><p><b>默认值:</b> <i>proxy_send_lowat off;</i>
+</p><p><b>上下文:</b> <i>http, server, location, if</i>
+</p><p>This directive set SO_SNDLOWAT.<br />
+This directive is only available on FreeBSD
+</p><h2> proxy_send_timeout </h2>
+<p><b>语法:</b> <i>proxy_send_timeout time_in_seconds</i>
+</p><p><b>默认值:</b> <i>proxy_send_timeout 60</i>
+</p><p><b>上下文:</b> <i>http, server, location</i>
+</p><p>This directive assigns timeout with the transfer of request to the proxy server. Time out is established not on entire transfer of request, but only between two operations of record. If after this time the proxy server will not take new data, then nginx is shut the connection
+</p><h2> proxy_send_lowat </h2>
+<p><b>语法:</b> <i>proxy_set_body [ on | off ] </i>
+</p><p><b>默认值:</b> <i>proxy_set_body off;</i>
+</p><p><b>上下文:</b> <i>http, server, location, if</i>
+</p><p>Available since: 0.3.10<br />
+TODO: Description.
+</p><h2> proxy_set_header </h2>
+<p><b>语法:</b> <i>proxy_set_header header value</i>
+</p><p><b>默认值:</b> <i>Host and Connection</i>
+</p><p><b>上下文:</b> <i>http, server, location</i>
+</p><p>This directive allows to redefine and to add some request header lines which
+will be transferred to the proxied server.
+</p><p>As the value it is possible to use a text, variables and their combination.
+</p><p>This directive is inherited from the previous level when at this level
+are not described their directives <code>proxy_set_header</code>.
+</p><p>By default only two lines will be redefined:
+</p>
+<pre>
+proxy_set_header Host $proxy_host;
+proxy_set_header Connection Close;
+</pre>
+<p>The unchanged request-header "Host" can be transmitted like this:
+</p>
+<pre>
+proxy_set_header Host $http_host;
+</pre>
+<p>However, if this line is absent from the client request, then nothing will be transferred.
+</p><p>In this case it is better to use variable $host, it's value is equal to the name of server in the request-header "Host"
+or to the basic name of server, if there is no line:
+</p>
+<pre>
+proxy_set_header Host $host;
+</pre>
+<p>Furthermore, it is possible to transmit the name of server together with the port of the proxied server:
+</p>
+<pre>
+proxy_set_header Host $host:$proxy_port;
+</pre>
+<h2>proxy_store </h2>
+<p><b>语法:</b> <i>proxy_store [on | off | path] </i>
+</p><p><b>默认值:</b> <i>proxy_store off</i>
+</p><p><b>上下文:</b> <i>http, server, location</i>
+</p><p>This directive sets the path in which upstream files are stored. The parameter "on" preserves files in accordance with path specified in directives <i>alias</i> or <i>root</i>. The parameter "off" forbids storing. Furthermore, the name of the path can be clearly assigned with the aid of the line with the variables:
+</p>
+<pre>
+proxy_store   /data/www$original_uri;
+</pre>
+<p>The time of modification for the file will be set to the date of "Last-Modified" header in the response. To be able to safe files in this directory it is necessary that the path is under the directory with temporary files, given by directive proxy_temp_path for the data location.
+</p><p>This directive can be used for creating the local copies for dynamic output of the backend which is not very often changed, for example:
+</p>
+<pre>
+location /images/ {
+: root                 /data/www;
+: error_page           404 = /fetch$uri;
+}
+location /fetch {
+: internal;
+: proxy_pass           http://backend;
+: proxy_store          on;
+: proxy_store_access   user:rw  group:rw  all:r;
+: proxy_temp_path      /data/temp;
+: alias                /data/www;
+}
+</pre>
+<p>To be clear proxy_store is not a cache, it's rather mirror on demand.
+</p><h2> proxy_store_access</h2>
+<p><b>语法:</b> <i>proxy_store_access users:permissions [users:permission ...] </i>
+</p><p><b>默认值:</b> <i>proxy_store_access user:rw</i>
+</p><p><b>上下文:</b> <i>http, server, location</i>
+</p><p>This directive assigns the permissions for the created files and directories, for example:
+</p>
+<pre>
+proxy_store_access  user:rw  group:rw  all:r;
+</pre>
+<p>If any rights for groups or all are assigned, then it is not necessary to assign rights for user:
+</p>
+<pre>
+proxy_store_access  group:rw  all:r;
+</pre>
+<h2> proxy_temp_file_write_size </h2>
+<p><b>语法:</b> <i>proxy_temp_file_write_size size;</i>
+</p><p><b>默认值:</b> <i>proxy_temp_file_write_size proxy_buffer_size</a>  * 2;</i>
+</p><p><b>上下文:</b> <i>http, server, location, if</i>
+</p><p>TODO: Description.
+</p><h2> proxy_temp_path </h2>
+<p><b>语法:</b> <i>proxy_temp_path dir-path [ level1 [ level2 [ level3 ]    &nbsp;;</i>
+</p><p><b>默认值:</b> <i>$NGX_PREFIX/proxy_temp controlled by --http-proxy-temp-path at ./configure stage</i>
+</p><p><b>上下文:</b> <i>http, server, location</i>
+</p><p>This directive works like client_body_temp_path to specify a location to buffer large proxied requests to the filesystem.
+</p><h2> proxy_upstream_fail_timeout </h2>
+<p>Changed in 0.5.0 to deprecated.<br />
+Please use the <i>fail_timeout</i> parameter of server Directive  from the upstream module.
+</p><h2> proxy_upstream_max_fails </h2>
+<p>Changed in 0.5.0 to deprecated.<br />
+Please use the <i>max_fails</i> parameter of server Directive  from the upstream module.
+</p>
+<h2>Variables </h2>
+<p>In module ngx_http_proxy_module there are some built-in variables, which can be used for the creation of headers with the help of the <code>proxy_set_header</code> directive:
+</p><p>
+$proxy_host:: the name of proxied host and port;
+</p><p>
+$proxy_port:: the port of proxied host;
+</p><p>
+$proxy_add_x_forwarded_for:: equivalent to client request-header "X-Forwarded-For" and to variable added to it through the comma
+</p><p>
+$remote_addr:: But if there is no line "X-Forwarded-For" in the client request, then variable <code>$proxy_add_x_forwarded_for</code> is equal to variable <code>$remote_addr</code>.
+</p><p><br />
+</p>
+<h2>References</h2>
+<p><a href="http://sysoev.ru/nginx/docs/http/ngx_http_proxy_module.html" class="external text" title="http://sysoev.ru/nginx/docs/http/ngx_http_proxy_module.html" rel="nofollow">Original Documentation</a> 
+</p>
+<h2>Questions </h2>
+<ul><li> Is it possible to have the proxy use a client SSL certificate to communicate with the server being proxied? I am in the situation where I want to secure the proxy &lt;-&gt; application server connection. Another solution could be to use SSL only with a custom header checked at each connection in the application server, but doing it at the protocol level would be nicer.
+</li></ul>
+<hr />
+<ul><li> NginxHttpProxyModule#preview 原文
+</li></ul>
+</div>
+<!-- END CONTENT -->
+<div id="footer">
+<p><a href="#top">顶端</a></p>
+<p>中文化: <a href="../index.html" >Nginx中文文档</a> &nbsp;&middot;&nbsp; 制作: nginx.cn  (整理及部分翻译 )</p>
+</div>
+ 
+</body></html>

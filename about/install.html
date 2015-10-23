@@ -1,0 +1,212 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Nginx安装-Nginx中文文档</title>
+<link rel="stylesheet" type="text/css" media="all" href="../userguide.css" />
+<script type="text/javascript" src="../nav/nav.js"></script>
+<script type="text/javascript" src="../nav/prototype.lite.js"></script>
+<script type="text/javascript" src="../nav/moo.fx.js"></script>
+<script type="text/javascript" src="../nav/user_guide_menu.js"></script>
+<meta name="robots" content="all" />
+</head>
+<body>
+<!-- START NAVIGATION -->
+<div id="nav2"><a name="top"></a><a href="../index.html" ><img src="../images/nav_toggle_darker.jpg" width="154" height="43" border="0" /></a></div>
+<div id="masthead">
+<table cellpadding="0" cellspacing="0" border="0" style="width:100%">
+<tr>
+<td><span id="sitename">Nginx中文文档</span></td>
+<td id="breadcrumb_right"><a href="../index.html">目录首页</a></td>
+</tr>
+</table>
+</div>
+<!-- END NAVIGATION -->
+<table cellpadding="0" cellspacing="0" border="0" style="width:100%">
+<tr>
+<td id="breadcrumb">
+<a href="../index.html" >&nbsp;&#8250;&nbsp;Nginx安装
+</td>
+</tr>
+</table>
+<br clear="all" />
+<!-- START CONTENT -->
+<div id="content">
+<h1>Nginx安装</h1>
+<p>nginx可以使用各平台的默认包来安装，本文是介绍使用源码编译安装，包括具体的编译参数信息。</p>
+<p>正式开始前，编译环境gcc g++ 开发库之类的需要提前装好，这里默认你已经装好。</p>
+<p>ububtu平台编译环境可以使用以下指令</p>
+<pre class="prettyprint">
+apt-get install build-essential
+apt-get install libtool
+</pre>
+<p>centos平台编译环境使用如下指令</p>
+<p>安装make：</p>
+<pre class="prettyprint">
+yum -y install gcc automake autoconf libtool make
+</pre>
+<p>安装g++:</p>
+<pre class="prettyprint">
+yum install gcc gcc-c++
+</pre>
+<p>下面正式开始<br />
+---------------------------------------------------------------------------<br />
+一般我们都需要先装pcre, zlib，前者为了重写rewrite，后者为了gzip压缩。<br />
+<strong>1.选定源码目录</strong><br />
+可以是任何目录，本文选定的是/usr/local/src</p>
+<pre class="prettyprint">
+cd /usr/local/src
+</pre>
+<p><strong>2.安装PCRE库</strong><br />
+ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/ 下载最新的 PCRE 源码包，使用下面命令下载编译和安装 PCRE 包：</p>
+<pre class="prettyprint">
+cd /usr/local/src
+wget ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/pcre-8.34.tar.gz 
+tar -zxvf pcre-8.34.tar.gz
+cd pcre-8.34
+./configure
+make
+make install
+</pre>
+<p><strong>3.安装zlib库</strong><br />
+http://zlib.net/zlib-1.2.8.tar.gz 下载最新的 zlib 源码包，使用下面命令下载编译和安装 zlib包：</p>
+<pre class="prettyprint">
+cd /usr/local/src
+
+wget http://zlib.net/zlib-1.2.8.tar.gz
+tar -zxvf zlib-1.2.8.tar.gz
+cd zlib-1.2.8
+./configure
+make
+make install
+</pre>
+<p><strong>4.安装ssl（某些vps默认没装ssl)</strong></p>
+<pre class="prettyprint">
+cd /usr/local/src
+wget http://www.openssl.org/source/openssl-1.0.1c.tar.gz
+tar -zxvf openssl-1.0.1c.tar.gz
+</pre>
+<p><strong>5.安装nginx</strong></p>
+<p>Nginx 一般有两个版本，分别是稳定版和开发版，您可以根据您的目的来选择这两个版本的其中一个，下面是把 Nginx 安装到 /usr/local/nginx 目录下的详细步骤：</p>
+<pre class="prettyprint">
+cd /usr/local/src
+wget http://nginx.org/download/nginx-1.4.2.tar.gz
+tar -zxvf nginx-1.4.2.tar.gz
+cd nginx-1.4.2
+
+./configure --sbin-path=/usr/local/nginx/nginx 
+--conf-path=/usr/local/nginx/nginx.conf 
+--pid-path=/usr/local/nginx/nginx.pid 
+--with-http_ssl_module 
+--with-pcre=/usr/local/src/pcre-8.34 
+--with-zlib=/usr/local/src/zlib-1.2.8 
+--with-openssl=/usr/local/src/openssl-1.0.1c
+
+make
+make install
+</pre>
+<p>--with-pcre=/usr/src/pcre-8.34 指的是pcre-8.34 的源码路径。<br />
+--with-zlib=/usr/src/zlib-1.2.7 指的是zlib-1.2.7 的源码路径。</p>
+<p>安装成功后 /usr/local/nginx 目录下如下</p>
+<pre class="prettyprint">
+fastcgi.conf            koi-win             nginx.conf.default
+fastcgi.conf.default    logs                scgi_params
+fastcgi_params          mime.types          scgi_params.default
+fastcgi_params.default  mime.types.default  uwsgi_params
+html                    nginx               uwsgi_params.default
+koi-utf                 nginx.conf          win-utf
+</pre>
+<p>6.启动<br />
+确保系统的 80 端口没被其他程序占用，运行/usr/local/nginx/nginx 命令来启动 Nginx，</p>
+<pre class="prettyprint">
+netstat -ano|grep 80
+</pre>
+<p>如果查不到结果后执行，有结果则忽略此步骤（ubuntu下必须用sudo启动，不然只能在前台运行）</p>
+<pre class="prettyprint">
+sudo /usr/local/nginx/nginx
+</pre>
+<p>打开浏览器访问此机器的 IP，如果浏览器出现 Welcome to nginx! 则表示 Nginx 已经安装并运行成功。</p>
+<p><a href="8.png"><img class="alignnone size-medium wp-image-185" title="8" alt="" src="8-300x65.png" width="300" height="65" /></a></p>
+<p>-----------------------------------------------------<br />
+到这里nginx就安装完成了，如果只是处理静态html就不用继续安装了</p>
+<p>如果你需要处理php脚本的话，还需要<a title="安装php-fpm" href="php-fpm.html" target="_blank">安装php-fpm</a>。</p>
+<p>下面安装排错</p>
+<p><strong>附：可能遇到的错误和一些帮助信息</strong></p>
+<p><strong>1.1编译pcre错误</strong></p>
+<pre class="prettyprint">
+libtool: compile: unrecognized option `-DHAVE_CONFIG_H'
+libtool: compile: Try `libtool --help' for more information.
+make[1]: *** [pcrecpp.lo] Error 1
+make[1]: Leaving directory `/usr/local/src/pcre-8.34'
+make: *** [all] Error 2
+</pre>
+<p><a href="3.png"><img class="alignnone size-medium wp-image-188" title="3" alt="" src="3-300x79.png" width="300" height="79" /></a></p>
+<p>解决办法：安装g++,别忘了重新configure</p>
+<pre class="prettyprint">
+apt-get install g++
+apt-get install build-essential
+make clean
+./configure
+make
+</pre>
+<p><strong>1.2 make出错</strong></p>
+<pre class="prettyprint">
+make: *** No rule to make target `build', needed by `default'.  Stop.
+./configure: error: SSL modules require the OpenSSL library.
+You can either do not enable the modules, or install the OpenSSL library
+into the system, or build the OpenSSL library statically from the source
+with nginx by using --with-openssl=<path> option.
+</pre>
+<p>按照第4步的安装方法或<br />
+ubuntu下</p>
+<pre class="prettyprint">
+apt-get install openssl
+apt-get install libssl-dev
+</pre>
+<p>centos下</p>
+<pre class="prettyprint">
+yum -y install openssl openssl-devel
+</pre>
+<p><strong>2.nginx编译选项</strong></p>
+<p>make是用来编译的，它从Makefile中读取指令，然后编译。</p>
+<p>make install是用来安装的，它也从Makefile中读取指令，安装到指定的位置。</p>
+<p>configure命令是用来检测你的安装平台的目标特征的。它定义了系统的各个方面，包括nginx的被允许使用的连接处理的方法，比如它会检测你是不是有CC或GCC，并不是需要CC或GCC，它是个shell脚本，执行结束时，它会创建一个Makefile文件。nginx的configure命令支持以下参数：</p>
+<ul>
+<li><code>--prefix=<code><em>path</em></code></code>    定义一个目录，存放服务器上的文件 ，也就是nginx的安装目录。默认使用 <code>/usr/local/nginx。</code></li>
+<li><code>--sbin-path=<code><em>path</em></code></code> 设置nginx的可执行文件的路径，默认为  <code><code><em>prefix</em></code>/sbin/nginx</code>.</li>
+<li><code>--conf-path=<code><em>path</em></code></code>  设置在nginx.conf配置文件的路径。nginx允许使用不同的配置文件启动，通过命令行中的-c选项。默认为<code><code><em>prefix</em></code>/conf/nginx.conf</code>.</li>
+<li><code>--pid-path=<code><em>path</em>  设置nginx.pid文件，将存储的主进程的进程号。安装完成后，可以随时改变的文件名 ， 在nginx.conf配置文件中使用 PID指令。默认情况下，文件名 为</code></code><code><code><em>prefix</em></code>/logs/nginx.pid</code>.</li>
+<li><code>--error-log-path=<code><em>path</em></code></code> 设置主错误，警告，和诊断文件的名称。安装完成后，可以随时改变的文件名 ，在nginx.conf配置文件中 使用 的error_log指令。默认情况下，文件名 为<code><code><em>prefix</em></code>/logs/error.log</code>.</li>
+<li><code>--http-log-path=<code><em>path</em></code></code>  设置主请求的HTTP服务器的日志文件的名称。安装完成后，可以随时改变的文件名 ，在nginx.conf配置文件中 使用 的access_log指令。默认情况下，文件名 为<code><code><em>prefix</em></code>/logs/access.log</code>.</li>
+<li><code>--user=<code><em>name</em></code></code>  设置nginx工作进程的用户。安装完成后，可以随时更改的名称在nginx.conf配置文件中 使用的 user指令。默认的用户名是nobody。</li>
+<li><code>--group=<code><em>name</em></code></code>  设置nginx工作进程的用户组。安装完成后，可以随时更改的名称在nginx.conf配置文件中 使用的 user指令。默认的为非特权用户。</li>
+<li><code>--with-select_module</code> <code>--without-select_module 启用或禁用构建一个模块来允许服务器使用select()方法。该模块将自动建立，如果平台不支持的kqueue，epoll，rtsig或/dev/poll。</code></li>
+<li><code>--with-poll_module</code> <code>--without-poll_module</code> 启用或禁用构建一个模块来允许服务器使用poll()方法。该模块将自动建立，如果平台不支持的kqueue，epoll，rtsig或/dev/poll。</li>
+<li><code>--without-http_gzip_module</code> — 不编译压缩的HTTP服务器的响应模块。编译并运行此模块需要zlib库。</li>
+<li><code>--without-http_rewrite_module</code>  不编译重写模块。编译并运行此模块需要PCRE库支持。</li>
+<li><code>--without-http_proxy_module</code> — 不编译http_proxy模块。</li>
+<li><code>--with-http_ssl_module</code> — 使用https协议模块。默认情况下，该模块没有被构建。建立并运行此模块的OpenSSL库是必需的。</li>
+<li><code>--with-pcre=<code><em>path</em></code></code> — 设置PCRE库的源码路径。PCRE库的源码（版本4.4 - 8.30）需要从PCRE网站下载并解压。其余的工作是Nginx的./ configure和make来完成。正则表达式使用在location指令和 ngx_http_rewrite_module 模块中。</li>
+<li><code>--with-pcre-jit</code> —编译PCRE包含“just-in-time compilation”（1.1.12中， pcre_jit指令）。</li>
+<li><code>--with-zlib=<code><em>path</em></code></code> —设置的zlib库的源码路径。要下载从 zlib（版本1.1.3 - 1.2.5）的并解压。其余的工作是Nginx的./ configure和make完成。ngx_http_gzip_module模块需要使用zlib 。</li>
+<li><code>--with-cc-opt=<code><em>parameters</em></code></code> — 设置额外的参数将被添加到CFLAGS变量。例如,当你在FreeBSD上使用PCRE库时需要使用:<code>--with-cc-opt="-I /usr/local/include。</code>.如需要需要增加 <code>select()支持的文件数量</code>:<code>--with-cc-opt="-D FD_SETSIZE=2048".</code></li>
+<li><code>--with-ld-opt=<code><em>parameters</em></code></code> —设置附加的参数，将用于在链接期间。例如，当在FreeBSD下使用该系统的PCRE库,应指定:<code>--with-ld-opt="-L /usr/local/lib".</code></li>
+</ul>
+<p>典型实例(下面为了展示需要写在多行，执行时内容需要在同一行)</p>
+<pre class="prettyprint">
+./configure
+    --sbin-path=/usr/local/nginx/nginx
+    --conf-path=/usr/local/nginx/nginx.conf
+    --pid-path=/usr/local/nginx/nginx.pid
+    --with-http_ssl_module
+    --with-pcre=../pcre-4.4
+    --with-zlib=../zlib-1.1.3
+</pre>
+</div>
+<!-- END CONTENT -->
+<div id="footer">
+<p><a href="#top">顶端</a></p>
+<p>中文化: <a href="../index.html" >Nginx中文文档</a> &nbsp;&middot;&nbsp; 制作: nginx.cn  (整理及部分翻译 )</p>
+</div>
+ 
+</body></html>

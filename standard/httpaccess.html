@@ -1,0 +1,79 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>HttpAccess模块-Nginx中文文档</title>
+<link rel="stylesheet" type="text/css" media="all" href="../userguide.css" />
+<script type="text/javascript" src="../nav/nav.js"></script>
+<script type="text/javascript" src="../nav/prototype.lite.js"></script>
+<script type="text/javascript" src="../nav/moo.fx.js"></script>
+<script type="text/javascript" src="../nav/user_guide_menu.js"></script>
+<meta name="robots" content="all" />
+</head>
+<body>
+<!-- START NAVIGATION -->
+<div id="nav2"><a name="top"></a><a href="../index.html" ><img src="../images/nav_toggle_darker.jpg" width="154" height="43" border="0" /></a></div>
+<div id="masthead">
+<table cellpadding="0" cellspacing="0" border="0" style="width:100%">
+<tr>
+<td><span id="sitename">Nginx中文文档</span></td>
+<td id="breadcrumb_right"><a href="../index.html">目录首页</a></td>
+</tr>
+</table>
+</div>
+<!-- END NAVIGATION -->
+<table cellpadding="0" cellspacing="0" border="0" style="width:100%">
+<tr>
+<td id="breadcrumb">
+<a href="../index.html" >&nbsp;&#8250;&nbsp;HttpAccess模块
+</td>
+</tr>
+</table>
+<br clear="all" />
+<!-- START CONTENT -->
+<div id="content">
+<h1>HttpAccess模块</h1>
+<p>此模块提供了一个简易的基于主机的访问控制.
+</p><p>ngx_http_access_module 模块使有可能对特定IP客户端进行控制.
+规则检查按照第一次匹配的顺序
+</p><p>__配置样例__
+</p>
+<pre>
+location / {
+: deny    192.168.1.1;
+: allow   192.168.1.0/24;
+: allow   10.1.1.0/16;
+: deny    all;
+}
+</pre>
+<p>在上面的例子中,仅允许网段 10.1.1.0/16 和 192.168.1.0/24中除 192.168.1.1之外的ip访问.
+</p><p>当执行很多规则时,最好使用 ngx_http_geo_module 模块.
+</p>
+<h2> 指导 </h2>
+<ul><li> [#放行 放行] 
+</li><li> [#禁止 禁止] 
+</li></ul>
+<h2>放行 </h2>
+<p><b>syntax:</b> <i>allow [ address | CIDR | all ] </i>
+</p><p><b>default:</b> <i>no</i>
+</p><p><b>context:</b> <i>http, server, location, limit_except</i>
+</p><p>以上描述的网络地址有权直接访问
+</p>
+<h2> 禁止 </h2>
+<p><b>syntax:</b> <i>deny [ address | CIDR | all ] </i>
+</p><p><b>default:</b> <i>no</i>
+</p><p><b>context:</b> <i>http, server, location, limit_except</i>
+</p><p>以上描述的网络地址拒绝访问
+</p><p><br />
+</p>
+<h2>References </h2>
+<p><a href="http://sysoev.ru/nginx/docs/http/ngx_http_access_module.html" class="external text" title="http://sysoev.ru/nginx/docs/http/ngx_http_access_module.html" rel="nofollow">Original Documentation</a>
+</p>
+</div>
+<!-- END CONTENT -->
+<div id="footer">
+<p><a href="#top">顶端</a></p>
+<p>中文化: <a href="../index.html" >Nginx中文文档</a> &nbsp;&middot;&nbsp; 制作: nginx.cn  (整理及部分翻译 )</p>
+</div>
+ 
+</body></html>

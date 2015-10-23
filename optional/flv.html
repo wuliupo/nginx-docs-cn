@@ -1,0 +1,81 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>flv-Nginx中文文档</title>
+<link rel="stylesheet" type="text/css" media="all" href="../userguide.css" />
+<script type="text/javascript" src="../nav/nav.js"></script>
+<script type="text/javascript" src="../nav/prototype.lite.js"></script>
+<script type="text/javascript" src="../nav/moo.fx.js"></script>
+<script type="text/javascript" src="../nav/user_guide_menu.js"></script>
+<meta name="robots" content="all" />
+</head>
+<body>
+<!-- START NAVIGATION -->
+<div id="nav2"><a name="top"></a><a href="../index.html" ><img src="../images/nav_toggle_darker.jpg" width="154" height="43" border="0" /></a></div>
+<div id="masthead">
+<table cellpadding="0" cellspacing="0" border="0" style="width:100%">
+<tr>
+<td><span id="sitename">Nginx中文文档</span></td>
+<td id="breadcrumb_right"><a href="../index.html">目录首页</a></td>
+</tr>
+</table>
+</div>
+<!-- END NAVIGATION -->
+<table cellpadding="0" cellspacing="0" border="0" style="width:100%">
+<tr>
+<td id="breadcrumb">
+<a href="../index.html" >&nbsp;&#8250;&nbsp;flv
+</td>
+</tr>
+</table>
+<br clear="all" />
+<!-- START CONTENT -->
+<div id="content">
+<h1>flv</h1>
+<p>This module provides the ability to seek within FLV (Flash) files using time-based offsets.
+</p>
+<p>本模块提供FLV文件加载基于时间位移.
+</p>
+<p>Module ngx_http_flv_module offers special handling of files it handles: 
+</p>
+<p>模块ngx_http_flv_module提供特殊处理的文件,它处理: 
+</p>
+<ul><li> adds FLV  header to the requested file; </li>
+<li>添加 FLV  头请求的文件; </li>
+<li> transfers file, beginning from the displacement, specified in the request argument start=XXX. 
+</li>
+<li>	
+传输文件，从开始的位移，在请求参数中指定 start=XXX. 
+</li>
+</ul>
+<p>This module is not compiled by default and must be specified using the --with-http_flv_module  argument to  configure  when compiling Nginx.
+</p>
+<p>本模块必需在编译nginx时加上--with-http_flv_module.
+</p>
+<p>例如：
+<style>/* GeSHi (C) 2004 - 2007 Nigel McNie (http://qbnz.com/highlighter) */
+.code .imp {font-weight: bold; color: red;}
+.code .kw1 {color: #b1b100;}
+.code .kw2 {color: #000000; font-weight: bold;}
+.code .kw3 {color: #000066;}
+.code .kw4 {color: #993333;}
+.code .co1 {color: #808080; font-style: italic;}
+.code .coMULTI {color: #808080; font-style: italic;}
+.code .es0 {color: #000099; font-weight: bold;}
+.code .br0 {color: #66cc66;}
+.code .st0 {color: #ff0000;}
+.code .me1 {color: #202020;}
+.code .me2 {color: #202020;}
+</p>
+</style><pre class="code"><span class="kw3">location</span> ~ \.<span class="kw27">flv</span>$ <span class="br0">&#123;</span>
+  <span class="kw27">flv</span>;
+<span class="br0">&#125;</span></pre>
+</div>
+<!-- END CONTENT -->
+<div id="footer">
+<p><a href="#top">顶端</a></p>
+<p>中文化: <a href="../index.html" >Nginx中文文档</a> &nbsp;&middot;&nbsp; 制作: nginx.cn  (整理及部分翻译 )</p>
+</div>
+ 
+</body></html>

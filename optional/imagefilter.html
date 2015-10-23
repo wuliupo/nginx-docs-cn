@@ -1,0 +1,131 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>HttpImageFilter-Nginx中文文档</title>
+<link rel="stylesheet" type="text/css" media="all" href="../userguide.css" />
+<script type="text/javascript" src="../nav/nav.js"></script>
+<script type="text/javascript" src="../nav/prototype.lite.js"></script>
+<script type="text/javascript" src="../nav/moo.fx.js"></script>
+<script type="text/javascript" src="../nav/user_guide_menu.js"></script>
+<meta name="robots" content="all" />
+</head>
+<body>
+<!-- START NAVIGATION -->
+<div id="nav2"><a name="top"></a><a href="../index.html" ><img src="../images/nav_toggle_darker.jpg" width="154" height="43" border="0" /></a></div>
+<div id="masthead">
+<table cellpadding="0" cellspacing="0" border="0" style="width:100%">
+<tr>
+<td><span id="sitename">Nginx中文文档</span></td>
+<td id="breadcrumb_right"><a href="../index.html">目录首页</a></td>
+</tr>
+</table>
+</div>
+<!-- END NAVIGATION -->
+<table cellpadding="0" cellspacing="0" border="0" style="width:100%">
+<tr>
+<td id="breadcrumb">
+<a href="../index.html" >&nbsp;&#8250;&nbsp;HttpImageFilter
+</td>
+</tr>
+</table>
+<br clear="all" />
+<!-- START CONTENT -->
+<div id="content">
+<h1>HttpImageFilter</h1>
+<p><b>Version:</b> 0.7.54+
+</p><p>This module is a filter for transforming JPEG, GIF and PNG images. It is not enabled by default to enable it, provide this option to ./configure when building nginx: <br />
+这个模块用来分发JPEG，GIF和PNG图片。这个没有默认开启，在编译nginx中通过./configure参数配置
+</p>
+<pre>
+--with-http_image_filter_module  
+</pre>
+<p>libgd is required to build and run the module. We recommend using the latest version of libgd. <br />
+编译和运行这个模块必须安装libgd库。我们推荐使用最新版本的Libgd.
+</p><p><br />
+</p>
+<h1> Example Configuration </h1>
+<p><style>/* GeSHi (C) 2004 - 2007 Nigel McNie (http://qbnz.com/highlighter) */
+.code .imp {font-weight: bold; color: red;}
+.code .kw1 {color: #b1b100;}
+.code .kw2 {color: #000000; font-weight: bold;}
+.code .kw3 {color: #000066;}
+.code .kw4 {color: #993333;}
+.code .co1 {color: #808080; font-style: italic;}
+.code .coMULTI {color: #808080; font-style: italic;}
+.code .es0 {color: #000099; font-weight: bold;}
+.code .br0 {color: #66cc66;}
+.code .st0 {color: #ff0000;}
+.code .me1 {color: #202020;}
+.code .me2 {color: #202020;}
+</p>
+</style><pre class="code"><span class="kw3">location</span> /img/ <span class="br0">&#123;</span>
+    <span class="kw21">proxy_pass</span>     <span class="kw3">http</span>://backend;
+    image_filter   resize  <span class="nu0">150</span> <span class="nu0">100</span>;
+    <span class="kw3">error_page</span>     <span class="nu0">415</span>   = /empty;
+<span class="br0">&#125;</span>
+&nbsp;
+<span class="kw3">location</span> = /empty <span class="br0">&#123;</span>
+    <span class="kw10">empty_gif</span>;
+<span class="br0">&#125;</span></pre>
+<h2>指令</h2>
+<h2>image_filter </h2>
+<p><b>Syntax:</b> <i>image_filter (test|size|resize width height|crop width height)</i>
+</p><p><b>Default:</b> <i>none</i> 
+</p><p><b>Context:</b> <i>location</i>
+</p><p>Specifies the type of transformation to apply to the image, one of the below: <br />
+详细的图片后缀类型如下：
+</p>
+<ul><li> test: checking that the response is indeed an image format JPEG, GIF or PNG. Otherwise, an error 415. <br />
+测试：测试确定图片文件的后缀格式为JPEG，GIF OR PNG。否则返回415错误
+</li></ul>
+<ul><li> size: Gives information about the image in JSON format. For example, <br />
+尺寸：返回JSON格式的图片信息。例如：
+</li></ul>
+<pre>{ &quot;img&quot;&nbsp;: { &quot;width&quot;: 100, &quot;height&quot;: 100, &quot;type&quot;: &quot;gif&quot; } }</pre>
+<p>Or if an error occurs, <br />或者如果发生错误,
+</p>
+<pre>{}</pre>
+<ul><li> resize: proportionally reduces the image to a specified size. <br /> 调整大小：缩略图片到特定的尺寸
+</li></ul>
+<ul><li> crop: proportionally reduces the image to a specified size and trims extra edge. <br />
+切割：切割图片到特定的尺寸和特定的分辨率
+</li></ul>
+<h2>image_filter_buffer </h2>
+<p><b>Syntax:</b> <i>image_filter_buffer size</i> 
+</p><p><b>Default:</b> <i>1M</i> 
+</p><p><b>Context:</b> <i>http, server, location</i> 
+</p><p>Sets the maximum size for reading the image. <br />
+设置读取文件的最大的尺寸
+</p>
+<h2> image_filter_jpeg_quality </h2>
+<p><b>Syntax:</b> <i>image_filter_jpeg_quality [0...100]</i> 
+</p><p><b>Default:</b> <i>75</i> 
+</p><p><b>Context:</b> <i>http, server, location</i> 
+</p><p>Sets the rate of loss of information when processing the images as <b>JPEG</b>. The maximum recommended value is <b>95</b>. <br />
+设置处理JPEG图片的丢失信息率.推荐的最大值为95
+</p>
+<h2> image_filter_transparency </h2>
+<p><b>Syntax:</b> <i>image_filter_transparency on|off</i>
+</p><p><b>Default:</b> <i>on</i>
+</p><p><b>Context:</b> <i>http, server, location</i>
+</p><p>This directive allows you to disable image transparency in GIF and
+palette-based PNG to improve image resampling quality. <br />
+这个指令容许你关闭GIF图片的透明度和 PNG图片质量
+</p><p>True color PNG alpha-channels are always preserved despite this setting. <br />
+真彩色PNG图片保存忽略设定
+</p><p>Note: Grayscale PNG's are untested, but should be handled
+as truecolor PNGs. <br />
+注释：灰度PNG图片未被设置，但应该被作为真彩色PNG图片处理
+</p>
+<h2>References </span></h2>
+<p><a href="http://sysoev.ru/nginx/docs/http/ngx_http_image_filter_module.html" class="external text" title="http://sysoev.ru/nginx/docs/http/ngx_http_image_filter_module.html" rel="nofollow">Original Documentation</a>
+</p>
+</div>
+<!-- END CONTENT -->
+<div id="footer">
+<p><a href="#top">顶端</a></p>
+<p>中文化: <a href="../index.html" >Nginx中文文档</a> &nbsp;&middot;&nbsp; 制作: nginx.cn  (整理及部分翻译 )</p>
+</div>
+ 
+</body></html>

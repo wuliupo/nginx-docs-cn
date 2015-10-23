@@ -1,0 +1,96 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>HttpLog模块-Nginx中文文档</title>
+<link rel="stylesheet" type="text/css" media="all" href="../userguide.css" />
+<script type="text/javascript" src="../nav/nav.js"></script>
+<script type="text/javascript" src="../nav/prototype.lite.js"></script>
+<script type="text/javascript" src="../nav/moo.fx.js"></script>
+<script type="text/javascript" src="../nav/user_guide_menu.js"></script>
+<meta name="robots" content="all" />
+</head>
+<body>
+<!-- START NAVIGATION -->
+<div id="nav2"><a name="top"></a><a href="../index.html" ><img src="../images/nav_toggle_darker.jpg" width="154" height="43" border="0" /></a></div>
+<div id="masthead">
+<table cellpadding="0" cellspacing="0" border="0" style="width:100%">
+<tr>
+<td><span id="sitename">Nginx中文文档</span></td>
+<td id="breadcrumb_right"><a href="../index.html">目录首页</a></td>
+</tr>
+</table>
+</div>
+<!-- END NAVIGATION -->
+<table cellpadding="0" cellspacing="0" border="0" style="width:100%">
+<tr>
+<td id="breadcrumb">
+<a href="../index.html" >&nbsp;&#8250;&nbsp;HttpLog模块
+</td>
+</tr>
+</table>
+<br clear="all" />
+<!-- START CONTENT -->
+<div id="content">
+<h1>HttpLog模块</h1>
+	    <dl><dd> ngx_http_log_module
+</dd></dl>
+<p>实例
+</p><p><br />
+</p>
+<pre>
+log_format  gzip  '$remote_addr - $remote_user [$time_local]  '
+: '&quot;$request&quot; $status $bytes_sent '
+: '&quot;$http_referer&quot; &quot;$http_user_agent&quot; &quot;$gzip_ratio&quot;';
+access_log  /spool/logs/nginx-access.log  gzip  buffer=32k;
+</pre>
+<h2> 指令</h2>
+<ul><li> access_log
+</li><li>log_format
+</li></ul>
+<p><br />
+</p>
+<h2> access_log </h2>
+<p><b>语法：</b> <i>access_log path [format [buffer=size  | off</i>
+]
+<b>默认值：</b> <i>access_log log/access.log combined</i>
+</p><p><b>作用域：</b> <i>http, server, location</i>
+</p><p>指令 access_log 指派路径、格式和缓存大小。参数 "off" 将清除当前级别的所有 access_log 指令。如果未指定格式，则使用预置的 "combined" 格式。缓存不能大于能写入磁盘的文件的最大大小。在 FreeBSD 3.0-6.0 ，缓存大小无此限制。
+</p><p><br />
+</p>
+<h2> log_format </h2>
+<p><b>语法：</b> <i>log_format name format [format ...] </i>
+</p><p><b>默认值：</b> <i>log_format combined "..."</i>
+</p><p><b>作用域：</b> <i>http</i> <i>server</i>
+</p><p>Directive log_format describes the format of a log entry. Besides general variables in the format it is possible to use variables which exist only at the moment of record into the log:
+</p>
+<ul><li> $body_bytes_sent, the number of bytes, transmitted to client minus the response headers, variable is compatible with parameter&nbsp;%B of module Apache's mod_log_config (this was called $apache_bytes_sent, before version 0.3.10)
+</li><li> $bytes_sent, the number of bytes, transmitted to client
+</li><li> $connection, the number of connection
+</li><li> $msec, the time with an accuracy to microseconds at the moment of the log entry
+</li><li> $pipe, "p" if request was pipelining 
+</li><li> $request_length, the length of the body of the request
+</li><li> $request_time, the time of working on request in seconds
+</li><li> $status, status of answer
+</li><li> $time_local, local time into common log format.
+</li></ul>
+<p>The headers, transmitted to client, begin from the prefix "sent_http_", for example, $sent_http_content_range.
+</p><p>In the configuration there is always a predetermined format "combined":
+</p><p><br />
+</p>
+<pre>
+log_format  combined  '$remote_addr - $remote_user [$time_local]  '
+: '&quot;$request&quot; $status $apache_bytes_sent '
+: '&quot;$http_referer&quot; &quot;$http_user_agent&quot;';
+</pre>
+<h2>参考 </h2>
+<p><a href="http://sysoev.ru/nginx/docs/http/ngx_http_log_module.html" class="external text" title="http://sysoev.ru/nginx/docs/http/ngx_http_log_module.html" rel="nofollow">原始文档</a>
+</p>
+</div>
+<!-- END CONTENT -->
+<div id="footer">
+<p><a href="#top">顶端</a></p>
+<p>中文化: <a href="../index.html" >Nginx中文文档</a> &nbsp;&middot;&nbsp; 制作: nginx.cn  (整理及部分翻译 )</p>
+</div>
+ 
+</body></html>

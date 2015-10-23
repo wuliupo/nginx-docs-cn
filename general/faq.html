@@ -1,0 +1,84 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>常见问题(FAQ)-Nginx中文文档</title>
+<link rel="stylesheet" type="text/css" media="all" href="../userguide.css" />
+<script type="text/javascript" src="../nav/nav.js"></script>
+<script type="text/javascript" src="../nav/prototype.lite.js"></script>
+<script type="text/javascript" src="../nav/moo.fx.js"></script>
+<script type="text/javascript" src="../nav/user_guide_menu.js"></script>
+<meta name="robots" content="all" />
+</head>
+<body>
+<!-- START NAVIGATION -->
+<div id="nav2"><a name="top"></a><a href="../index.html" ><img src="../images/nav_toggle_darker.jpg" width="154" height="43" border="0" /></a></div>
+<div id="masthead">
+<table cellpadding="0" cellspacing="0" border="0" style="width:100%">
+<tr>
+<td><span id="sitename">Nginx中文文档</span></td>
+<td id="breadcrumb_right"><a href="../index.html">目录首页</a></td>
+</tr>
+</table>
+</div>
+<!-- END NAVIGATION -->
+<table cellpadding="0" cellspacing="0" border="0" style="width:100%">
+<tr>
+<td id="breadcrumb">
+<a href="../index.html" >&nbsp;&#8250;&nbsp;常见问题(FAQ)
+</td>
+</tr>
+</table>
+<br clear="all" />
+<!-- START CONTENT -->
+<div id="content">
+<h1>常见问题(FAQ)</h1>
+<ul><li> [#notwork 某些东东不工作 (URL重写, 代理, 路径, ...)] 
+</li><li> [#other 有没有其它类似的Web服务器] 
+</li><li> [#chroot 对于chroot的支持是否在计划之中?] 
+</li><li> [#usecase 在什么情况下使用Nginx比使用squid要好?] 
+</li><li> [#imapexample 有没有人能给出一个完整的.conf配置文件来详细的解读一下怎么配置和测试 IMAP 模块， 而不只是关于 IMAP 的只言片语啊?] 
+</li><li> [#smtpexample 怎么让Nginx成为以postfix做为后端的SMTP代理?] 
+</li><li> [#loadbalancing Nginx使用什么算法来实现负载均衡? 它能实现基于连接数的负载均衡吗?] 
+</li><li> [#proxy_buffering 我能关闭从代理服务器到后端服务器的缓存吗或者使用上传进度特性?] 
+</li></ul>
+<h3> 某些东东不工作 (URL重写, 代理, 路径, ...) </h3>
+<p>例如： 如URL重写(rewrite)不工作了或者是unix的路径(/$PATH)的问题云云...
+</p><p>请仔细阅读 [NginxDebugging]  并且 <b>逐行</b> 查看错误日志。<br /> 如果你没找到错误 <b>打起精神</b> 试着到IRC或邮件列表里说明一下你碰到的问题。
+</p>
+<h3> 有没有其它类似的Web服务器 </h3>
+<ul><li> <a href="http://www.0x50.org/" class="external text" title="http://www.0x50.org/" rel="nofollow">Cherokee</a> 
+</li><li> <a href="http://www.lighttpd.net/" class="external text" title="http://www.lighttpd.net/" rel="nofollow">Lighttpd (Lighty)</a> 
+</li><li> <a href="http://www.acme.com/software/thttpd/" class="external text" title="http://www.acme.com/software/thttpd/" rel="nofollow">thttpd</a> 
+</li></ul>
+<p>关于各自的优缺点请使用自己喜欢的搜索引挚查找 &nbsp;;-)
+</p>
+<h3>对于chroot的支持是否在计划之中? </h3>
+<p>有人知道吗？
+</p>
+<h3>在什么情况下使用Nginx比使用squid要好? 反之亦然。 </h3>
+<p>大体上来说nginx主要用于反向加速代理而不是像squid那样做为常规代理服务器。Nginx的最大优势在于高负载情况下内存和CPU的低消耗。 我不认为squid能给你带来比nginx更好的性能。
+</p>
+<h3>怎么让Nginx成为以postfix做为后端的SMTP代理? </h3>
+<p>有人知道不？
+</p>
+<h3> Nginx使用什么算法来实现负载均衡? 它能实现基于连接数的负载均衡吗? </h3>
+<p>目前Nginx使用简单的轮巡算法，所以无法做基本链接计数的负载均衡。 这个可能会在将来的版本中有所改变。
+</p>
+<h3>> 我能关闭从代理服务器到后端服务器的缓存吗或者使用上传进度特性? </h3>
+<p>基于 <b>太多</b>人询问下面的问题:
+</p>
+<ul><li> 我能为了得到上传进度而关闭代理的缓存吗
+</li><li> 使用nginx我怎么才能给用户显示上传进度
+</li><li> ...
+</li></ul>
+<p>到目前为止 (2007-Apr-26) 还没有办法关闭到后端服务器的缓存.
+</p>
+</div>
+<!-- END CONTENT -->
+<div id="footer">
+<p><a href="#top">顶端</a></p>
+<p>中文化: <a href="../index.html" >Nginx中文文档</a> &nbsp;&middot;&nbsp; 制作: nginx.cn  (整理及部分翻译 )</p>
+</div>
+ 
+</body></html>

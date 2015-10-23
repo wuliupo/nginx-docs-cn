@@ -1,0 +1,84 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>HttpSubstitution-Nginx中文文档</title>
+<link rel="stylesheet" type="text/css" media="all" href="../userguide.css" />
+<script type="text/javascript" src="../nav/nav.js"></script>
+<script type="text/javascript" src="../nav/prototype.lite.js"></script>
+<script type="text/javascript" src="../nav/moo.fx.js"></script>
+<script type="text/javascript" src="../nav/user_guide_menu.js"></script>
+<meta name="robots" content="all" />
+</head>
+<body>
+<!-- START NAVIGATION -->
+<div id="nav2"><a name="top"></a><a href="../index.html" ><img src="../images/nav_toggle_darker.jpg" width="154" height="43" border="0" /></a></div>
+<div id="masthead">
+<table cellpadding="0" cellspacing="0" border="0" style="width:100%">
+<tr>
+<td><span id="sitename">Nginx中文文档</span></td>
+<td id="breadcrumb_right"><a href="../index.html">目录首页</a></td>
+</tr>
+</table>
+</div>
+<!-- END NAVIGATION -->
+<table cellpadding="0" cellspacing="0" border="0" style="width:100%">
+<tr>
+<td id="breadcrumb">
+<a href="../index.html" >&nbsp;&#8250;&nbsp;HttpSubstitution
+</td>
+</tr>
+</table>
+<br clear="all" />
+<!-- START CONTENT -->
+<div id="content">
+<h1>HttpSubstitution</h1>
+<p>This module can search and replace text in the nginx response.  It is only available if the 
+</p>
+<pre>--with-http_sub_module option</pre>
+<p>was specified for ./configure.
+<p>本模块可以在nginx的回应中查找和替换文本.在编译nginx时必需加上--with-http_sub_module option
+</p>
+</p><p>例如:
+</p>
+<pre>
+location / {
+  sub_filter      &lt;/head&gt;
+  '&lt;/head&gt;&lt;script language=&quot;javascript&quot; src=&quot;$script&quot;&gt;&lt;/script&gt;';
+  sub_filter_once on;
+}
+</pre>
+<h2>指令</h2>
+<h2>sub_filter </h2>
+<p><b>syntax:</b> <i>sub_filter text substitution</i>
+</p><p><b>default:</b> <i>none</i>
+</p><p><b>context:</b> <i>http, server, location</i>
+</p><p><i>sub_filter</i> allows replacing some text in the nginx response with some other text, independently of the source of the data. The matching is case-insensitive. Substitution text may contain variables. Only one substitution rule per location is supported.
+</p>
+<p><i>sub_filter</i> 允许替换源文件里的多个文本（多次替换）匹配是非常快速的。替换必须包含变量，一个location只能一个替换规则.
+</p>
+<h2>sub_filter_once </h2>
+<p><b>syntax:</b> <i>sub_filter_once on|off</i>
+</p><p><b>default:</b> <i>sub_filter_once on</i>
+</p><p><b>context:</b> <i>http, server, location</i>
+</p><p><i>sub_filter_once off</i> allows to search and replace all matching lines, the default is replacing only the first one.
+</p><p><i>sub_filter_once off</i> 允许查找替换所有匹配行，默认只替换第一个.
+</p>
+<h2> sub_filter_types </h2>
+<p><b>syntax:</b> <i>sub_filter_types mime-type [mime-type ...] </i>
+</p><p><b>default:</b> <i>sub_filter_types text/html</i>
+</p><p><b>context:</b> <i>http, server, location</i>
+</p><p><i>sub_filter_types</i> is used to specify which content types should be checked for <i>sub_filter</i>.  The default is only <i>text/html</i>.
+</p><p><i>sub_filter_types</i>用于指定替换<i>sub_filter</i>的类型，默认为<i>text/html</i>.
+</p>
+<h2>References </h1>
+<p><a href="http://sysoev.ru/nginx/docs/http/ngx_http_sub_module.html" class="external text" title="http://sysoev.ru/nginx/docs/http/ngx_http_sub_module.html" rel="nofollow">Original Documentation</a>
+</p>
+</div>
+<!-- END CONTENT -->
+<div id="footer">
+<p><a href="#top">顶端</a></p>
+<p>中文化: <a href="../index.html" >Nginx中文文档</a> &nbsp;&middot;&nbsp; 制作: nginx.cn  (整理及部分翻译 )</p>
+</div>
+ 
+</body></html>

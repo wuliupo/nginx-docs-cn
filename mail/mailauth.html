@@ -1,0 +1,77 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>MailAuth-Nginx中文文档</title>
+<link rel="stylesheet" type="text/css" media="all" href="../userguide.css" />
+<script type="text/javascript" src="../nav/nav.js"></script>
+<script type="text/javascript" src="../nav/prototype.lite.js"></script>
+<script type="text/javascript" src="../nav/moo.fx.js"></script>
+<script type="text/javascript" src="../nav/user_guide_menu.js"></script>
+<meta name="robots" content="all" />
+</head>
+<body>
+<!-- START NAVIGATION -->
+<div id="nav2"><a name="top"></a><a href="../index.html" ><img src="../images/nav_toggle_darker.jpg" width="154" height="43" border="0" /></a></div>
+<div id="masthead">
+<table cellpadding="0" cellspacing="0" border="0" style="width:100%">
+<tr>
+<td><span id="sitename">Nginx中文文档</span></td>
+<td id="breadcrumb_right"><a href="../index.html">目录首页</a></td>
+</tr>
+</table>
+</div>
+<!-- END NAVIGATION -->
+<table cellpadding="0" cellspacing="0" border="0" style="width:100%">
+<tr>
+<td id="breadcrumb">
+<a href="../index.html" >&nbsp;&#8250;&nbsp;MailAuth
+</td>
+</tr>
+</table>
+<br clear="all" />
+<!-- START CONTENT -->
+<div id="content">
+<h1>MailAuth</h1>
+<p>Example configuration<br />
+配置举例：
+</p>
+<pre>
+  auth_http           localhost:9000/cgi-bin/nginxauth.cgi;
+  auth_http_timeout   5;
+}
+</pre>
+<h2>指令</h2>
+<h2>auth_http </h2>
+<p><b>syntax:</b> <i>auth_http</i> <i><b>URL</b></i>
+</p><p><b>default:</b> <i>no</i>
+</p><p><b>context:</b> <i>mail, server</i>
+</p><p>With this directive you can set the URL to the external HTTP-like server for authorization. A description of the protocol can be found <a href="mailcore.html" title="NginxMailCoreModule"> here</a> . <br />
+使用这条指令你可以设置URL像HTTP服务器那样的验证。协议描述可以看<a href="mailcore.html" title="NginxMailCoreModule"> 这里</a> 
+</p>
+<h2> auth_http_header </h2>
+<p><b>syntax:</b> <i>auth_http_header</i> <i><b>header value</b></i>
+</p><p><b>default:</b> <i>no</i>
+</p><p><b>context:</b> <i>mail, server</i>
+</p><p>With this directive you can add a HTTP header and value during the identification process. This makes it possible to use a shared secret to ensure that the request was answered by nginx. <br />
+使用这条指令你可以添加HTTP头和值到验证进程中。这个使得可以用共享密码来却不请求得到Nginx的响应
+</p><p>For example:
+</p>
+<pre>
+auth_http_header X-NGX-Auth-Key &quot;secret_string&quot;;
+</pre>
+<h2>auth_http_timeout  </h2>
+<p><b>syntax:</b> <i>auth_http_timeout</i> <i><b>milliseconds;</b></i>
+</p><p><b>default:</b> <i>60000</i>
+</p><p><b>context:</b> <i>mail, server</i>
+</p><p>With this directive you can set the time out for authentication process. <br />
+使用这条指令你可以设置验证进程的超时时间
+</p>
+</div>
+<!-- END CONTENT -->
+<div id="footer">
+<p><a href="#top">顶端</a></p>
+<p>中文化: <a href="../index.html" >Nginx中文文档</a> &nbsp;&middot;&nbsp; 制作: nginx.cn  (整理及部分翻译 )</p>
+</div>
+ 
+</body></html>

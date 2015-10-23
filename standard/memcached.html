@@ -1,0 +1,102 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Memcached-Nginx中文文档</title>
+<link rel="stylesheet" type="text/css" media="all" href="../userguide.css" />
+<script type="text/javascript" src="../nav/nav.js"></script>
+<script type="text/javascript" src="../nav/prototype.lite.js"></script>
+<script type="text/javascript" src="../nav/moo.fx.js"></script>
+<script type="text/javascript" src="../nav/user_guide_menu.js"></script>
+<meta name="robots" content="all" />
+</head>
+<body>
+<!-- START NAVIGATION -->
+<div id="nav2"><a name="top"></a><a href="../index.html" ><img src="../images/nav_toggle_darker.jpg" width="154" height="43" border="0" /></a></div>
+<div id="masthead">
+<table cellpadding="0" cellspacing="0" border="0" style="width:100%">
+<tr>
+<td><span id="sitename">Nginx中文文档</span></td>
+<td id="breadcrumb_right"><a href="../index.html">目录首页</a></td>
+</tr>
+</table>
+</div>
+<!-- END NAVIGATION -->
+<table cellpadding="0" cellspacing="0" border="0" style="width:100%">
+<tr>
+<td id="breadcrumb">
+<a href="../index.html" >&nbsp;&#8250;&nbsp;Memcached
+</td>
+</tr>
+</table>
+<br clear="all" />
+<!-- START CONTENT -->
+<div id="content">
+<h1>Memcached</h1>
+<p>你可以利用本模块来进行简单的缓存以提高系统效率。本模块计划在未来进行扩展。
+</p><p>__配置示例__
+</p>
+<pre>
+server {
+: location / {
+: set  $memcached_key  $uri;
+: memcached_pass   name:11211;
+: default_type     text/html;
+: error_page       404 = /fallback;
+: }
+: location = /fallback {
+: proxy_pass       backend;
+: }
+}
+</pre>
+<h2> 指令 </h2>
+<ul><li> [#memcached_pass memcached_pass] 
+</li><li> [#memcached_connect_timeout memcached_connect_timeout] 
+</li><li> [#memcached_send_timeout memcached_send_timeout] 
+</li><li> [#memcached_read_timeout memcached_read_timeout] 
+</li><li> [#memcached_buffer_size memcached_buffer_size] 
+</li><li> [#memcached_next_upstream memcached_next_upstream] 
+</li></ul>
+<h2>变量 </h2>
+<ul><li> $memcached_key
+</li></ul>
+<h2> memcached_pass </h2>
+<p><b>语法：</b> <i>memcached_pass [ name:port ] </i>
+</p><p><b>默认值：</b> <i>none</i>
+</p><p><b>作用域：</b> <i>http, server, location</i>
+</p><p>The backend should set the data in memcached.  The memcached key is "/uri?args".
+</p><p>Since 0.5.9 the memcached key is now in <code>$memcached_key</code>.
+</p><h2> memcached_connect_timeout </h2>
+<p><b>语法：</b> <i>memcached_connect_timeout [ time ] </i>
+</p><p><b>默认值：</b> <i>60000</i>
+</p><p><b>作用域：</b> <i>http, server, location</i>
+</p><p>The timeout for connecting to memcached, in milliseconds.
+</p><h2> memcached_read_timeout </h2>
+<p><b>语法：</b> <i>memcached_read_timeout [ time ] </i>
+</p><p><b>默认值：</b> <i>60000</i>
+</p><p><b>作用域：</b> <i>http, server, location</i>
+</p><p>The timeout for reading from memcached, in milliseconds.
+</p><h2> memcached_send_timeout </h2>
+<p><b>语法：</b> <i>memcached_send_timeout [ time ] </i>
+</p><p><b>默认值：</b> <i>60000</i>
+</p><p><b>作用域：</b> <i>http, server, location</i>
+</p><p>The timeout for sending to memcached, in milliseconds.
+</p><h2> memcached_buffer_size </h2>
+<p><b>语法：</b> <i>memcached_buffer_size [ size ] </i>
+</p><p><b>默认值：</b> see <i>getpagesize(2)</i>
+</p><p><b>作用域：</b> <i>http, server, location</i>
+</p><p>The recv/send buffer size, in bytes.
+</p><h2> memcached_next_upstream </h2>
+<p><b>语法：</b> <i>memcached_next_upstream [ error | timeout | invalid_response | not_found | off ] </i>
+</p><p><b>默认值：</b> <i>error timeout</i>
+</p><p><b>作用域：</b> <i>http, server, location</i>
+</p><p>Which failure conditions should cause the request to be forwarded to another upstream server? Applies only when the value in memcached_pass is an upstream with two or more servers.
+</p>
+</div>
+<!-- END CONTENT -->
+<div id="footer">
+<p><a href="#top">顶端</a></p>
+<p>中文化: <a href="../index.html" >Nginx中文文档</a> &nbsp;&middot;&nbsp; 制作: nginx.cn  (整理及部分翻译 )</p>
+</div>
+ 
+</body></html>

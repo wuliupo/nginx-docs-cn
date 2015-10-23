@@ -1,0 +1,99 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>HttpLimit zone-Nginx中文文档</title>
+<link rel="stylesheet" type="text/css" media="all" href="../userguide.css" />
+<script type="text/javascript" src="../nav/nav.js"></script>
+<script type="text/javascript" src="../nav/prototype.lite.js"></script>
+<script type="text/javascript" src="../nav/moo.fx.js"></script>
+<script type="text/javascript" src="../nav/user_guide_menu.js"></script>
+<meta name="robots" content="all" />
+</head>
+<body>
+<!-- START NAVIGATION -->
+<div id="nav2"><a name="top"></a><a href="../index.html" ><img src="../images/nav_toggle_darker.jpg" width="154" height="43" border="0" /></a></div>
+<div id="masthead">
+<table cellpadding="0" cellspacing="0" border="0" style="width:100%">
+<tr>
+<td><span id="sitename">Nginx中文文档</span></td>
+<td id="breadcrumb_right"><a href="../index.html">目录首页</a></td>
+</tr>
+</table>
+</div>
+<!-- END NAVIGATION -->
+<table cellpadding="0" cellspacing="0" border="0" style="width:100%">
+<tr>
+<td id="breadcrumb">
+<a href="../index.html" >&nbsp;&#8250;&nbsp;HttpLimit zone
+</td>
+</tr>
+</table>
+<br clear="all" />
+<!-- START CONTENT -->
+<div id="content">
+<h1>HttpLimit zone</h1>
+<p>本模块可以针对条件，进行会话的并发连接数控制。（例如：限制每个IP的并发连接数。）
+</p><p>__配置示例__
+</p>
+<pre>
+http {
+: limit_zone   one  $binary_remote_addr  10m;
+: ...
+: server {
+: ...
+: location /download/ {
+: limit_conn   one  1;
+: }
+</pre>
+<h2> 指令</h2>
+<ul><li> [#limit_zone limit_zone] 
+</li><li> [#limit_conn limit_conn] 
+</li></ul>
+<h2>limit_zone </h2>
+<p><b>语法：</b> <i>limit_zone zone_name $variable the_size</i>
+</p><p><b>默认值：</b> <i>no</i>
+</p><p><b>作用域：</b> <i>http</i>
+</p><p>本指令定义了一个数据区，里面记录会话状态信息。<br />
+$variable 定义判断会话的变量；the_size 定义记录区的总容量。
+</p><p>例子：
+</p>
+<pre>
+limit_zone   one  $binary_remote_addr  10m;
+</pre>
+<p>定义一个叫“one”的记录区，总容量为 10M，以变量 $binary_remote_addr 作为会话的判断基准（即一个地址一个会话）。
+</p><p><br />
+您可以注意到了，在这里使用的是 $binary_remote_addr 而不是 $remote_addr。
+</p><p>$remote_addr 的长度为 7 至 15 bytes，会话信息的长度为 32 或 64 bytes。
+而 $binary_remote_addr 的长度为 4 bytes，会话信息的长度为 32 bytes。
+</p><p>当区的大小为 1M 的时候，大约可以记录 32000 个会话信息（一个会话占用 32 bytes）。
+</p><h2> limit_conn </h2>
+<p><b>语法：</b> <i>limit_conn zone_name the_size</i>
+</p><p><b>默认值：</b> <i>no</i>
+</p><p><b>作用域：</b> <i>http, server, location</i>
+</p><p>指定一个会话最大的并发连接数。
+当超过指定的最发并发连接数时，服务器将返回 "Service unavailable" (503)。
+</p><p>例子：
+</p>
+<pre>
+limit_zone   one  $binary_remote_addr  10m;
+: server {
+: location /download/ {
+: limit_conn   one  1;
+: }
+</pre>
+<p>定义一个叫“one”的记录区，总容量为 10M，以变量 $binary_remote_addr 作为会话的判断基准（即一个地址一个会话）。
+限制 /download/ 目录下，一个会话只能进行一个连接。
+简单点，就是限制 /download/ 目录下，一个IP只能发起一个连接，多过一个，一律503。
+</p>
+<h2> References</h2>
+<p><a href="http://sysoev.ru/nginx/docs/http/ngx_http_limit_zone_module.html" class="external text" title="http://sysoev.ru/nginx/docs/http/ngx_http_limit_zone_module.html" rel="nofollow">原始文档</a>
+</p>
+</div>
+<!-- END CONTENT -->
+<div id="footer">
+<p><a href="#top">顶端</a></p>
+<p>中文化: <a href="../index.html" >Nginx中文文档</a> &nbsp;&middot;&nbsp; 制作: nginx.cn  (整理及部分翻译 )</p>
+</div>
+ 
+</body></html>

@@ -1,0 +1,95 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>MailProxy-Nginx中文文档</title>
+<link rel="stylesheet" type="text/css" media="all" href="../userguide.css" />
+<script type="text/javascript" src="../nav/nav.js"></script>
+<script type="text/javascript" src="../nav/prototype.lite.js"></script>
+<script type="text/javascript" src="../nav/moo.fx.js"></script>
+<script type="text/javascript" src="../nav/user_guide_menu.js"></script>
+<meta name="robots" content="all" />
+</head>
+<body>
+<!-- START NAVIGATION -->
+<div id="nav2"><a name="top"></a><a href="../index.html" ><img src="../images/nav_toggle_darker.jpg" width="154" height="43" border="0" /></a></div>
+<div id="masthead">
+<table cellpadding="0" cellspacing="0" border="0" style="width:100%">
+<tr>
+<td><span id="sitename">Nginx中文文档</span></td>
+<td id="breadcrumb_right"><a href="../index.html">目录首页</a></td>
+</tr>
+</table>
+</div>
+<!-- END NAVIGATION -->
+<table cellpadding="0" cellspacing="0" border="0" style="width:100%">
+<tr>
+<td id="breadcrumb">
+<a href="../index.html" >&nbsp;&#8250;&nbsp;MailProxy
+</td>
+</tr>
+</table>
+<br clear="all" />
+<!-- START CONTENT -->
+<div id="content">
+<h1>MailProxy</h1>
+<p>Nginx can proxy IMAP, POP3, and SMTP protocols. <br />
+Ngin可以代理IMAP，POP3和SMTP协议
+</p>
+<h2>指令</h2>
+<h2> proxy </h2>
+<p><b>syntax:</b> <i>proxy</i> <i><b>on | off</b></i>
+</p><p><b>default:</b> <i>off</i>
+</p><p><b>context:</b> <i>mail, server</i>
+</p><p>With this directive you can enable or disable the proxy for mail. <br />
+使用这条指令你可以开启和关闭邮件代理
+</p>
+<h2>proxy_buffer </h2>
+<p><b>syntax:</b> <i>proxy_buffer</i> <i><b>size</b></i>
+</p><p><b>default:</b> <i>4K/8K</i>
+</p><p><b>context:</b> <i>mail, server</i>
+</p><p>With this directive you can set the buffer size for the proxy connection. The default value is equal to the size of a page (this can be either 4K or 8K depending on the platform). <br />
+使用这条指令你可以设置代理连接的缓存大小。默认值为页面的大小(这个根据平台的不同可能是4K或者8K）
+</p>
+<h2> proxy_pass_error_message </h2>
+<p><b>syntax:</b> <i>proxy_pass_error_message</i> <i><b>on | off</b></i>
+</p><p><b>default:</b> <i>off</i>
+</p><p><b>context:</b> <i>mail, server</i>
+</p><p>With this directive you can pass authentification error messages obtained from the backend back to the client. Usually if authorization in nginx passed successfully then the backend cannot return errors back to the client. <br />
+通过这条指令你可以使得客户端忽略从后端获得的验证错误消息.通常验证成不会返回错误消息到客户端。
+</p><p>But for some POP3 servers errors in response to correct password is a regular behavior. For example <a href="http://www.stalker.com/" class="external text" title="http://www.stalker.com/" rel="nofollow">CommuniGatePro</a>  notifies user about overcrowding of the mailbox (or other events) periodically issuing an error in authorization. In this case is worth indicating proxy_error_message on. <br />
+但是在POP3服务器中错误是用来更重密码。例如<a href="http://www.stalker.com/" class="external text" title="http://www.stalker.com/" rel="nofollow">CommuniGatePro</a>
+通过验证返回邮箱收件箱已满的错误来通知用户，这样的代理错误信息是很有意义的。
+</p>
+<h2>proxy_timeout </h2>
+<p><b>syntax:</b> <i>proxy_timeout</i> <i><b>time</b></i>
+</p><p><b>default:</b> <i>24h</i>
+</p><p><b>context:</b> <i>mail, server</i>
+</p><p>With this directive you can set the timeout for the proxy connection. <br />
+使用这条指令你可以设置代理连接的超时时间。
+</p>
+<h2>xclient </h2>
+<p><b>syntax:</b> <i>xclient</i> <i><b>on | off</b></i>
+</p><p><b>default:</b> <i>on</i>
+</p><p><b>context:</b> <i>mail, server</i>
+</p><p>With this directive you can enable or disable the command XCLIENT with the connection to SMTP backend. This allows the backend to enforce limitations on the client based on IP/HELO/LOGIN. <br />
+使用这条指令你可以开启或者关闭命令XCLIENT的SMTP后端连接.这个使得后端强制可以通过IP／HELO／LOGIN限定客户端
+</p><p>If xclient is enabled then nginx first transfers to the backend: <br />
+如果xclient被启用，nginx首先转换到后端
+</p>
+<pre>
+EHLO server_name
+</pre>
+<p>Then:
+</p>
+<pre>
+XCLIENT PROTO=ESMTP HELO=client_helo ADDR=client_ip LOGIN=authentificated_user NAME=[UNAVAILABLE] 
+</pre>
+</div>
+<!-- END CONTENT -->
+<div id="footer">
+<p><a href="#top">顶端</a></p>
+<p>中文化: <a href="../index.html" >Nginx中文文档</a> &nbsp;&middot;&nbsp; 制作: nginx.cn  (整理及部分翻译 )</p>
+</div>
+ 
+</body></html>

@@ -1,0 +1,1233 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>http核心模块-Nginx中文文档</title>
+<link rel="stylesheet" type="text/css" media="all" href="../userguide.css" />
+<script type="text/javascript" src="../nav/nav.js"></script>
+<script type="text/javascript" src="../nav/prototype.lite.js"></script>
+<script type="text/javascript" src="../nav/moo.fx.js"></script>
+<script type="text/javascript" src="../nav/user_guide_menu.js"></script>
+<meta name="robots" content="all" />
+</head>
+<body>
+<!-- START NAVIGATION -->
+<div id="nav2"><a name="top"></a><a href="../index.html" ><img src="../images/nav_toggle_darker.jpg" width="154" height="43" border="0" /></a></div>
+<div id="masthead">
+<table cellpadding="0" cellspacing="0" border="0" style="width:100%">
+<tr>
+<td><span id="sitename">Nginx中文文档</span></td>
+<td id="breadcrumb_right"><a href="../index.html">目录首页</a></td>
+</tr>
+</table>
+</div>
+<!-- END NAVIGATION -->
+<table cellpadding="0" cellspacing="0" border="0" style="width:100%">
+<tr>
+<td id="breadcrumb">
+<a href="../index.html" >&nbsp;&#8250;&nbsp;http核心模块
+</td>
+</tr>
+</table>
+<br clear="all" />
+<!-- START CONTENT -->
+<div id="content">
+<h1>http核心模块</h1>
+<h1>指令 </h1>
+<h2> alias </h2>
+<p><b>syntax:</b> <i>alias file-path|directory-path;</i>
+</p><p><b>default:</b> <i>no</i>
+</p><p><b>context:</b> <i>location</i>
+</p><p>This directive assigns a path to be used for the indicated location.  Note that it may look similar to
+the <code>root</code> directive, but the document root doesn't change, just the file system path used for the request.
+</p><p>For example:
+</p><p><style>/* GeSHi (C) 2004 - 2007 Nigel McNie (http://qbnz.com/highlighter) */
+.code .imp {font-weight: bold; color: red;}
+.code .kw1 {color: #b1b100;}
+.code .kw2 {color: #000000; font-weight: bold;}
+.code .kw3 {color: #000066;}
+.code .kw4 {color: #993333;}
+.code .co1 {color: #808080; font-style: italic;}
+.code .coMULTI {color: #808080; font-style: italic;}
+.code .es0 {color: #000099; font-weight: bold;}
+.code .br0 {color: #66cc66;}
+.code .st0 {color: #ff0000;}
+.code .me1 {color: #202020;}
+.code .me2 {color: #202020;}
+</p>
+</style><pre class="code"><span class="kw3">location</span>  /i/ <span class="br0">&#123;</span>
+ <span class="kw3">alias</span>   /spool/w3/images/;
+<span class="br0">&#125;</span></pre>
+<p>The request "/i/top.gif" will return the file "/spool/w3/images/top.gif".
+</p><p>It is possible to use variables in the replacement path.
+</p><p>The <code>alias</code> directive cannot be used inside a regex-specified <code>location</code>. If you need to do this you must use a combination of <code>rewrite</code> and <code>root</code>.
+</p>
+<h2> client_body_in_file_only </h2>
+<p><b>syntax:</b> <i>client_body_in_file_only on|off</i>
+</p><p><b>default:</b> <i>off</i>
+</p><p><b>context:</b> <i>http, server, location</i>
+</p><p>The directive enables to store a client request body in a file.
+</p><p>Please note that the file at the request completion will not be removed if the directive is enabled.
+</p><p>This directive can be used for debugging and for the <code>$r-&gt;request_body_file</code> method in the Embedded Perl module.
+</p>
+<h2>client_body_in_single_buffer </h2>
+<p><b>syntax:</b> <i>client_body_in_single_buffer</i>
+</p><p><b>default:</b> <i>off</i>
+</p><p><b>context:</b> <i>http, server, location</i>
+</p><p>The directive(0.7.58+) specifies whether to keep the whole body in a single client request buffer. The directive is recommended when using the variable $request_body to reduce the operations of copying.
+</p>
+<h2>client_body_buffer_size </h2>
+<p><b>syntax:</b> <i>client_body_buffer_size the_size</i>
+</p><p><b>default:</b> <i>8k/16k</i>
+</p><p><b>context:</b> <i>http, server, location</i>
+</p><p>The directive specifies the client request body buffer size.
+</p><p>If the request body is more than the buffer, then the entire request body or some part is written in a temporary file.
+</p><p>The default size is equal to two pages size, depending on platform it is either 8K or 16K.
+</p>
+<h2>client_body_temp_path </h2>
+<p><b>syntax:</b> <i>client_body_temp_path dir-path [ level1 [ level2 [ level3 ]     </i>
+</p><p><b>default:</b> <i>client_body_temp</i>
+</p><p><b>context:</b> <i>http, server, location</i>
+</p><p>The directive assigns the directory for storing the temporary files in it with the body of the request.
+</p><p>In the <code>dir-path</code> a hierarchy of subdirectories up to three levels are possible.
+</p><p>For example
+</p><p><style>/* GeSHi (C) 2004 - 2007 Nigel McNie (http://qbnz.com/highlighter) */
+.code .imp {font-weight: bold; color: red;}
+.code .kw1 {color: #b1b100;}
+.code .kw2 {color: #000000; font-weight: bold;}
+.code .kw3 {color: #000066;}
+.code .kw4 {color: #993333;}
+.code .co1 {color: #808080; font-style: italic;}
+.code .coMULTI {color: #808080; font-style: italic;}
+.code .es0 {color: #000099; font-weight: bold;}
+.code .br0 {color: #66cc66;}
+.code .st0 {color: #ff0000;}
+.code .me1 {color: #202020;}
+.code .me2 {color: #202020;}
+</p>
+</style><pre class="code"><span class="kw3">client_body_temp_path</span> /spool/nginx/client_temp <span class="nu0">1</span> <span class="nu0">2</span>;</pre>
+<p>The directory structure will be like this:
+</p>
+<pre>
+/spool/nginx/client_temp/7/45/00000123457
+</pre>
+<h2>client_body_timeout </h2>
+<p><b>syntax:</b> <i>client_body_timeout time</i>
+</p><p><b>default:</b> <i>60</i>
+</p><p><b>context:</b> <i>http, server, location</i>
+</p><p>Directive sets the read timeout for the request body from client.
+</p><p>The timeout is set only if a body is not get in one readstep. If after this time the client send nothing, nginx returns error "Request time out" (408).
+</p>
+<h2>client_header_buffer_size </h2>
+<p><b>syntax:</b> <i>client_header_buffer_size size</i>
+</p><p><b>default:</b> <i>1k</i>
+</p><p><b>context:</b> <i>http, server</i>
+</p><p>Directive sets the headerbuffer size for the request header from client.
+</p><p>For the overwhelming majority of requests it is completely sufficient a buffer size of 1K.
+</p><p>However if a big cookie is in the request-header or the request has come from a wap-client the header can not be placed in 1K, therefore, the request-header or a line of request-header is not located completely in this buffer nginx allocate a bigger buffer, the size of the bigger buffer can be set with the instruction large_client_header_buffers.
+</p>
+<h2>client_header_timeout </h2>
+<p><b>syntax:</b> <i>client_header_timeout time</i>
+</p><p><b>default:</b> <i>60</i>
+</p><p><b>context:</b> <i>http, server</i>
+</p><p>Directive assigns timeout with reading of the title of the request of client.
+</p><p>The timeout is set only if a header is not get in one readstep. If after this time the client send nothing, nginx returns error "Request time out" (408).
+</p>
+<h2>client_max_body_size </h2>
+<p><b>syntax:</b> <i>client_max_body_size size</i>
+</p><p><b>default:</b> <i>client_max_body_size 1m</i>
+</p><p><b>context:</b> <i>http, server, location</i>
+</p><p>Directive assigns the maximum accepted body size of client request, indicated by the line <code>Content-Length</code> in the header of request.
+</p><p>If size is greater the given one, then the client gets the error "Request Entity Too Large" (413).
+</p><p>It is necessary to keep in mind that the browsers do not know how to correctly show this error.
+</p>
+<h2>default_type </h2>
+<p><b>syntax:</b> <i>default_type MIME-type</i>
+</p><p><b>default:</b> <i>default_type text/plain</i>
+</p><p><b>context:</b> <i>http, server, location</i>
+</p><p>Assigns the default MIME-type to be used for files where the standard MIME map doesn't specify anything.
+</p><p>See also types 
+</p><p>Example:
+</p><p><style>/* GeSHi (C) 2004 - 2007 Nigel McNie (http://qbnz.com/highlighter) */
+.code .imp {font-weight: bold; color: red;}
+.code .kw1 {color: #b1b100;}
+.code .kw2 {color: #000000; font-weight: bold;}
+.code .kw3 {color: #000066;}
+.code .kw4 {color: #993333;}
+.code .co1 {color: #808080; font-style: italic;}
+.code .coMULTI {color: #808080; font-style: italic;}
+.code .es0 {color: #000099; font-weight: bold;}
+.code .br0 {color: #66cc66;}
+.code .st0 {color: #ff0000;}
+.code .me1 {color: #202020;}
+.code .me2 {color: #202020;}
+</p>
+</style><pre class="code"><span class="kw3">location</span> = /proxy.pac <span class="br0">&#123;</span>
+ <span class="kw3">default_type</span> application/x-ns-proxy-autoconfig;
+<span class="br0">&#125;</span>
+<span class="kw3">location</span> = /wpad.dat <span class="br0">&#123;</span>
+  <span class="kw22">rewrite</span> . /proxy.pac;
+ <span class="kw3">default_type</span> application/x-ns-proxy-autoconfig;
+<span class="br0">&#125;</span></pre>
+<h2> directio </h2>
+<p><b>syntax:</b> <i>directio [size|off]</i>
+</p><p><b>default:</b> <i>directio off</i>
+</p><p><b>context:</b> <i>http, server, location</i>
+</p><p>The directive enables use of flags O_DIRECT (FreeBSD, Linux), F_NOCACHE (Mac OS X) or directio() function (Solaris) for reading files with size greater than specified. This directive disables use of sendfile for this request. This directive may be useful for big files:
+<style>/* GeSHi (C) 2004 - 2007 Nigel McNie (http://qbnz.com/highlighter) */
+.code .imp {font-weight: bold; color: red;}
+.code .kw1 {color: #b1b100;}
+.code .kw2 {color: #000000; font-weight: bold;}
+.code .kw3 {color: #000066;}
+.code .kw4 {color: #993333;}
+.code .co1 {color: #808080; font-style: italic;}
+.code .coMULTI {color: #808080; font-style: italic;}
+.code .es0 {color: #000099; font-weight: bold;}
+.code .br0 {color: #66cc66;}
+.code .st0 {color: #ff0000;}
+.code .me1 {color: #202020;}
+.code .me2 {color: #202020;}
+</p>
+</style><pre class="code">    directio  4m;</pre>
+<h2> error_page </h2>
+<p><b>syntax:</b> <i>error_page code [ code... ]  [ = | =answer-code ] uri | @named_location </i>
+</p><p><b>default:</b> <i>no</i>
+</p><p><b>context:</b> <i>http, server, location, if in location</i>
+</p><p>The directive specifies the URI, which will be showed for the errors indicated.
+</p><p>Example:
+<style>/* GeSHi (C) 2004 - 2007 Nigel McNie (http://qbnz.com/highlighter) */
+.code .imp {font-weight: bold; color: red;}
+.code .kw1 {color: #b1b100;}
+.code .kw2 {color: #000000; font-weight: bold;}
+.code .kw3 {color: #000066;}
+.code .kw4 {color: #993333;}
+.code .co1 {color: #808080; font-style: italic;}
+.code .coMULTI {color: #808080; font-style: italic;}
+.code .es0 {color: #000099; font-weight: bold;}
+.code .br0 {color: #66cc66;}
+.code .st0 {color: #ff0000;}
+.code .me1 {color: #202020;}
+.code .me2 {color: #202020;}
+</p>
+</style><pre class="code"><span class="kw3">error_page</span>   <span class="nu0">404</span>          /<span class="nu0">404</span>.html;
+<span class="kw3">error_page</span>   <span class="nu0">502</span> <span class="nu0">503</span> <span class="nu0">504</span>  /50x.html;
+<span class="kw3">error_page</span>   <span class="nu0">403</span>          <span class="kw3">http</span>://example.com/forbidden.html;
+<span class="kw3">error_page</span>   <span class="nu0">404</span>          = <span class="re0">@fetch</span>;</pre>
+<p>Furthermore, it is possible to change the code of answer to another, for example:
+</p><p><style>/* GeSHi (C) 2004 - 2007 Nigel McNie (http://qbnz.com/highlighter) */
+.code .imp {font-weight: bold; color: red;}
+.code .kw1 {color: #b1b100;}
+.code .kw2 {color: #000000; font-weight: bold;}
+.code .kw3 {color: #000066;}
+.code .kw4 {color: #993333;}
+.code .co1 {color: #808080; font-style: italic;}
+.code .coMULTI {color: #808080; font-style: italic;}
+.code .es0 {color: #000099; font-weight: bold;}
+.code .br0 {color: #66cc66;}
+.code .st0 {color: #ff0000;}
+.code .me1 {color: #202020;}
+.code .me2 {color: #202020;}
+</p>
+</style><pre class="code"><span class="kw3">error_page</span> <span class="nu0">404</span> =<span class="nu0">200</span> /.empty.gif;</pre>
+<p>If an erroneous answer is processed by the proxied or FastCGI server and this server can return the different answer codes, for example, 200, 302, 401 or 404, then it is possible to hide the code returned:
+</p><p><style>/* GeSHi (C) 2004 - 2007 Nigel McNie (http://qbnz.com/highlighter) */
+.code .imp {font-weight: bold; color: red;}
+.code .kw1 {color: #b1b100;}
+.code .kw2 {color: #000000; font-weight: bold;}
+.code .kw3 {color: #000066;}
+.code .kw4 {color: #993333;}
+.code .co1 {color: #808080; font-style: italic;}
+.code .coMULTI {color: #808080; font-style: italic;}
+.code .es0 {color: #000099; font-weight: bold;}
+.code .br0 {color: #66cc66;}
+.code .st0 {color: #ff0000;}
+.code .me1 {color: #202020;}
+.code .me2 {color: #202020;}
+</p>
+</style><pre class="code"><span class="kw3">error_page</span>   <span class="nu0">404</span>  =  /<span class="nu0">404</span>.php;</pre>
+<p>If you wish to return the error code as-is, OMIT the = from the error_page directive:
+<style>/* GeSHi (C) 2004 - 2007 Nigel McNie (http://qbnz.com/highlighter) */
+.code .imp {font-weight: bold; color: red;}
+.code .kw1 {color: #b1b100;}
+.code .kw2 {color: #000000; font-weight: bold;}
+.code .kw3 {color: #000066;}
+.code .kw4 {color: #993333;}
+.code .co1 {color: #808080; font-style: italic;}
+.code .coMULTI {color: #808080; font-style: italic;}
+.code .es0 {color: #000099; font-weight: bold;}
+.code .br0 {color: #66cc66;}
+.code .st0 {color: #ff0000;}
+.code .me1 {color: #202020;}
+.code .me2 {color: #202020;}
+</p>
+</style><pre class="code"><span class="kw3">error_page</span>   <span class="nu0">404</span>  /<span class="nu0">404</span>.php;</pre>
+<h2> if_modified_since </h2>
+<p><b>syntax:</b> <i>if_modified_since [off|exact|before]</i>
+</p><p><b>default:</b> <i>if_modified_since exact</i>
+</p><p><b>context:</b> <i>http, server, location</i>
+</p><p>The directive (0.7.24) defines how to compare time of file modification and time in request header "If-Modified-Since":
+</p>
+<ul><li> off — don't check "If-Modified-Since" request header (0.7.34);
+</li><li> exact — exact match;
+</li><li> before — file modification time should be less than time in "If-Modified-Since" request header.
+</li></ul>
+<h2>index </h2>
+<p><b>syntax:</b> <i>index file [file...] </i>
+</p><p><b>default:</b> <i>index index.html</i>
+</p><p><b>context:</b> <i>http, server, location</i>
+</p><p>Directive determines the file(s) which will be used as the index. It's possible to use variables in the name of file.
+The presence of the files is checked in the order of their enumeration. A file with an absolute path can be put at the end.
+Example using a variable:
+<style>/* GeSHi (C) 2004 - 2007 Nigel McNie (http://qbnz.com/highlighter) */
+.code .imp {font-weight: bold; color: red;}
+.code .kw1 {color: #b1b100;}
+.code .kw2 {color: #000000; font-weight: bold;}
+.code .kw3 {color: #000066;}
+.code .kw4 {color: #993333;}
+.code .co1 {color: #808080; font-style: italic;}
+.code .coMULTI {color: #808080; font-style: italic;}
+.code .es0 {color: #000099; font-weight: bold;}
+.code .br0 {color: #66cc66;}
+.code .st0 {color: #ff0000;}
+.code .me1 {color: #202020;}
+.code .me2 {color: #202020;}
+</p>
+</style><pre class="code"><span class="kw3">index</span>  <span class="kw3">index</span>.<span class="re0">$geo</span>.html  index<span class="nu0">.0</span>.html  /<span class="kw3">index</span>.html;</pre>
+<p>If you want to automatically generate an index from a directory listing, useautoindex on.
+</p><p><br />
+</p>
+<h2>internal </h2>
+<p><b>syntax:</b> <i>internal</i>
+</p><p><b>default:</b> <i>no</i>
+</p><p><b>context:</b> <i>location</i>
+</p><p><b>internal</b> indicates that the matching location can be used only for so called "internal" requests.
+</p><p>For external requests it will return the error "Not found" (404).
+</p><p>Internal requests are the following:
+</p>
+<ul><li> requests redirected by the instruction <b>error_page</b>
+</li><li> subrequests created by the command <b>include virtual</b> of the "ngx_http_ssi_module" module
+</li><li> requests changed by the instruction <b>rewrite</b> of the "ngx_http_rewrite_module" module
+</li></ul>
+<p>An example to prevent clients fetching error pages directly:
+<style>/* GeSHi (C) 2004 - 2007 Nigel McNie (http://qbnz.com/highlighter) */
+.code .imp {font-weight: bold; color: red;}
+.code .kw1 {color: #b1b100;}
+.code .kw2 {color: #000000; font-weight: bold;}
+.code .kw3 {color: #000066;}
+.code .kw4 {color: #993333;}
+.code .co1 {color: #808080; font-style: italic;}
+.code .coMULTI {color: #808080; font-style: italic;}
+.code .es0 {color: #000099; font-weight: bold;}
+.code .br0 {color: #66cc66;}
+.code .st0 {color: #ff0000;}
+.code .me1 {color: #202020;}
+.code .me2 {color: #202020;}
+</p>
+</style><pre class="code"><span class="kw3">error_page</span> <span class="nu0">404</span> /<span class="nu0">404</span>.html;
+<span class="kw3">location</span>  /<span class="nu0">404</span>.html <span class="br0">&#123;</span>
+  <span class="kw3">internal</span>;
+<span class="br0">&#125;</span></pre>
+<p>Nginx 0.7.x introduces a new syntax for internal locations: <code>@location</code>
+</p><p>Example:
+<style>/* GeSHi (C) 2004 - 2007 Nigel McNie (http://qbnz.com/highlighter) */
+.code .imp {font-weight: bold; color: red;}
+.code .kw1 {color: #b1b100;}
+.code .kw2 {color: #000000; font-weight: bold;}
+.code .kw3 {color: #000066;}
+.code .kw4 {color: #993333;}
+.code .co1 {color: #808080; font-style: italic;}
+.code .coMULTI {color: #808080; font-style: italic;}
+.code .es0 {color: #000099; font-weight: bold;}
+.code .br0 {color: #66cc66;}
+.code .st0 {color: #ff0000;}
+.code .me1 {color: #202020;}
+.code .me2 {color: #202020;}
+</p>
+</style><pre class="code"><span class="kw3">location</span> / <span class="br0">&#123;</span>
+    <span class="kw3">root</span> /var/www/html;
+    <span class="kw3">error_page</span> <span class="nu0">404</span> @40x;
+<span class="br0">&#125;</span>
+&nbsp;
+<span class="kw3">location</span> @40x <span class="br0">&#123;</span>
+  <span class="kw3">root</span> /var/www/errors/40x.html;
+<span class="br0">&#125;</span></pre>
+<h2> keepalive_timeout </h2>
+<p><b>syntax:</b> <i>keepalive_timeout [ time ] </i>
+</p><p><b>default:</b> <i>keepalive_timeout 75</i>
+</p><p><b>context:</b> <i>http, server, location</i>
+</p><p>The first parameter assigns the timeout for keep-alive connections with the client. The server will close connections after this time.
+</p><p>The optional second parameter assigns the <code>time</code> value in the header <code>Keep-Alive: timeout=time</code> of the response. This header can convince some browsers to close the connection, so that the server does not have to. Without this parameter, nginx does not send a <code>Keep-Alive</code> header (though this is not what makes a connection "keep-alive").
+</p><p>The parameters can differ from each other.
+</p><p>Notes on how browsers handle the <code>Keep-Alive</code> header:
+</p>
+<ul><li> MSIE and Opera ignore the "Keep-Alive: timeout=&lt;N&gt;" header.
+</li><li> MSIE keeps the connection alive for about 60-65 seconds, then sends a TCP RST.
+</li><li> Opera keeps the connection alive for a long time.
+</li><li> Mozilla keeps the connection alive for N plus about 1-10 seconds.
+</li><li> Konqueror keeps the connection alive for about N seconds.
+</li></ul>
+<h2> keepalive_requests </h2>
+<p><b>syntax:</b> <i>keepalive_requests n</i>
+</p><p><b>default:</b> <i>keepalive_requests 100</i>
+</p><p><b>context:</b> <i>http, server, location</i>
+</p><p>Number of requests which can be made over a keep-alive connection.
+</p>
+<h2> large_client_header_buffers </h2>
+<p><b>syntax:</b> <i>large_client_header_buffers number size</i>
+</p><p><b>default:</b> <i>large_client_header_buffers 4 4k/8k</i>
+</p><p><b>context:</b> <i>http, server</i>
+</p><p>Directive assigns the maximum number and size of buffers for large headers to read from client request.
+</p><p>The request line can not be bigger than the size of one buffer, if the client send a bigger header nginx returns error "Request URI too large" (414).
+</p><p>The longest header line of request also must be not more than the size of one buffer, otherwise the client get the error "Bad request" (400).
+</p><p>Buffers are separated only as needed.
+</p><p>By default the size of one buffer is equal to the size of page, depending on platform this either 4K or 8K, if at the end of working request connection converts to state keep-alive, then these buffers are freed.
+</p>
+<h2> limit_except </h2>
+<p><b>syntax:</b> <i>limit_except methods {...}</i>
+</p><p><b>default:</b> <i>no</i>
+</p><p><b>context:</b> <i>location</i>
+</p><p>Directive limits HTTP-methods, accessible inside location.
+</p><p>For the limitation can be used the directives of modules ngx_http_access_module and ngx_http_auth_basic_module:
+</p><p><style>/* GeSHi (C) 2004 - 2007 Nigel McNie (http://qbnz.com/highlighter) */
+.code .imp {font-weight: bold; color: red;}
+.code .kw1 {color: #b1b100;}
+.code .kw2 {color: #000000; font-weight: bold;}
+.code .kw3 {color: #000066;}
+.code .kw4 {color: #993333;}
+.code .co1 {color: #808080; font-style: italic;}
+.code .coMULTI {color: #808080; font-style: italic;}
+.code .es0 {color: #000099; font-weight: bold;}
+.code .br0 {color: #66cc66;}
+.code .st0 {color: #ff0000;}
+.code .me1 {color: #202020;}
+.code .me2 {color: #202020;}
+</p>
+</style><pre class="code"><span class="kw3">limit_except</span>  GET <span class="br0">&#123;</span>
+  <span class="kw5">allow</span>  <span class="nu0">192.168</span><span class="nu0">.1</span><span class="nu0">.0</span>/<span class="nu0">32</span>;
+  <span class="kw5">deny</span>   all;
+<span class="br0">&#125;</span></pre>
+<h2>limit_rate </h2>
+<p><b>syntax:</b> <i>limit_rate speed</i>
+</p><p><b>default:</b> <i>no</i>
+</p><p><b>context:</b> <i>http, server, location, if in location</i>
+</p><p>Directive assigns the speed of transmission of the answer to client. Speed is assigned in the bytes per second. Limitation works only for one connection, i.e., if client opens 2 connections, then total velocity will be 2 times higher then the limit set.
+</p><p>If it is necessary to limit speed for the part of the clients at the <i>server</i> level, based on some kind of condition - then this directive does not apply. Instead you should specify the limit by assigning the value to the $limit_rate variable, as shown below:
+</p><p><style>/* GeSHi (C) 2004 - 2007 Nigel McNie (http://qbnz.com/highlighter) */
+.code .imp {font-weight: bold; color: red;}
+.code .kw1 {color: #b1b100;}
+.code .kw2 {color: #000000; font-weight: bold;}
+.code .kw3 {color: #000066;}
+.code .kw4 {color: #993333;}
+.code .co1 {color: #808080; font-style: italic;}
+.code .coMULTI {color: #808080; font-style: italic;}
+.code .es0 {color: #000099; font-weight: bold;}
+.code .br0 {color: #66cc66;}
+.code .st0 {color: #ff0000;}
+.code .me1 {color: #202020;}
+.code .me2 {color: #202020;}
+</p>
+</style><pre class="code"><span class="kw3">server</span> <span class="br0">&#123;</span>
+  <span class="kw22">if</span> <span class="br0">&#40;</span><span class="re0">$slow</span><span class="br0">&#41;</span> <span class="br0">&#123;</span>
+    <span class="kw22">set</span> <span class="re0">$limit_rate</span>  4k;
+  <span class="br0">&#125;</span>
+<span class="br0">&#125;</span></pre>
+<h2> limit_rate_after </h2>
+<p><b>syntax:</b> <i>limit_rate_after time</i>
+</p><p><b>default:</b> <i>limit_rate_after 1m</i>
+</p><p><b>context:</b> <i>http, server, location, if in location</i>
+</p><p>The directive limits speed only after the first part was sent.
+</p><p><style>/* GeSHi (C) 2004 - 2007 Nigel McNie (http://qbnz.com/highlighter) */
+.code .imp {font-weight: bold; color: red;}
+.code .kw1 {color: #b1b100;}
+.code .kw2 {color: #000000; font-weight: bold;}
+.code .kw3 {color: #000066;}
+.code .kw4 {color: #993333;}
+.code .co1 {color: #808080; font-style: italic;}
+.code .coMULTI {color: #808080; font-style: italic;}
+.code .es0 {color: #000099; font-weight: bold;}
+.code .br0 {color: #66cc66;}
+.code .st0 {color: #ff0000;}
+.code .me1 {color: #202020;}
+.code .me2 {color: #202020;}
+</p>
+</style><pre class="code"><span class="kw3">limit_rate_after</span> 1m;
+<span class="kw3">limit_rate</span> 100k;</pre>
+<h2> listen </h2>
+<p><b>syntax:</b> <i>listen address:port [ default [ backlog=num | rcvbuf=size | sndbuf=size | accept_filter=filter | deferred | bind | ssl ] ]   </i>
+</p><p><b>default:</b> <i>listen 80</i>
+</p><p><b>context:</b> <i>server</i>
+</p><p>The <i>listen</i> directive specifies the address and port accepted by the enclosing server {...}  block. It is possible to specify only an address, only a port, or a server name as the address.
+</p><p><style>/* GeSHi (C) 2004 - 2007 Nigel McNie (http://qbnz.com/highlighter) */
+.code .imp {font-weight: bold; color: red;}
+.code .kw1 {color: #b1b100;}
+.code .kw2 {color: #000000; font-weight: bold;}
+.code .kw3 {color: #000066;}
+.code .kw4 {color: #993333;}
+.code .co1 {color: #808080; font-style: italic;}
+.code .coMULTI {color: #808080; font-style: italic;}
+.code .es0 {color: #000099; font-weight: bold;}
+.code .br0 {color: #66cc66;}
+.code .st0 {color: #ff0000;}
+.code .me1 {color: #202020;}
+.code .me2 {color: #202020;}
+</p>
+</style><pre class="code"><span class="kw3">listen</span> <span class="nu0">127.0</span><span class="nu0">.0</span><span class="nu0">.1</span>:<span class="nu0">8000</span>;
+<span class="kw3">listen</span> <span class="nu0">127.0</span><span class="nu0">.0</span><span class="nu0">.1</span>;
+<span class="kw3">listen</span> <span class="nu0">8000</span>;
+<span class="kw3">listen</span> *:<span class="nu0">8000</span>;
+<span class="kw3">listen</span> localhost:<span class="nu0">8000</span>;</pre>
+<p>IPv6 address(0.7.36) are set in square brackets:
+<style>/* GeSHi (C) 2004 - 2007 Nigel McNie (http://qbnz.com/highlighter) */
+.code .imp {font-weight: bold; color: red;}
+.code .kw1 {color: #b1b100;}
+.code .kw2 {color: #000000; font-weight: bold;}
+.code .kw3 {color: #000066;}
+.code .kw4 {color: #993333;}
+.code .co1 {color: #808080; font-style: italic;}
+.code .coMULTI {color: #808080; font-style: italic;}
+.code .es0 {color: #000099; font-weight: bold;}
+.code .br0 {color: #66cc66;}
+.code .st0 {color: #ff0000;}
+.code .me1 {color: #202020;}
+.code .me2 {color: #202020;}
+</p>
+</style><pre class="code"><span class="kw3">listen</span> <span class="br0">&#91;</span>::<span class="br0">&#93;</span>:<span class="nu0">8000</span>; 
+<span class="kw3">listen</span> <span class="br0">&#91;</span>fe80::<span class="nu0">1</span><span class="br0">&#93;</span>;</pre>
+<p>When Linux (in contrast to FreeBSD) binds IPv6 [::], it will also bind the corresponding IPv4 address. If other non IPv6 server definitions already used this, the bind will fail. By using explicit addresses instead of [::] this will not be a problem. It is also possible to specify that this listen directive is only to bind the IPv6 address with use of the "default ipv6only=on" option. Note that this only affect this listen directive, the same <a href="#server" title="">server {...}</a> block may very well listen to IPv4 as well, specified by other listen directives.
+<style>/* GeSHi (C) 2004 - 2007 Nigel McNie (http://qbnz.com/highlighter) */
+.code .imp {font-weight: bold; color: red;}
+.code .kw1 {color: #b1b100;}
+.code .kw2 {color: #000000; font-weight: bold;}
+.code .kw3 {color: #000066;}
+.code .kw4 {color: #993333;}
+.code .co1 {color: #808080; font-style: italic;}
+.code .coMULTI {color: #808080; font-style: italic;}
+.code .es0 {color: #000099; font-weight: bold;}
+.code .br0 {color: #66cc66;}
+.code .st0 {color: #ff0000;}
+.code .me1 {color: #202020;}
+.code .me2 {color: #202020;}
+</p>
+</style><pre class="code"><span class="kw3">listen</span> <span class="br0">&#91;</span>2a02:<span class="nu0">750</span>:<span class="nu0">5</span>::<span class="nu0">123</span><span class="br0">&#93;</span>:<span class="nu0">80</span>;
+<span class="kw3">listen</span> <span class="br0">&#91;</span>::<span class="br0">&#93;</span>:<span class="nu0">80</span> default ipv6only=on;</pre>
+<p>If only address is given, the default port is 80.
+</p><p>If the directive has the <i>default</i> parameter, then the enclosing server {...} block will be the default server for the address:port pair.  This is useful for name-based virtual hosting where you wish to specify the default server block for hostnames that do not match any [#server_name server_name]  directives.  If there are no directives with the <code>default</code> parameter, then the default server will be the first server block in which the <code>address:port</code> pair appears.
+</p><p>The <code>listen</code> directive accepts several parameters, specific to the system calls <code>listen(2)</code> and <code>bind(2)</code>.  These parameters must follow the <code>default</code> parameter.
+</p><p>backlog=num -- is assigned parameter backlog in call <code>listen(2)</code>. By default backlog equals -1.
+</p><p>rcvbuf=size -- assigned to the parameter <code>SO_RCVBUF</code> for the listening socket.
+</p><p>sndbuf=size -- assigned to the parameter <code>SO_SNDBUF</code> for the listening socket.
+</p><p>accept_filter=filter -- is assigned name accept-filter.
+</p>
+<dl><dd> . It works only to FreeBSD, it is possible to use two filters -- <code>dataready</code> and <code>httpready</code>. On the signal -HUP accept-filter it is possible to change only in the quite last versions FreeBSD: 6.0, 5.4-STABLE and 4.11-STABLE.
+</dd></dl>
+<p>deferred -- indicates to use that postponed accept(2) on Linux with
+</p>
+<dl><dd> . the aid of option <code>TCP_DEFER_ACCEPT</code>.
+</dd></dl>
+<p>bind -- indicates that it is necessary to make <code>bind(2)</code> separately
+</p>
+<dl><dd> . for this pair of address:port. The fact is that if are described several directives listen with the identical port, but by different  addresses and one of the directives listen listens to on all addresses for this port (*:port), then nginx will make bind(2) only to *:port. It is necessary to consider that in this case for determining the address, on which the connections arrive, is done the system call getsockname(). But if are used parameters backlog, rcvbuf, sndbuf, accept_filter or deferred, then it is always done separately for this pair of address:port bind(2).
+</dd></dl>
+<p>ssl -- parameter (0.7.14) not related to listen(2) and bind(2) syscalls
+</p>
+<dl><dd> . but instead specifies that connections accepted on this port should work in SSL mode. This allows to specify compact configurations for servers working with both HTTP and HTTPS. For example:
+</dd></dl>
+<p><style>/* GeSHi (C) 2004 - 2007 Nigel McNie (http://qbnz.com/highlighter) */
+.code .imp {font-weight: bold; color: red;}
+.code .kw1 {color: #b1b100;}
+.code .kw2 {color: #000000; font-weight: bold;}
+.code .kw3 {color: #000066;}
+.code .kw4 {color: #993333;}
+.code .co1 {color: #808080; font-style: italic;}
+.code .coMULTI {color: #808080; font-style: italic;}
+.code .es0 {color: #000099; font-weight: bold;}
+.code .br0 {color: #66cc66;}
+.code .st0 {color: #ff0000;}
+.code .me1 {color: #202020;}
+.code .me2 {color: #202020;}
+</p>
+</style><pre class="code"><span class="kw3">listen</span>  <span class="nu0">80</span>;
+<span class="kw3">listen</span>  <span class="nu0">443</span> default <span class="kw31">ssl</span>;</pre>
+<p>Example of the use of the parameters:
+<style>/* GeSHi (C) 2004 - 2007 Nigel McNie (http://qbnz.com/highlighter) */
+.code .imp {font-weight: bold; color: red;}
+.code .kw1 {color: #b1b100;}
+.code .kw2 {color: #000000; font-weight: bold;}
+.code .kw3 {color: #000066;}
+.code .kw4 {color: #993333;}
+.code .co1 {color: #808080; font-style: italic;}
+.code .coMULTI {color: #808080; font-style: italic;}
+.code .es0 {color: #000099; font-weight: bold;}
+.code .br0 {color: #66cc66;}
+.code .st0 {color: #ff0000;}
+.code .me1 {color: #202020;}
+.code .me2 {color: #202020;}
+</p>
+</style><pre class="code"><span class="kw3">listen</span>  <span class="nu0">127.0</span><span class="nu0">.0</span><span class="nu0">.1</span> default accept_filter=dataready backlog=<span class="nu0">1024</span>;</pre>
+<h2> location </h2>
+<p><b>syntax:</b> <i>location [=|~|~*|^~]  /uri/ { ... }</i>
+</p><p><b>default:</b> <i>no</i>
+</p><p><b>context:</b> <i>server</i>
+</p><p>This directive allows different configurations depending on the URI. It can be configured using both literal strings and regular expressions. To use regular expressions, you must use the a prefix:
+</p>
+<ol><li>  <code>~*</code> for case insensitive matching 
+</li><li>  <code>~</code> for case sensitive matching
+</li></ol>
+<p>To determine which <i>location</i> directive matches a particular query, the literal strings are checked first. Literal strings match the beginning portion of the query and are case-sensitive - the most specific match will be used (see below on how nginx determines this). Afterwards, regular expressions are checked in the order defined in the configuration file. The first regular expression to match the query will stop the search. If no regular expression matches are found, the result from the literal string search is used.
+</p><p>There are two ways to modify this behavior. The first is to use the prefix "=", which matches an exact query only. If the query matches, then searching stops and the request is handled immediately. For example, if the request "/" occurs frequently, then using "location = /" will expedite the processing of this request.
+</p><p>The second is to use the prefix <code>^~</code>. This prefix is used with a literal string and tells nginx to not check regular expressions if the path provided is a match. For instance, "location <code>^~</code> /images/" would halt searching if the query begins with /images/ - all regular expression directives would not be checked.
+</p><p>To summarize, the order in which directives are checked is as follows:
+</p>
+<ol><li>  Directives with the <code>=</code> prefix that match the query exactly. If found, searching stops.
+</li><li>  All remaining directives with conventional strings. If this match used the <code>^~</code> prefix, searching stops.
+</li><li>  Regular expressions, in the order they are defined in the configuration file.
+</li><li>  If #3 yielded a match, that result is used. Otherwise, the match from #2 is used.
+</li></ol>
+<p>It is important to know that nginx does the comparison against decoded URIs. For example, if you wish to match "/images/%20/test", then you must use "/images/ /test" to determine the location.
+</p><p>Example:
+</p><p><style>/* GeSHi (C) 2004 - 2007 Nigel McNie (http://qbnz.com/highlighter) */
+.code .imp {font-weight: bold; color: red;}
+.code .kw1 {color: #b1b100;}
+.code .kw2 {color: #000000; font-weight: bold;}
+.code .kw3 {color: #000066;}
+.code .kw4 {color: #993333;}
+.code .co1 {color: #808080; font-style: italic;}
+.code .coMULTI {color: #808080; font-style: italic;}
+.code .es0 {color: #000099; font-weight: bold;}
+.code .br0 {color: #66cc66;}
+.code .st0 {color: #ff0000;}
+.code .me1 {color: #202020;}
+.code .me2 {color: #202020;}
+</p>
+</style><pre class="code"><span class="kw3">location</span>  = / <span class="br0">&#123;</span>
+  <span class="co1"># matches the query / only.</span>
+  <span class="br0">&#91;</span> configuration A <span class="br0">&#93;</span> 
+<span class="br0">&#125;</span>
+<span class="kw3">location</span>  / <span class="br0">&#123;</span>
+  <span class="co1"># matches any query, since all queries begin with /, but regular</span>
+  <span class="co1"># expressions and any longer conventional blocks will be</span>
+  <span class="co1"># matched first.</span>
+  <span class="br0">&#91;</span> configuration B <span class="br0">&#93;</span> 
+<span class="br0">&#125;</span>
+<span class="kw3">location</span> ^~ /images/ <span class="br0">&#123;</span>
+  <span class="co1"># matches any query beginning with /images/ and halts searching,</span>
+  <span class="co1"># so regular expressions will not be checked.</span>
+  <span class="br0">&#91;</span> configuration C <span class="br0">&#93;</span> 
+<span class="br0">&#125;</span>
+<span class="kw3">location</span> ~* \.<span class="br0">&#40;</span>gif|jpg|jpeg<span class="br0">&#41;</span>$ <span class="br0">&#123;</span>
+  <span class="co1"># matches any request ending in gif, jpg, or jpeg. However, all</span>
+  <span class="co1"># requests to the /images/ directory will be handled by</span>
+  <span class="co1"># Configuration C.   </span>
+  <span class="br0">&#91;</span> configuration D <span class="br0">&#93;</span> 
+<span class="br0">&#125;</span></pre>
+<p>Example requests:
+</p>
+<ul><li>  / -&gt; configuration A
+</li><li> /documents/document.html -&gt; configuration B
+</li><li> /images/1.gif -&gt; configuration C
+</li><li> /documents/1.jpg -&gt; configuration D
+</li></ul>
+<p>Note that you could define these 4 configurations in any order and the results would remain the same.  While nested locations are allowed by the configuration file parser, their use is discouraged and may produce unexpected results.
+</p>
+<h3> How nginx Determines Which Path Matches </h3>
+<p>Most users will not need to know how nginx internally determines which path to use - know that it will choose the "most specific" match for your URI in a speedy and efficient manner. For those that are curious, however, read on.
+</p><p>All path strings are sorted alphabetically. nginx then proceeds to search down the list looking for matches until the request URI has a "higher" value then the current string in the sorted list. This is determined using the family of <code>strcmp()</code> functions - once <code>strcmp()</code> returns 1, then searching stops. Once searching stops, the last string which matched is used.
+</p><p>For example, lets say we have the following paths:
+</p>
+<pre>
+/
+/a
+/apple
+/banana
+</pre>
+<p>Now, lets say the server gets the path "/az". nginx would begin search down this list. First, "/" would match, but "/ is less than "/az" so searching continues. "/a" also matches, but "/a" is still less than "/az" so we continue again. "/apple" does not match. The next string, "/banana", is greater than "/az" so searching stops and the last match, "/a", would be used.
+</p>
+<h3> Named Locations </h3>
+<p>Later versions of Nginx (&gt;0.7.x) have Named Locations. These are location blocks that start with an @ symbol, and are treated similar to internal locations except that they preserve the original URI on internal redirects for error_page or try_files directives.
+</p><p><style>/* GeSHi (C) 2004 - 2007 Nigel McNie (http://qbnz.com/highlighter) */
+.code .imp {font-weight: bold; color: red;}
+.code .kw1 {color: #b1b100;}
+.code .kw2 {color: #000000; font-weight: bold;}
+.code .kw3 {color: #000066;}
+.code .kw4 {color: #993333;}
+.code .co1 {color: #808080; font-style: italic;}
+.code .coMULTI {color: #808080; font-style: italic;}
+.code .es0 {color: #000099; font-weight: bold;}
+.code .br0 {color: #66cc66;}
+.code .st0 {color: #ff0000;}
+.code .me1 {color: #202020;}
+.code .me2 {color: #202020;}
+</p>
+</style><pre class="code"><span class="kw3">location</span> / <span class="br0">&#123;</span>
+ <span class="kw3">try_files</span> <span class="re0">@joomla</span> <span class="kw3">index</span>.html;
+<span class="br0">&#125;</span>
+<span class="kw3">location</span> <span class="re0">@joomla</span> <span class="br0">&#123;</span>
+  <span class="kw22">rewrite</span> ^<span class="br0">&#40;</span>.*<span class="br0">&#41;</span>$ /<span class="kw3">index</span>.php?q=$<span class="nu0">1</span> last;
+<span class="br0">&#125;</span></pre>
+<h2> log_not_found </h2>
+<p><b>syntax:</b> <i>log_not_found [on|off]</i>
+</p><p><b>default:</b> <i>log_not_found on</i>
+</p><p><b>context:</b> <i>http, server, location</i>
+</p><p>The directive enables or disables messages in error_log about files not found on disk.
+</p>
+<h2> log_subrequest  </h2>
+<p><b>syntax:</b> <i>log_subrequest [on|off]</i>
+</p><p><b>default:</b> <i>log_subrequest off</i>
+</p><p><b>context:</b> <i>http, server, location</i>
+</p><p>The directive enables or disables messages in access_log about sub-requests such as rewrite rules and/or SSI requests.
+</p>
+<h2> msie_padding </h2>
+<p><b>syntax:</b> <i>msie_padding [on|off] </i>
+</p><p><b>default:</b> <i>msie_padding on</i>
+</p><p><b>context:</b> <i>http, server, location</i>
+</p><p>This directive enables or disables the the msie_padding feature for MSIE browsers. When this is enabled, nginx will pad the size of the response body to a minimum of 512 bytes, for responses with a status code above or equal to 400.
+</p><p>The padding prevents the activation of "friendly" HTTP error pages in MSIE, so as to not hide the more-informative error pages from the server.
+</p><p>Note that Chromium/Chrome have "friendly" HTTP error pages as well, but this feature will not send them the padding.
+</p>
+<h2> msie_refresh  </h2>
+<p><b>syntax:</b> <i>msie_refresh [on|off] </i>
+</p><p><b>default:</b> <i>msie_refresh off</i>
+</p><p><b>context:</b> <i>http, server, location</i>
+</p><p>This directive allows or forbids issuing a <code>refresh</code> instead of doing a <code>redirect</code> for MSIE.
+</p>
+<h2> open_file_cache </h2>
+<p><b>syntax:</b> <i>open_file_cache max = N [inactive = time] | off </i>
+</p><p><b>default:</b> <i>open_file_cache off</i>
+</p><p><b>context:</b> <i>http, server, location</i>
+</p><p>The directive sets the cache activity on. These information can be stored:
+</p>
+<ul><li> Open file descriptors, information with their size and modification time;
+</li><li> Information about the existence of directories;
+</li><li> Error information when searches for a file - no file, do not have rights to read, etc. See also open_file_cache_errors
+</li></ul>
+<p>Options directive:
+</p>
+<ul><li> <code>max</code> - specifies the maximum number of entries in the cache. When the cache overflows, the longest-used items(LRU) will be removed;
+</li><li> <code>inactive</code> - specifies the time when the cached item is removed, if it has not been downloaded during that time, the default is 60 seconds;
+</li><li> <code>off</code> - prohibits the cache activity.
+</li></ul>
+<p>Example:
+<style>/* GeSHi (C) 2004 - 2007 Nigel McNie (http://qbnz.com/highlighter) */
+.code .imp {font-weight: bold; color: red;}
+.code .kw1 {color: #b1b100;}
+.code .kw2 {color: #000000; font-weight: bold;}
+.code .kw3 {color: #000066;}
+.code .kw4 {color: #993333;}
+.code .co1 {color: #808080; font-style: italic;}
+.code .coMULTI {color: #808080; font-style: italic;}
+.code .es0 {color: #000099; font-weight: bold;}
+.code .br0 {color: #66cc66;}
+.code .st0 {color: #ff0000;}
+.code .me1 {color: #202020;}
+.code .me2 {color: #202020;}
+</p>
+</style><pre class="code"> open_file_cache max=<span class="nu0">1000</span> inactive=20s; 
+ open_file_cache_valid    30s; 
+ open_file_cache_min_uses <span class="nu0">2</span>;
+ open_file_cache_errors   on;</pre>
+<h2>open_file_cache_errors  </h2>
+<p><b>syntax:</b> <i>open_file_cache_errors on | off </i>
+</p><p><b>default:</b> <i>open_file_cache_errors off</i>
+</p><p><b>context:</b> <i>http, server, location</i>
+</p><p>The directive specifies to cache errors or not when searching a file.
+</p>
+<h2> open_file_cache_min_uses </h2>
+<p><b>syntax:</b> <i>open_file_cache_min_uses number</i>
+</p><p><b>default:</b> <i>open_file_cache_min_uses 1</i>
+</p><p><b>context:</b> <i>http, server, location</i>
+</p><p>The directive defines the minimum use number of a file within the time specified in the directive parameter inactive in open_file_cache.&nbsp;?If use more than the number, the file descriptor will remain open in the cache.
+</p>
+<h2>open_file_cache_valid </h2>
+<p><b>syntax:</b> <i>open_file_cache_valid time</i>
+</p><p><b>default:</b> <i>open_file_cache_valid 60</i>
+</p><p><b>context:</b> <i>http, server, location</i>
+</p><p>The directive specifies the time when need to check the validity of the information about the item in open_file_cache.
+</p>
+<h2> optimize_server_names </h2>
+<p><b>syntax:</b> <i>optimize_server_names [ on|off ] </i>
+</p><p><b>default:</b> <i>optimize_server_names on</i>
+</p><p><b>context:</b> <i>http, server</i>
+</p><p>Directive activates or deactivates optimization of host name checks for name-based virtual servers.
+</p><p>In particular, the check influences the name of the host used in redirects. If optimization is on, and all name-based servers listening on one address:port pair have identical configuration, then names are not checked during request execution and redirects use first server name.
+</p><p>If redirect must use host name passed by the client, then the optimization must be turned off.
+</p><p>Note: this directive is deprecated in nginx 0.7.x, use server_name_in_redirect  instead.
+</p>
+<h2>port_in_redirect </h2>
+<p><b>syntax:</b> <i>port_in_redirect [ on|off ] </i>
+</p><p><b>default:</b> <i>port_in_redirect on</i>
+</p><p><b>context:</b> <i>http, server, location</i>
+</p><p>Directive allows or prevents port indication in redirects handled by nginx.
+</p><p>If <code>port_in_redirect</code> is on, then Nginx will not add the port in the url when the request is redirected.
+</p>
+<h2>recursive_error_pages </h2>
+<p><b>syntax:</b> <i>recursive_error_pages [on|off] </i>
+</p><p><b>default:</b> <i>recursive_error_pages off</i>
+</p><p><b>context:</b> <i>http, server, location</i>
+</p><p><code>recursive_error_pages</code> enables or disables following a chain of <code>error_page</code> directives.
+</p>
+<h2>resolver </h2>
+<p><b>syntax:</b> <i>resolver address</i>
+</p><p><b>default:</b> <i>no</i>
+</p><p><b>context:</b> <i>http, server, location</i>
+</p><p>TODO: Description
+</p>
+<h2> resolver_timeout </h2>
+<p><b>syntax:</b> <i>resolver_timeout time</i>
+</p><p><b>default:</b> <i>30</i>
+</p><p><b>context:</b> <i>http, server, location</i>
+</p><p>Resolver timeout in seconds.
+</p>
+<h2> root </h2>
+<p><b>syntax:</b> <i>root path</i>
+</p><p><b>default:</b> <i>root html</i>
+</p><p><b>context:</b> <i>http, server, location, if in location</i>
+</p><p><b>root</b> specifies the document root for the requests. For example, with this configuration
+</p><p><style>/* GeSHi (C) 2004 - 2007 Nigel McNie (http://qbnz.com/highlighter) */
+.code .imp {font-weight: bold; color: red;}
+.code .kw1 {color: #b1b100;}
+.code .kw2 {color: #000000; font-weight: bold;}
+.code .kw3 {color: #000066;}
+.code .kw4 {color: #993333;}
+.code .co1 {color: #808080; font-style: italic;}
+.code .coMULTI {color: #808080; font-style: italic;}
+.code .es0 {color: #000099; font-weight: bold;}
+.code .br0 {color: #66cc66;}
+.code .st0 {color: #ff0000;}
+.code .me1 {color: #202020;}
+.code .me2 {color: #202020;}
+</p>
+</style><pre class="code"><span class="kw3">location</span>  /i/ <span class="br0">&#123;</span>
+ <span class="kw3">root</span>  /spool/w3;
+<span class="br0">&#125;</span></pre>
+<p>A request for "/i/top.gif" will return the file "/spool/w3/i/top.gif". You can use variables in the argument.
+</p><p><b>note:</b> Keep in mind that the root will still append the directory to the request so that a request for "/i/top.gif" will not look in "/spool/w3/top.gif" like might happen in an Apache-like alias configuration where the location match itself is dropped. Use the <code>alias</code> directive to achieve the Apache-like functionality.
+</p>
+<h2>satisfy_any </h2>
+<p><b>syntax:</b> <i>satisfy_any [ on|off ] </i>
+</p><p><b>default:</b> <i>satisfy_any off</i>
+</p><p><b>context:</b> <i>location</i>
+</p><p>Directive solves access with at least one successful checking, executed by modules NginxHttpAccessModule orNginxHttpAuthBasicModule:
+</p><p><style>/* GeSHi (C) 2004 - 2007 Nigel McNie (http://qbnz.com/highlighter) */
+.code .imp {font-weight: bold; color: red;}
+.code .kw1 {color: #b1b100;}
+.code .kw2 {color: #000000; font-weight: bold;}
+.code .kw3 {color: #000066;}
+.code .kw4 {color: #993333;}
+.code .co1 {color: #808080; font-style: italic;}
+.code .coMULTI {color: #808080; font-style: italic;}
+.code .es0 {color: #000099; font-weight: bold;}
+.code .br0 {color: #66cc66;}
+.code .st0 {color: #ff0000;}
+.code .me1 {color: #202020;}
+.code .me2 {color: #202020;}
+</p>
+</style><pre class="code"><span class="kw3">location</span>  / <span class="br0">&#123;</span>
+ <span class="kw3">satisfy_any</span>  on;
+  <span class="kw5">allow</span>  <span class="nu0">192.168</span><span class="nu0">.1</span><span class="nu0">.0</span>/<span class="nu0">32</span>;
+  <span class="kw5">deny</span>   all;
+  <span class="kw6">auth_basic</span>            <span class="st0">&quot;closed site&quot;</span>;
+  <span class="kw6">auth_basic_user_file</span>  conf/htpasswd;
+<span class="br0">&#125;</span></pre>
+<h2> send_timeout </h2>
+<p><b>syntax:</b> <i>send_timeout the time</i>
+</p><p><b>default:</b> <i>send_timeout 60</i>
+</p><p><b>context:</b> <i>http, server, location</i>
+</p><p>Directive assigns response timeout to client. Timeout is established not on entire transfer of answer, but only between two operations of reading, if after this time client will take nothing, then nginx is shutting down the connection.
+</p>
+<h2>sendfile </h2>
+<p><b>syntax:</b> <i>sendfile [ on|off ] </i>
+</p><p><b>default:</b> <i>sendfile off</i>
+</p><p><b>context:</b> <i>http, server, location</i>
+</p><p>Directive activate or deactivate the usage of <code>sendfile()</code>.
+</p>
+ <h2>server </h2>
+<p><b>syntax:</b> <i>server {...}</i>
+</p><p><b>default:</b> <i>no</i>
+</p><p><b>context:</b> <i>http</i>
+</p><p>Directive assigns configuration for the virtual server.
+</p><p>There is no separation of IP and name-based (the <code>Host</code> header of the request) servers.
+</p><p>Instead, the directive <code>listen</code> is used to describe all addresses and ports on which incoming connections can occur, and in directive <code>server_name</code> indicate all names of the server.
+</p>
+<h2>server_name </h2>
+<p><b>syntax:</b> <i>server_name name [... ] </i>
+</p><p><b>default:</b> <i>server_name hostname</i>
+</p><p><b>context:</b> <i>server</i>
+</p><p>This directive performs two actions:
+</p>
+<ul><li> Compares the <code>Host</code> header of the incoming HTTP request against the server { ... } blocks in the Nginx configuration files and selects the first one that matches. This is how <b>virtual servers</b> are defined. Server names are processed in the following order:
+</li></ul>
+<ol><li> full, static names
+</li><li> names with a wildcard at the start of the name — *.example.com
+</li><li> names with a wildcard at the end of the name — www.example.*
+</li><li> names with regular expressions
+</li></ol>
+<dl><dd> If there is no match, a [#server server { ... }]  block in the configuration file will be used based on the following order:
+</dd></dl>
+<ol><li> the server block with a matching <code>listen</code> directive marked as <code>default</code>
+</li><li> the first server block with a matching <code>listen</code> directive (or implicit <code>listen 80;</code>)
+</li></ol>
+<ul><li> Sets the server name that will be used in HTTP redirects if server_name_in_redirect  is set.
+</li></ul>
+<p>Example:
+</p><p><style>/* GeSHi (C) 2004 - 2007 Nigel McNie (http://qbnz.com/highlighter) */
+.code .imp {font-weight: bold; color: red;}
+.code .kw1 {color: #b1b100;}
+.code .kw2 {color: #000000; font-weight: bold;}
+.code .kw3 {color: #000066;}
+.code .kw4 {color: #993333;}
+.code .co1 {color: #808080; font-style: italic;}
+.code .coMULTI {color: #808080; font-style: italic;}
+.code .es0 {color: #000099; font-weight: bold;}
+.code .br0 {color: #66cc66;}
+.code .st0 {color: #ff0000;}
+.code .me1 {color: #202020;}
+.code .me2 {color: #202020;}
+</p>
+</style><pre class="code"><span class="kw3">server</span> <span class="br0">&#123;</span>
+ <span class="kw3">server_name</span>   example.com  www.example.com;
+<span class="br0">&#125;</span></pre>
+<p>The first name becomes the basic name of server. By default the name of the machine (hostname) is used.  
+</p><p>It is possible to use "*" for replacing the first or the last part of the name:
+</p><p><style>/* GeSHi (C) 2004 - 2007 Nigel McNie (http://qbnz.com/highlighter) */
+.code .imp {font-weight: bold; color: red;}
+.code .kw1 {color: #b1b100;}
+.code .kw2 {color: #000000; font-weight: bold;}
+.code .kw3 {color: #000066;}
+.code .kw4 {color: #993333;}
+.code .co1 {color: #808080; font-style: italic;}
+.code .coMULTI {color: #808080; font-style: italic;}
+.code .es0 {color: #000099; font-weight: bold;}
+.code .br0 {color: #66cc66;}
+.code .st0 {color: #ff0000;}
+.code .me1 {color: #202020;}
+.code .me2 {color: #202020;}
+</p>
+</style><pre class="code"><span class="kw3">server</span> <span class="br0">&#123;</span>
+ <span class="kw3">server_name</span>   example.com  *.example.com  www.example.*;
+<span class="br0">&#125;</span></pre>
+<p>Two of the above given names can be combined into one:
+</p><p><style>/* GeSHi (C) 2004 - 2007 Nigel McNie (http://qbnz.com/highlighter) */
+.code .imp {font-weight: bold; color: red;}
+.code .kw1 {color: #b1b100;}
+.code .kw2 {color: #000000; font-weight: bold;}
+.code .kw3 {color: #000066;}
+.code .kw4 {color: #993333;}
+.code .co1 {color: #808080; font-style: italic;}
+.code .coMULTI {color: #808080; font-style: italic;}
+.code .es0 {color: #000099; font-weight: bold;}
+.code .br0 {color: #66cc66;}
+.code .st0 {color: #ff0000;}
+.code .me1 {color: #202020;}
+.code .me2 {color: #202020;}
+</p>
+</style><pre class="code"><span class="kw3">server</span> <span class="br0">&#123;</span>
+ <span class="kw3">server_name</span>  .example.com;
+<span class="br0">&#125;</span></pre>
+<p>It is also possible to use regular expressions in server names, prepending the name with a tilde "~" like so:
+</p><p><style>/* GeSHi (C) 2004 - 2007 Nigel McNie (http://qbnz.com/highlighter) */
+.code .imp {font-weight: bold; color: red;}
+.code .kw1 {color: #b1b100;}
+.code .kw2 {color: #000000; font-weight: bold;}
+.code .kw3 {color: #000066;}
+.code .kw4 {color: #993333;}
+.code .co1 {color: #808080; font-style: italic;}
+.code .coMULTI {color: #808080; font-style: italic;}
+.code .es0 {color: #000099; font-weight: bold;}
+.code .br0 {color: #66cc66;}
+.code .st0 {color: #ff0000;}
+.code .me1 {color: #202020;}
+.code .me2 {color: #202020;}
+</p>
+</style><pre class="code"><span class="kw3">server</span> <span class="br0">&#123;</span>
+ <span class="kw3">server_name</span>   www.example.com   ~^www\d+\.example\.com$;
+<span class="br0">&#125;</span></pre>
+<p><br />
+The basic name of server is used in an HTTP redirects, if no <code>Host</code> header was in client request or that header does not match any assigned server_name. You can also use just "*" to force Nginx to use the <code>Host</code> header in the HTTP redirect (note that "*" cannot be used as the first name, but you can use a dummy name such as "_" instead):
+</p><p><style>/* GeSHi (C) 2004 - 2007 Nigel McNie (http://qbnz.com/highlighter) */
+.code .imp {font-weight: bold; color: red;}
+.code .kw1 {color: #b1b100;}
+.code .kw2 {color: #000000; font-weight: bold;}
+.code .kw3 {color: #000066;}
+.code .kw4 {color: #993333;}
+.code .co1 {color: #808080; font-style: italic;}
+.code .coMULTI {color: #808080; font-style: italic;}
+.code .es0 {color: #000099; font-weight: bold;}
+.code .br0 {color: #66cc66;}
+.code .st0 {color: #ff0000;}
+.code .me1 {color: #202020;}
+.code .me2 {color: #202020;}
+</p>
+</style><pre class="code"><span class="kw3">server</span> <span class="br0">&#123;</span>
+ <span class="kw3">server_name</span> example.com *;
+<span class="br0">&#125;</span>
+<span class="kw3">server</span> <span class="br0">&#123;</span>
+ <span class="kw3">server_name</span>  _ *;
+<span class="br0">&#125;</span></pre>
+<p>Note that this has changed in 0.6.x and is now:
+<style>/* GeSHi (C) 2004 - 2007 Nigel McNie (http://qbnz.com/highlighter) */
+.code .imp {font-weight: bold; color: red;}
+.code .kw1 {color: #b1b100;}
+.code .kw2 {color: #000000; font-weight: bold;}
+.code .kw3 {color: #000066;}
+.code .kw4 {color: #993333;}
+.code .co1 {color: #808080; font-style: italic;}
+.code .coMULTI {color: #808080; font-style: italic;}
+.code .es0 {color: #000099; font-weight: bold;}
+.code .br0 {color: #66cc66;}
+.code .st0 {color: #ff0000;}
+.code .me1 {color: #202020;}
+.code .me2 {color: #202020;}
+</p>
+</style><pre class="code"><span class="kw3">server</span> <span class="br0">&#123;</span>
+ <span class="kw3">server_name</span> _;
+<span class="br0">&#125;</span></pre>
+<p>Since nginx 0.7.12, an empty server name is supported, to catch the requests without "Host" header:
+<style>/* GeSHi (C) 2004 - 2007 Nigel McNie (http://qbnz.com/highlighter) */
+.code .imp {font-weight: bold; color: red;}
+.code .kw1 {color: #b1b100;}
+.code .kw2 {color: #000000; font-weight: bold;}
+.code .kw3 {color: #000066;}
+.code .kw4 {color: #993333;}
+.code .co1 {color: #808080; font-style: italic;}
+.code .coMULTI {color: #808080; font-style: italic;}
+.code .es0 {color: #000099; font-weight: bold;}
+.code .br0 {color: #66cc66;}
+.code .st0 {color: #ff0000;}
+.code .me1 {color: #202020;}
+.code .me2 {color: #202020;}
+</p>
+</style><pre class="code"><span class="kw3">server</span> <span class="br0">&#123;</span>
+<span class="kw3">server_name</span> <span class="st0">&quot;&quot;</span>;
+<span class="br0">&#125;</span></pre>
+<h2>server_name_in_redirect </h2>
+<p><b>syntax:</b> <i>server_name_in_redirect on|off</i>
+</p><p><b>default:</b> <i>server_name_in_redirect on</i>
+</p><p><b>context:</b> <i>http, server, location</i>
+</p><p>If <code>server_name_in_redirect</code> is on, then Nginx will use the first value
+of the server_name directive for redirects. If <code>server_name_in_redirect</code> is off,
+then nginx will use the requested <code>Host</code> header.
+</p>
+<h2>server_names_hash_max_size </h2>
+<p><b>syntax:</b> <i>server_names_hash_max_size number</i>
+</p><p><b>default:</b> <i>server_names_hash_max_size 512</i>
+</p><p><b>context:</b> <i>http</i>
+</p><p>The maximum size of the server name hash tables. For more detail see the description of tuning the hash tables in Nginx Optimizations.
+</p>
+<h2> server_names_hash_bucket_size </h2>
+<p><b>syntax:</b> <i>server_names_hash_bucket_size number</i>
+</p><p><b>default:</b> <i>server_names_hash_bucket_size 32/64/128</i>
+</p><p><b>context:</b> <i>http</i>
+</p><p>Directive assigns the size of basket in the hash-tables of the names of servers. This value by default depends on the size of the line of processor cache. For more detail see the description of tuning the hash tables in Nginx Optimizations.
+</p>
+<h2>server_tokens </h2>
+<p><b>syntax:</b> <i>server_tokens on|off</i>
+</p><p><b>default:</b> <i>server_tokens on</i>
+</p><p><b>context:</b> <i>http, server, location</i>
+</p><p>Whether to send the Nginx version number in error pages and <code>Server</code> header.
+</p>
+<h2> tcp_nodelay </h2>
+<p><b>syntax:</b> <i>tcp_nodelay [on|off] </i>
+</p><p><b>default:</b> <i>tcp_nodelay on</i>
+</p><p><b>context:</b> <i>http, server, location</i>
+</p><p>This directive allows or forbids the use of the socket option <code>TCP_NODELAY</code>. Only included in <code>keep-alive</code> connections.
+</p><p>You can read more about the <code>TCP_NODELAY</code> socket option here.
+</p>
+<h2> tcp_nopush </h2>
+<p><b>syntax:</b> <i>tcp_nopush [on|off] </i>
+</p><p><b>default:</b> <i>tcp_nopush off</i>
+</p><p><b>context:</b> <i>http, server, location</i>
+</p><p>This directive permits or forbids the use of the socket options <code>TCP_NOPUSH</code> on FreeBSD or <code>TCP_CORK</code> on Linux. This option is only available when using <code>sendfile</code>. 
+</p>
+<dl><dd> Setting this option causes nginx to attempt to send it's HTTP response headers in one packet on Linux and FreeBSD 4.x
+</dd></dl>
+<dl><dd> ReadMoreAboutTcpNopush
+</dd><dd>
+</dd></dl>
+<h2>try_files </h2>
+<p><b>syntax:</b> <i>try_files file1 [file2 ... filen] fallback</i>
+</p><p><b>default:</b> <i>none</i>
+</p><p><b>context:</b> <i>location</i>
+</p><p>This directive tells Nginx to test for each file's existence, and use the first found file as the URI.  If none of the files are found, then the location <code>fallback</code> is called ("fallback" can be any name).  <code>fallback</code> is a required parameter.   It can be a named location or any <i>guaranteed</i> URI.
+</p><p>Example:
+<style>/* GeSHi (C) 2004 - 2007 Nigel McNie (http://qbnz.com/highlighter) */
+.code .imp {font-weight: bold; color: red;}
+.code .kw1 {color: #b1b100;}
+.code .kw2 {color: #000000; font-weight: bold;}
+.code .kw3 {color: #000066;}
+.code .kw4 {color: #993333;}
+.code .co1 {color: #808080; font-style: italic;}
+.code .coMULTI {color: #808080; font-style: italic;}
+.code .es0 {color: #000099; font-weight: bold;}
+.code .br0 {color: #66cc66;}
+.code .st0 {color: #ff0000;}
+.code .me1 {color: #202020;}
+.code .me2 {color: #202020;}
+</p>
+</style><pre class="code"><span class="kw3">location</span> / <span class="br0">&#123;</span>
+  <span class="kw3">try_files</span> <span class="kw3">index</span></a>.html <span class="kw3">index</span>.htm <span class="re0">@fallback</span>;
+<span class="br0">&#125;</span>
+&nbsp;
+<span class="kw3">location</span> <span class="re0">@fallback</span> <span class="br0">&#123;</span>
+ <span class="kw3">root </a> /var/www/error;
+ <span class="kw3">index</span> <span class="kw3">index</span></a>.html;
+<span class="br0">&#125;</span></pre>
+<h2> types </h2>
+<p><b>syntax:</b> <i>types {...}</i>
+</p><p><b>context:</b> <i>http, server, location</i>
+</p><p>Directive assigns the correspondence of expansion and MIME-types of answers. To one MIME- type can correspond several expansions. By default it is used these correspondences:
+</p><p><style>/* GeSHi (C) 2004 - 2007 Nigel McNie (http://qbnz.com/highlighter) */
+.code .imp {font-weight: bold; color: red;}
+.code .kw1 {color: #b1b100;}
+.code .kw2 {color: #000000; font-weight: bold;}
+.code .kw3 {color: #000066;}
+.code .kw4 {color: #993333;}
+.code .co1 {color: #808080; font-style: italic;}
+.code .coMULTI {color: #808080; font-style: italic;}
+.code .es0 {color: #000099; font-weight: bold;}
+.code .br0 {color: #66cc66;}
+.code .st0 {color: #ff0000;}
+.code .me1 {color: #202020;}
+.code .me2 {color: #202020;}
+</p>
+</style><pre class="code"> <span class="kw3">types</span>  <span class="br0">&#123;</span>
+  text/html    html;
+  image/gif    gif;
+  image/jpeg   jpg;
+<span class="br0">&#125;</span></pre>
+<p>The sufficiently complete table of mappings is included and is located in the file <code>conf/mime.types</code>.
+</p><p>So that for that determined location's for all answers would reveal MIME- type <code>application/octet-stream</code>, it is possible to use the following:
+</p><p><style>/* GeSHi (C) 2004 - 2007 Nigel McNie (http://qbnz.com/highlighter) */
+.code .imp {font-weight: bold; color: red;}
+.code .kw1 {color: #b1b100;}
+.code .kw2 {color: #000000; font-weight: bold;}
+.code .kw3 {color: #000066;}
+.code .kw4 {color: #993333;}
+.code .co1 {color: #808080; font-style: italic;}
+.code .coMULTI {color: #808080; font-style: italic;}
+.code .es0 {color: #000099; font-weight: bold;}
+.code .br0 {color: #66cc66;}
+.code .st0 {color: #ff0000;}
+.code .me1 {color: #202020;}
+.code .me2 {color: #202020;}
+</p>
+</style><pre class="code"><span class="kw3">location</span> /download/ <span class="br0">&#123;</span>
+<span class="kw3">types</span>          <span class="br0">&#123;</span> <span class="br0">&#125;</span>
+ <span class="kw3">default_type</span>  application/octet-stream;
+<span class="br0">&#125;</span></pre>
+<h1> 变量</h1>
+<p>The core module supports built-in variables, whose names correspond with the names of variables in Apache.
+</p><p>First of all, there are the variables, which represent the lines of the title of the client request, for example, <code>$http_user_agent</code>, <code>$http_cookie</code>, and so forth.
+</p><p>Furthermore, there are other variables: 
+</p>
+<h2> $arg_PARAMETER</h2>
+<p>This variable contains the value of the <code>GET</code> request variable <i>PARAMETER</i> if present in the query string
+</p>
+<h2> $args</h2>
+<p>This variable is equal to arguments in the line of request;
+</p>
+<h2> $binary_remote_addr </h2>
+<p>The address of the client in binary form;
+</p>
+<h2> $body_bytes_sent </h2>
+<p>(undocumented)
+</p>
+<h2> $content_length </h2>
+<p>This variable is equal to line <code>Content-Length</code> in the header of request;
+</p>
+<h2> $content_type </h2>
+<p>This variable is equal to line <code>Content-Type</code> in the header of request;
+</p>
+<h2> $cookie_COOKIE </h2>
+<p>The value of the cookie <i>COOKIE</i>;
+</p>
+<h2> $document_root</h2>
+<p>This variable is equal to the value of directive root for the current request;
+</p>
+<h2> $document_uri </h2>
+<p>The same as $uri.
+</p>
+<h2> $host</h2>
+<p>This variable is equal to line <code>Host</code> in the header of request or name of the server processing the request if the <code>Host</code> header is not available.
+</p>
+<h2> $http_HEADER</h2>
+<p>The value of the HTTP header <i>HEADER</i> when converted to lowercase and with 'dashes' converted to 'underscores', e.g. $http_user_agent, $http_referer...;
+</p>
+<h2>$is_args </h2>
+<p>Evaluates to "?" if  $args  is set, "" otherwise.
+</p>
+<h2> $limit_rate</h2>
+<p>This variable allows limiting the connection rate.
+</p>
+<h2> $query_string </h2>
+<p>The same as $args.
+</p>
+<h2> $remote_addr</h2>
+<p>The address of the client.
+</p>
+<h2> $remote_port </h2>
+<p>The port of the client;
+</p>
+<h2> $remote_user </h2>
+<p>This variable is equal to the name of user, authenticated by the Auth Basic Module;
+</p>
+<h2> $request_filename</h2>
+<p>This variable is equal to path to the file for the current request, formed from directives root or alias and URI request;
+</p>
+<h2> $request_body </h2>
+<p>This variable(0.7.58+) contains the body of the request. The significance of this variable appears in locations with directives proxy_pass or fastcgi_pass.
+</p>
+<h2> $request_body_file </h2>
+<p>Client request body temporary filename;
+</p>
+<h2> $request_completion </h2>
+<p>(undocumented)
+</p>
+<h2> $request_method </h2>
+<p>This variable is equal to the method of request, usually <code>GET</code> or <code>POST</code>.
+</p>
+<h2> $request_uri </h2>
+<p>This variable is equal to the complete initial URI together with the arguments;
+</p>
+<h2> $scheme </h2>
+<p>The HTTP scheme (i.e. http, https).  Evaluated only on demand, for example:
+<style>/* GeSHi (C) 2004 - 2007 Nigel McNie (http://qbnz.com/highlighter) */
+.code .imp {font-weight: bold; color: red;}
+.code .kw1 {color: #b1b100;}
+.code .kw2 {color: #000000; font-weight: bold;}
+.code .kw3 {color: #000066;}
+.code .kw4 {color: #993333;}
+.code .co1 {color: #808080; font-style: italic;}
+.code .coMULTI {color: #808080; font-style: italic;}
+.code .es0 {color: #000099; font-weight: bold;}
+.code .br0 {color: #66cc66;}
+.code .st0 {color: #ff0000;}
+.code .me1 {color: #202020;}
+.code .me2 {color: #202020;}
+</p>
+</style><pre class="code"><span class="kw22">rewrite</span>  ^<span class="br0">&#40;</span>.+<span class="br0">&#41;</span>$  <span class="re0">$scheme</span>://example.com$<span class="nu0">1</span>  redirect;</pre>
+<h2> $server_addr </h2>
+<p>Equal to the server address. As a rule, for obtaining the value of this variable is done one system call. In order to avoid system call, it is necessary to indicate addresses in directives listen and to use parameter <code>bind</code>.
+</p>
+<h2> $server_name </h2>
+<p>The name of the server.
+</p>
+<h2> $server_port </h2>
+<p>This variable is equal to the port of the server, to which the request arrived;
+</p>
+<h2> $server_protocol </h2>
+<p>This variable is equal to the protocol of request, usually this <code>HTTP/1.0</code> or <code>HTTP/1.1</code>.
+</p>
+<h2> $uri </h2>
+<p>This variable is equal to current URI in the request, it can differ from initial, for example by internal redirects, or with the use of <a href="#index" title="">index</a> it is file with internal redirects.
+</p>
+<h2> References </h2>
+<p><a href="http://sysoev.ru/nginx/docs/http/ngx_http_core_module.html" class="external text" title="http://sysoev.ru/nginx/docs/http/ngx_http_core_module.html" rel="nofollow">Original Documentation</a>
+</p>
+</div>
+<!-- END CONTENT -->
+<div id="footer">
+<p><a href="#top">顶端</a></p>
+<p>中文化: <a href="../index.html" >Nginx中文文档</a> &nbsp;&middot;&nbsp; 制作: nginx.cn  (整理及部分翻译 )</p>
+</div>
+ 
+</body></html>

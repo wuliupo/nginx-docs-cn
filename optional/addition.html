@@ -1,0 +1,140 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Addition模块-Nginx中文文档</title>
+<link rel="stylesheet" type="text/css" media="all" href="../userguide.css" />
+<script type="text/javascript" src="../nav/nav.js"></script>
+<script type="text/javascript" src="../nav/prototype.lite.js"></script>
+<script type="text/javascript" src="../nav/moo.fx.js"></script>
+<script type="text/javascript" src="../nav/user_guide_menu.js"></script>
+<meta name="robots" content="all" />
+</head>
+<body>
+<!-- START NAVIGATION -->
+<div id="nav2"><a name="top"></a><a href="../index.html" ><img src="../images/nav_toggle_darker.jpg" width="154" height="43" border="0" /></a></div>
+<div id="masthead">
+<table cellpadding="0" cellspacing="0" border="0" style="width:100%">
+<tr>
+<td><span id="sitename">Nginx中文文档</span></td>
+<td id="breadcrumb_right"><a href="../index.html">目录首页</a></td>
+</tr>
+</table>
+</div>
+<!-- END NAVIGATION -->
+<table cellpadding="0" cellspacing="0" border="0" style="width:100%">
+<tr>
+<td id="breadcrumb">
+<a href="../index.html" >&nbsp;&#8250;&nbsp;Addition模块
+</td>
+</tr>
+</table>
+<br clear="all" />
+<!-- START CONTENT -->
+<div id="content">
+<h1>Addition模块</h1>
+<p>This module adds responses of other locations before and after the current location's response.
+</p><p>It is implemented as an output filter, the contents of the main request and subrequests to other locations are not buffered completely and are still sent to the client in a streaming fashion. Because the length of the final response body is unkown while sending the HTTP headers, the HTTP chunked encoding is always used here.
+</p>
+<h2> Installation</h2>
+<p>By default the module is not built, it is necessary to enable its build with 
+</p>
+<pre>
+./configure --with-http_addition_module
+</pre>
+<p>at compilation time.
+</p><p>Example:
+<style>/* GeSHi (C) 2004 - 2007 Nigel McNie (http://qbnz.com/highlighter) */
+.code .imp {font-weight: bold; color: red;}
+.code .kw1 {color: #b1b100;}
+.code .kw2 {color: #000000; font-weight: bold;}
+.code .kw3 {color: #000066;}
+.code .kw4 {color: #993333;}
+.code .co1 {color: #808080; font-style: italic;}
+.code .coMULTI {color: #808080; font-style: italic;}
+.code .es0 {color: #000099; font-weight: bold;}
+.code .br0 {color: #66cc66;}
+.code .st0 {color: #ff0000;}
+.code .me1 {color: #202020;}
+.code .me2 {color: #202020;}
+</p>
+</style><pre class="code"><span class="kw3">location</span> / <span class="br0">&#123;</span>
+  <span class="kw25">add_before_body</span>   /before_action;
+  <span class="kw25">add_after_body</span>    /after_action;
+<span class="br0">&#125;</span></pre>
+<h2> Limitations </h2>
+<p>Note that as of 0.8.17 no contents will be added if the current location is served as a subrequest itself. Consider the following example:
+</p><p><style>/* GeSHi (C) 2004 - 2007 Nigel McNie (http://qbnz.com/highlighter) */
+.code .imp {font-weight: bold; color: red;}
+.code .kw1 {color: #b1b100;}
+.code .kw2 {color: #000000; font-weight: bold;}
+.code .kw3 {color: #000066;}
+.code .kw4 {color: #993333;}
+.code .co1 {color: #808080; font-style: italic;}
+.code .coMULTI {color: #808080; font-style: italic;}
+.code .es0 {color: #000099; font-weight: bold;}
+.code .br0 {color: #66cc66;}
+.code .st0 {color: #ff0000;}
+.code .me1 {color: #202020;}
+.code .me2 {color: #202020;}
+</p>
+</style><pre class="code"><span class="kw3">location</span> /foo <span class="br0">&#123;</span>
+  <span class="kw25">add_before_body</span> /bar;
+<span class="br0">&#125;</span>
+&nbsp;
+<span class="kw3">location</span> /bar <span class="br0">&#123;</span>
+ <span class="kw25">add_before_body</span>  /baz;
+<span class="br0">&#125;</span></pre>
+<p>Then accessing <i>/foo</i> won't get <i>/baz</i> inserted before the contents of the subrequest <i>/bar</i>.
+</p><p>Also note that at this time, only strings can be used in before/after body locations, not variables. So
+<style>/* GeSHi (C) 2004 - 2007 Nigel McNie (http://qbnz.com/highlighter) */
+.code .imp {font-weight: bold; color: red;}
+.code .kw1 {color: #b1b100;}
+.code .kw2 {color: #000000; font-weight: bold;}
+.code .kw3 {color: #000066;}
+.code .kw4 {color: #993333;}
+.code .co1 {color: #808080; font-style: italic;}
+.code .coMULTI {color: #808080; font-style: italic;}
+.code .es0 {color: #000099; font-weight: bold;}
+.code .br0 {color: #66cc66;}
+.code .st0 {color: #ff0000;}
+.code .me1 {color: #202020;}
+.code .me2 {color: #202020;}
+</p>
+</style><pre class="code"><span class="kw3">location</span> / <span class="br0">&#123;</span>
+  <span class="kw22">set</span> <span class="re0">$before_action</span> /before_action;
+  <span class="kw25">add_before_body</span> <span class="re0">$before_action</span>;
+<span class="br0">&#125;</span></pre>
+<p>will not work as expected (although the configuration file will still load properly).
+</p>
+<h2>Directives </h2>
+<h2> add_before_body </h2>
+<p><b>syntax:</b> <i>add_before_body uri</i>
+</p><p><b>default:</b> <i>no</i>
+</p><p><b>context:</b> <i>http, server, location</i>
+</p><p>Directive adds content of uri before the response body, issued as a result of the work of the assigned subrequest. 
+</p>
+<h2> add_after_body</h2>
+<p><b>syntax:</b> <i>add_after_body uri</i>
+</p><p><b>default:</b> <i>no</i>
+</p><p><b>context:</b> <i>http, server, location</i>
+</p><p>Directive adds content of uri after the response body, issued as a result of the work of the assigned subrequest.
+</p>
+<h2>addition_types </h2>
+<p><b>syntax:</b> <i>addition_types mime-type [mime-type ...]</i>
+</p><p><b>default:</b> <i>text/html</i>
+</p><p><b>context:</b> <i>http, server, location</i>
+</p><p>Directive (since 0.7.9) allows you to add text only to locations of the specified MIME-types (defaults to <i>"text/html"</i>). 
+</p><p>(Before 0.8.17, this directive was mispelled as "addtion_types" in the source. This bug has been fixed in 0.8.17.)
+</p>
+<h2>References </h2>
+<p><a href="http://sysoev.ru/nginx/docs/http/ngx_http_addition_module.html" class="external text" title="http://sysoev.ru/nginx/docs/http/ngx_http_addition_module.html" rel="nofollow">Original Documentation</a>
+</p>
+</div>
+<!-- END CONTENT -->
+<div id="footer">
+<p><a href="#top">顶端</a></p>
+<p>中文化: <a href="../index.html" >Nginx中文文档</a> &nbsp;&middot;&nbsp; 制作: nginx.cn  (整理及部分翻译 )</p>
+</div>
+ 
+</body></html>

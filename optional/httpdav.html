@@ -1,0 +1,101 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>HttpDav模块-Nginx中文文档</title>
+<link rel="stylesheet" type="text/css" media="all" href="../userguide.css" />
+<script type="text/javascript" src="../nav/nav.js"></script>
+<script type="text/javascript" src="../nav/prototype.lite.js"></script>
+<script type="text/javascript" src="../nav/moo.fx.js"></script>
+<script type="text/javascript" src="../nav/user_guide_menu.js"></script>
+<meta name="robots" content="all" />
+</head>
+<body>
+<!-- START NAVIGATION -->
+<div id="nav2"><a name="top"></a><a href="../index.html" ><img src="../images/nav_toggle_darker.jpg" width="154" height="43" border="0" /></a></div>
+<div id="masthead">
+<table cellpadding="0" cellspacing="0" border="0" style="width:100%">
+<tr>
+<td><span id="sitename">Nginx中文文档</span></td>
+<td id="breadcrumb_right"><a href="../index.html">目录首页</a></td>
+</tr>
+</table>
+</div>
+<!-- END NAVIGATION -->
+<table cellpadding="0" cellspacing="0" border="0" style="width:100%">
+<tr>
+<td id="breadcrumb">
+<a href="../index.html" >&nbsp;&#8250;&nbsp;HttpDav模块
+</td>
+</tr>
+</table>
+<br clear="all" />
+<!-- START CONTENT -->
+<div id="content">
+<h1>HttpDav模块</h1>
+<p>这个模块可以为Http webDAV 增加 PUT, DELETE, MKCOL, COPY 和 MOVE 等方法。
+</p><p>这个模块在默认编译的情况下不是被包含的，你需要在编译时指定如下参数：
+</p>
+<pre>
+./configure --with-http_dav_module
+</pre>
+<p>配置范例：
+</p>
+<pre>
+location / {
+  root     /data/www;
+  client_body_temp_path  /data/client_temp;
+ 
+  dav_methods  PUT DELETE MKCOL COPY MOVE;
+ 
+  create_full_put_path   on;
+  dav_access             group:rw  all:r;
+ 
+  limit_except  GET {
+    allow  192.168.1.0/32;
+    deny   all;
+  }
+}
+</pre>
+<p>配置指导
+</p>
+<h2>dav_access</h2>
+<p>syntax: dav_access user:permissions [users:permissions] ... 
+</p><p>default: dav_access user:rw 
+</p><p>context: http, server, location 
+</p><p>这个指令是赋予某个目录或文件以访问权，如：
+</p>
+<pre>
+dav_access user:rw group:rw all:r;
+</pre>
+<p>如果给一个用户组或所有用户任何权限，user 这个参数就没有必要设置了，如：
+</p>
+<pre>
+dav_access group:rw all:r;
+</pre>
+<h2>dav_methods</h2>
+<p>syntax: dav_methods [off|put|delete|mkcol|copy|move] ... 
+</p><p>default: dav_methods off 
+</p><p>context: http, server, location 
+</p>
+<pre>
+这个指令用于于指定HTTP和WebDAV的方法，设置它为off 时其所有的方法都将无效（忽视你已经设置的方法）。
+Put 方法的目标文件必须是和Nginx 的临时文件夹client_body_temp_path 在同一个分区里。
+当使用Put 方法创建一个文件时，有可能会通过设定date header 修改文件创建日期。
+</pre>
+<h2>create_full_put_path</h2>
+<p>syntax: create_full_put_path on|off 
+</p><p>default: create_full_put_path off 
+</p><p>context: http, server, location 
+</p>
+<pre>
+默认情况下，Put 方法只能在已存在的目录里创建文件。当然了Nginx 必须得有这个目录的修改和写入权限。
+</pre>
+</div>
+<!-- END CONTENT -->
+<div id="footer">
+<p><a href="#top">顶端</a></p>
+<p>中文化: <a href="../index.html" >Nginx中文文档</a> &nbsp;&middot;&nbsp; 制作: nginx.cn  (整理及部分翻译 )</p>
+</div>
+ 
+</body></html>

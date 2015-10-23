@@ -1,0 +1,116 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>HttpLimitReqest模块-Nginx中文文档</title>
+<link rel="stylesheet" type="text/css" media="all" href="../userguide.css" />
+<script type="text/javascript" src="../nav/nav.js"></script>
+<script type="text/javascript" src="../nav/prototype.lite.js"></script>
+<script type="text/javascript" src="../nav/moo.fx.js"></script>
+<script type="text/javascript" src="../nav/user_guide_menu.js"></script>
+<meta name="robots" content="all" />
+</head>
+<body>
+<!-- START NAVIGATION -->
+<div id="nav2"><a name="top"></a><a href="../index.html" ><img src="../images/nav_toggle_darker.jpg" width="154" height="43" border="0" /></a></div>
+<div id="masthead">
+<table cellpadding="0" cellspacing="0" border="0" style="width:100%">
+<tr>
+<td><span id="sitename">Nginx中文文档</span></td>
+<td id="breadcrumb_right"><a href="../index.html">目录首页</a></td>
+</tr>
+</table>
+</div>
+<!-- END NAVIGATION -->
+<table cellpadding="0" cellspacing="0" border="0" style="width:100%">
+<tr>
+<td id="breadcrumb">
+<a href="../index.html" >&nbsp;&#8250;&nbsp;HttpLimitReqest模块
+</td>
+</tr>
+</table>
+<br clear="all" />
+<!-- START CONTENT -->
+<div id="content">
+<h1>HttpLimitReqest模块</h1>
+<p>This module allows you to limit the number of requests for a given session, or as a special case, with one address.
+</p><p>Restriction done using leaky bucket.
+</p>
+<h2> Example Configuration </h2>
+<p><style>/* GeSHi (C) 2004 - 2007 Nigel McNie (http://qbnz.com/highlighter) */
+.code .imp {font-weight: bold; color: red;}
+.code .kw1 {color: #b1b100;}
+.code .kw2 {color: #000000; font-weight: bold;}
+.code .kw3 {color: #000066;}
+.code .kw4 {color: #993333;}
+.code .co1 {color: #808080; font-style: italic;}
+.code .coMULTI {color: #808080; font-style: italic;}
+.code .es0 {color: #000099; font-weight: bold;}
+.code .br0 {color: #66cc66;}
+.code .st0 {color: #ff0000;}
+.code .me1 {color: #202020;}
+.code .me2 {color: #202020;}
+</p>
+</style><pre class="code"><span class="kw3">http</span> <span class="br0">&#123;</span>
+    limit_req_zone  <span class="re0">$binary_remote_addr</span>  zone=one:10m   rate=1r/s;
+&nbsp;
+    ...
+&nbsp;
+    <span class="kw3">server</span> <span class="br0">&#123;</span>
+&nbsp;
+        ...
+&nbsp;
+        <span class="kw3">location</span> /search/ <span class="br0">&#123;</span>
+            limit_req   zone=one  burst=<span class="nu0">5</span>;
+        <span class="br0">&#125;</span></pre>
+<h2>指令 </h2>
+<p><b>Syntax:</b> <i>limit_req_zone <b>$session_variable</b> zone=<b>name_of_zone</b>:<b>size</b> rate=<b>rate</b></i>
+</p><p><b>Default:</b> <i>none</i>
+</p><p><b>Context:</b> <i>http</i>
+</p><p>The directive describes the area, which stores the state of the sessions. The values of the sessions is determined by the given variable. Example of usage:
+</p>
+<pre>
+limit_req_zone  $binary_remote_addr  zone=one:10m   rate=1r/s;
+</pre>
+<p>In this case, the session state is allocated 10MB  as a zone called "one", and the average speed of queries for this zone is limited to 1 request per second.
+</p><p>The sessions are tracked per-user in this case, but note that instead of the variable $remote_addr, we've used the variable $binary_remote_addr, reducing the size of the state to 64 bytes. A 1 MB zone can hold approximately 16000 states of this size.
+</p><p>The speed is set in requests per second or requests per minute. The rate must be an integer, so if you need to specify less than one request per second, say, one request every two seconds, you would specify it as "30r/m".
+</p><p><b>Syntax:</b> <i>limit_req zone=<b>zone</b> burst=<b>burst</b> [nodelay]</i>
+</p><p><b>Default:</b> <i>none</i>
+</p><p><b>Context:</b> <i>http, server, location</i>
+</p><p>The directive specifies the zone (<b>zone</b>) and the maximum possible bursts of requests (burst). If the rate exceeds the demands outlined in the zone, the request is delayed, so that queries are processed at a given speed. Excess requests are delayed until their number does not exceed a specified number of bursts. In this case the request is completed the code "Service unavailable" (503). By default, the burst is zero.
+</p><p>For example, the directive
+</p><p><style>/* GeSHi (C) 2004 - 2007 Nigel McNie (http://qbnz.com/highlighter) */
+.code .imp {font-weight: bold; color: red;}
+.code .kw1 {color: #b1b100;}
+.code .kw2 {color: #000000; font-weight: bold;}
+.code .kw3 {color: #000066;}
+.code .kw4 {color: #993333;}
+.code .co1 {color: #808080; font-style: italic;}
+.code .coMULTI {color: #808080; font-style: italic;}
+.code .es0 {color: #000099; font-weight: bold;}
+.code .br0 {color: #66cc66;}
+.code .st0 {color: #ff0000;}
+.code .me1 {color: #202020;}
+.code .me2 {color: #202020;}
+</p>
+</style><pre class="code">limit_req_zone  <span class="re0">$binary_remote_addr</span>  zone=one:10m   rate=1r/s;
+&nbsp;
+    <span class="kw3">server</span> <span class="br0">&#123;</span>
+        <span class="kw3">location</span> /search/ <span class="br0">&#123;</span>
+            limit_req   zone=one  burst=<span class="nu0">5</span>;
+        <span class="br0">&#125;</span></pre>
+<p>allows a user no more than 1 request per second on average, with bursts of no more than 5 queries.
+If the excess requests within the limit burst delay are not necessary, you should use the nodelay:
+</p>
+<pre>
+            limit_req   zone=one  burst=5  nodelay;
+</pre>
+</div>
+<!-- END CONTENT -->
+<div id="footer">
+<p><a href="#top">顶端</a></p>
+<p>中文化: <a href="../index.html" >Nginx中文文档</a> &nbsp;&middot;&nbsp; 制作: nginx.cn  (整理及部分翻译 )</p>
+</div>
+ 
+</body></html>

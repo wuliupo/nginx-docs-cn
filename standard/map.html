@@ -1,0 +1,141 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>map-Nginx中文文档</title>
+<link rel="stylesheet" type="text/css" media="all" href="../userguide.css" />
+<script type="text/javascript" src="../nav/nav.js"></script>
+<script type="text/javascript" src="../nav/prototype.lite.js"></script>
+<script type="text/javascript" src="../nav/moo.fx.js"></script>
+<script type="text/javascript" src="../nav/user_guide_menu.js"></script>
+<meta name="robots" content="all" />
+</head>
+<body>
+<!-- START NAVIGATION -->
+<div id="nav2"><a name="top"></a><a href="../index.html" ><img src="../images/nav_toggle_darker.jpg" width="154" height="43" border="0" /></a></div>
+<div id="masthead">
+<table cellpadding="0" cellspacing="0" border="0" style="width:100%">
+<tr>
+<td><span id="sitename">Nginx中文文档</span></td>
+<td id="breadcrumb_right"><a href="../index.html">目录首页</a></td>
+</tr>
+</table>
+</div>
+<!-- END NAVIGATION -->
+<table cellpadding="0" cellspacing="0" border="0" style="width:100%">
+<tr>
+<td id="breadcrumb">
+<a href="../index.html" >&nbsp;&#8250;&nbsp;map
+</td>
+</tr>
+</table>
+<br clear="all" />
+<!-- START CONTENT -->
+<div id="content">
+<h1>map</h1>
+<p>This module allows you to classify, or map a set of values into a different set of values and store the result in a variable.
+</p><p>Example:
+<style>/* GeSHi (C) 2004 - 2007 Nigel McNie (http://qbnz.com/highlighter) */
+.code .imp {font-weight: bold; color: red;}
+.code .kw1 {color: #b1b100;}
+.code .kw2 {color: #000000; font-weight: bold;}
+.code .kw3 {color: #000066;}
+.code .kw4 {color: #993333;}
+.code .co1 {color: #808080; font-style: italic;}
+.code .coMULTI {color: #808080; font-style: italic;}
+.code .es0 {color: #000099; font-weight: bold;}
+.code .br0 {color: #66cc66;}
+.code .st0 {color: #ff0000;}
+.code .me1 {color: #202020;}
+.code .me2 {color: #202020;}
+</p>
+</style><pre class="code"><span class="kw19">map</span>  <span class="re0">$http_host</span>  <span class="re0">$name</span>  <span class="br0">&#123;</span>
+  hostnames;
+&nbsp;
+  default          <span class="nu0">0</span>;
+&nbsp;
+  example.com      <span class="nu0">1</span>;
+  *.example.com    <span class="nu0">1</span>;
+  test.com         <span class="nu0">2</span>;
+  *.test.com       <span class="nu0">2</span>;
+  .site.com        <span class="nu0">3</span>;
+<span class="br0">&#125;</span></pre>
+<p><br />
+One use for this would be to use a mapping in place of writing lots of server/location directives or redirects:
+</p><p><style>/* GeSHi (C) 2004 - 2007 Nigel McNie (http://qbnz.com/highlighter) */
+.code .imp {font-weight: bold; color: red;}
+.code .kw1 {color: #b1b100;}
+.code .kw2 {color: #000000; font-weight: bold;}
+.code .kw3 {color: #000066;}
+.code .kw4 {color: #993333;}
+.code .co1 {color: #808080; font-style: italic;}
+.code .coMULTI {color: #808080; font-style: italic;}
+.code .es0 {color: #000099; font-weight: bold;}
+.code .br0 {color: #66cc66;}
+.code .st0 {color: #ff0000;}
+.code .me1 {color: #202020;}
+.code .me2 {color: #202020;}
+</p>
+</style><pre class="code"><span class="kw19">map</span> <span class="re0">$uri</span> <span class="re0">$new</span> <span class="br0">&#123;</span>
+  default        <span class="kw3">http</span>://www.domain.com/home/;
+&nbsp;
+  /aa            <span class="kw3">http</span>://aa.domain.com/;
+  /bb            <span class="kw3">http</span>://bb.domain.com/;
+  /john          <span class="kw3">http</span>://my.domain.com/users/john/;
+<span class="br0">&#125;</span>
+&nbsp;
+<span class="kw3">server</span> <span class="br0">&#123;</span>
+  <span class="kw3">server_name</span>   www.domain.com;
+  <span class="kw22">rewrite</span>  ^    <span class="re0">$new</span>   redirect;
+<span class="br0">&#125;</span></pre>
+<h2>指令</h2>
+<h2> map </h2>
+<p><b>syntax:</b> <i>map $var1 $var2 { ... }</i>
+</p><p><b>default:</b> <i>none</i>
+</p><p><b>context:</b> <i>http</i>
+</p><p><b>map</b> defines the mapping table which will be used to set a variable.  There are three special parameters:
+</p>
+<ul><li> default — defines the value to be used where no match is found.
+</li><li> hostnames — it allows for an easier matching of values like host names, names with a starting dot may match exact host names and host names ending with the value, for example: 
+</li></ul>
+<pre>
+*.example.com  1; 
+</pre> 
+<p>Instead of two entries 
+</p>
+<pre>
+example.com    1;
+*.example.com  1;
+</pre> 
+<p>we can use only one 
+</p>
+<pre>
+.example.com   1;
+</pre>
+<ul><li> include — include values from a file. Multiple includes may be used.
+</li></ul>
+<h2> map_hash_max_size </h2>
+<p><b>syntax:</b> <i>map_hash_max_size number</i>
+</p><p><b>default:</b> <i>map_hash_max_size 2048</i>
+</p><p><b>context:</b> <i>http</i>
+</p><p>The directive sets the maximum size of a hash table to hold the variable map. For more details see the descriptions of hash settings <a href="../general/optimizations.html" title="NginxOptimizations">Optimization section</a> .
+</p><p><br />
+</p>
+<h2> map_hash_bucket_size </h2>
+<p><b>syntax:</b> <i>map_hash_bucket_size n</i>
+</p><p><b>default:</b> <i>map_hash_bucket_size 32/64/128</i>
+</p><p><b>context:</b> <i>http</i>
+</p><p>The directive sets the maximum size in a hash table to map variables. The default value depends on the size of the cache line processor. More see in the descriptions of hash settings in the <a href="../general/optimizations.html" title="NginxOptimizations">Optimization section</a> .
+</p><p><br />
+</p>
+<h2>References </h2>
+<p><a href="http://sysoev.ru/nginx/docs/http/ngx_http_map_module.html" class="external text" title="http://sysoev.ru/nginx/docs/http/ngx_http_map_module.html" rel="nofollow">Original Documentation</a>
+</p>
+</div>
+<!-- END CONTENT -->
+<div id="footer">
+<p><a href="#top">顶端</a></p>
+<p>中文化: <a href="../index.html" >Nginx中文文档</a> &nbsp;&middot;&nbsp; 制作: nginx.cn  (整理及部分翻译 )</p>
+</div>
+ 
+</body></html>

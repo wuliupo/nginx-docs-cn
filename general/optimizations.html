@@ -1,0 +1,61 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>优化 Nginx-Nginx中文文档</title>
+<link rel="stylesheet" type="text/css" media="all" href="../userguide.css" />
+<script type="text/javascript" src="../nav/nav.js"></script>
+<script type="text/javascript" src="../nav/prototype.lite.js"></script>
+<script type="text/javascript" src="../nav/moo.fx.js"></script>
+<script type="text/javascript" src="../nav/user_guide_menu.js"></script>
+<meta name="robots" content="all" />
+</head>
+<body>
+<!-- START NAVIGATION -->
+<div id="nav2"><a name="top"></a><a href="../index.html" ><img src="../images/nav_toggle_darker.jpg" width="154" height="43" border="0" /></a></div>
+<div id="masthead">
+<table cellpadding="0" cellspacing="0" border="0" style="width:100%">
+<tr>
+<td><span id="sitename">Nginx中文文档</span></td>
+<td id="breadcrumb_right"><a href="../index.html">目录首页</a></td>
+</tr>
+</table>
+</div>
+<!-- END NAVIGATION -->
+<table cellpadding="0" cellspacing="0" border="0" style="width:100%">
+<tr>
+<td id="breadcrumb">
+<a href="../index.html" >&nbsp;&#8250;&nbsp;优化 Nginx
+</td>
+</tr>
+</table>
+<br clear="all" />
+<!-- START CONTENT -->
+<div id="content">
+<h1>优化 Nginx</h1>
+<p>Ngnix使用hash表来协助完成请求的快速处理。
+</p><p>考虑到保存键及其值的hash表存储单元的大小不至于超出设定参数(hash bucket size)，  在启动和每次重新配置时，Nginx为hash表选择尽可能小的尺寸。
+</p><p>直到hash表超过参数(hash max size)的大小才重新进行选择. 对于大多数hash表都有指令来修改这些参数。例如，保存服务器名字的hash表是由指令 <code>server_names_hash_max_size</code> 和 <code>server_names_hash_bucket_size</code>所控制的。参数hash bucket size总是等于hash表的大小，并且是一路处理器缓存大小的倍数。在减少了在内存中的存取次数后，使在处理器中加速查找hash表键值成为可能。如果hash bucket size等于一路处理器缓存的大小，那么在查找键的时候，最坏的情况下在内存中查找的次数为2。第一次是确定存储单元的地址，第二次是在存储单元中查找键值。因此，如果Nginx给出需要增大 hash max size 或 hash bucket size的提示，那么首要的是增大前一个参数的大小.
+</p>
+<h2> 事件模型 </h2>
+<p>Nginx支持如下处理连接的方法（I/O复用方法），这些方法可以通过<code>use</code>指令指定。
+</p>
+<ul><li> <b>select</b> - 标准方法。 如果当前平台没有更有效的方法，它是编译时默认的方法。你可以使用配置参数 <code>--with-select_module</code> 和 <code>--without-select_module</code> 来启用或禁用这个模块。
+</li><li> <b>poll</b> - 标准方法。 如果当前平台没有更有效的方法，它是编译时默认的方法。你可以使用配置参数 <code>--with-poll_module</code> 和 <code>--without-poll_module</code> 来启用或禁用这个模块。
+</li><li> <b>kqueue</b> - 高效的方法，使用于 FreeBSD 4.1+, OpenBSD 2.9+, NetBSD 2.0 和 MacOS X. 使用双处理器的MacOS X系统使用kqueue可能会造成内核崩溃。
+</li><li> <b>epoll</b> - 高效的方法，使用于Linux内核2.6版本及以后的系统。在某些发行版本中，如SuSE 8.2, 有让2.4版本的内核支持epoll的补丁。
+</li><li> <b>rtsig</b> - 可执行的实时信号，使用于Linux内核版本2.2.19以后的系统。默认情况下整个系统中不能出现大于1024个POSIX实时(排队)信号。这种情况对于高负载的服务器来说是低效的；所以有必要通过调节内核参数 <code>/proc/sys/kernel/rtsig-max</code> 来增加队列的大小。可是从Linux内核版本2.6.6-mm2开始， 这个参数就不再使用了，并且对于每个进程有一个独立的信号队列，这个队列的大小可以用 RLIMIT_SIGPENDING 参数调节。当这个队列过于拥塞，nginx就放弃它并且开始使用 <code>poll</code> 方法来处理连接直到恢复正常。
+</li><li> <b>/dev/poll</b> - 高效的方法，使用于 Solaris 7 11/99+, HP/UX 11.22+ (eventport), IRIX 6.5.15+ 和 Tru64 UNIX 5.1A+.
+</li><li> <b>eventport</b> - 高效的方法，使用于 Solaris 10. 为了防止出现内核崩溃的问题， 有必要安装 <a href="http://sunsolve.sun.com/search/document.do?assetkey=1-26-102485-1" class="external text" title="http://sunsolve.sun.com/search/document.do?assetkey=1-26-102485-1" rel="nofollow">这个</a>  安全补丁。
+</li></ul>
+<h2>参考 </h2>
+<p><a href="http://sysoev.ru/nginx/docs/hash.html" class="external text" title="http://sysoev.ru/nginx/docs/hash.html" rel="nofollow">Hash表原始文档</a>
+</p>
+</div>
+<!-- END CONTENT -->
+<div id="footer">
+<p><a href="#top">顶端</a></p>
+<p>中文化: <a href="../index.html" >Nginx中文文档</a> &nbsp;&middot;&nbsp; 制作: nginx.cn  (整理及部分翻译 )</p>
+</div>
+ 
+</body></html>

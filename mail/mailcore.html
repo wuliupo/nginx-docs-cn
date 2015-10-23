@@ -1,0 +1,332 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>MailCore-Nginx中文文档</title>
+<link rel="stylesheet" type="text/css" media="all" href="../userguide.css" />
+<script type="text/javascript" src="../nav/nav.js"></script>
+<script type="text/javascript" src="../nav/prototype.lite.js"></script>
+<script type="text/javascript" src="../nav/moo.fx.js"></script>
+<script type="text/javascript" src="../nav/user_guide_menu.js"></script>
+<meta name="robots" content="all" />
+</head>
+<body>
+<!-- START NAVIGATION -->
+<div id="nav2"><a name="top"></a><a href="../index.html" ><img src="../images/nav_toggle_darker.jpg" width="154" height="43" border="0" /></a></div>
+<div id="masthead">
+<table cellpadding="0" cellspacing="0" border="0" style="width:100%">
+<tr>
+<td><span id="sitename">Nginx中文文档</span></td>
+<td id="breadcrumb_right"><a href="../index.html">目录首页</a></td>
+</tr>
+</table>
+</div>
+<!-- END NAVIGATION -->
+<table cellpadding="0" cellspacing="0" border="0" style="width:100%">
+<tr>
+<td id="breadcrumb">
+<a href="../index.html" >&nbsp;&#8250;&nbsp;MailCore
+</td>
+</tr>
+</table>
+<br clear="all" />
+<!-- START CONTENT -->
+<div id="content">
+<h1>MailCore</h1>
+<p>Nginx is able to handle and proxy the following mail protocols:<br />
+Nginx 能够处理和代理以下邮件协议:
+</p>
+<ul><li> IMAP
+</li><li> POP3
+</li><li> SMTP
+</li></ul>
+<h1> 认证 </h1>
+<p>nginx uses external HTTP-like server to learn which IMAP/POP backend it should connect to.<br />
+nginx的IMAP／POP后端处理类似HTTP服务器的连接方式。
+</p>
+<p>
+nginx passes authorization information in HTTP headers:<br />
+nginx 在HTTP头里传递授权信息:
+</p>
+<pre>
+GET /auth HTTP/1.0
+Host: auth.server.hostname
+Auth-Method: plain
+Auth-User: user
+Auth-Pass: password
+Auth-Protocol: imap
+Auth-Login-Attempt: 1
+Client-IP: 192.168.1.1
+</pre>
+<p>The good response is:<br />
+正常的回应是:
+</p>
+<pre>
+HTTP/1.0 200 OK      # this line is actually ignored and may not exist at all 这行可能被忽略或者不可能都存在
+Auth-Status: OK
+Auth-Server: 192.168.1.10
+Auth-Port: 110
+Auth-User: newname   # you may override the user name to login to a backend  你可以重写用户名登录后端
+</pre>
+<p>
+When authenticating with APOP for POP3, you must return Auth-Pass as well:<br />
+当在POP3中使用APOP协议时，你必须返回验证密码如下:
+</p>
+<pre>
+HTTP/1.0 200 OK      # this line is actually ignored and may not exist at all
+Auth-Status: OK
+Auth-Server: 192.168.1.10
+Auth-Port: 110
+Auth-User: newname   # you may override the user name to login to a backend
+Auth-Pass: password  # this must be the user's password in cleartext 这里必须是明文形式的用户密码
+</pre>
+<p>
+The failed response is:<br />
+失败的回应是:
+</p>
+<pre>
+HTTP/1.0 200 OK      # this line is actually ignored and may not exist at all
+Auth-Status: Invalid login or password
+Auth-Wait: 3         # nginx will wait 3 seconds before reading  Nginx在读之前等待3秒
+# client's login/passwd again
+</pre>
+<h1>指令 </h1>
+<h2>auth </h2>
+<p>Renamed to pop3_auth</a> in 0.5.15
+</p>
+<h2> imap_capabilities </h2>
+<p><b>syntax:</b> <i>imap_capabilities</i> <i><b>"capability1" ["capability2" .. "capabilityN"] </b></i>
+</p><p><b>default:</b> <i>"IMAP4" "IMAP4rev1" "UIDPLUS"</i>
+</p><p><b>context:</b> <i>main, server</i>
+</p><p><br />
+With this directive you can set the list of <a href="http://ietf.org/rfc/rfc3501.txt" class="external text" title="http://ietf.org/rfc/rfc3501.txt" rel="nofollow">IMAP protocol</a>  extensions presented to the client upon issuing the IMAP command CAPABILITY. <a href="http://ietf.org/rfc/rfc2595.txt" class="external text" title="http://ietf.org/rfc/rfc2595.txt" rel="nofollow">STARTTLS</a>  is automatically added if you enable the  starttls  directive.
+<br />
+使用这条指令你可以设置IMAP协议列表来扩展现有的客户端上的IMAP的命令CAPABILITY。如果你启用了STARTTLS那么STARTTLS命令将自动加入。
+</p>
+<p>The current list of standardized IMAP expansions is published on <a href="http://www.iana.org/assignments/imap4-capabilities" class="external text" title="http://www.iana.org/assignments/imap4-capabilities" rel="nofollow">www.iana.org</a>.
+<br />
+现在所列出的标准的IMAP扩展发布在<a href="http://www.iana.org/assignments/imap4-capabilities" class="external text" title="http://www.iana.org/assignments/imap4-capabilities" rel="nofollow">www.iana.org</a>上。
+</p>
+<pre>
+mail {
+  imap_capabilities NAMESPACE SORT QUOTA;
+}
+</pre>
+<p>Will the defaults be also set, I haven't see this in the source?! (al 2007-05-11) <br />
+这个设置了默认了？我在源码中没有看到！
+</p>
+<h2> imap_client_buffer </h2>
+<p><b>syntax:</b> <i>imap_client_buffer <b>size</b></i>
+</p><p><b>default:</b> <i>4K/8K</i>
+</p><p><b>context:</b> <i>main, server</i>
+</p><p>With this directive you can set the read buffer for IMAP commands. The default value is equal to the size of a page (this can be either 4K or 8K depending on the platform).
+</p>
+<h2> listen</h2>
+<p><b>syntax:</b> <i>listen</i> <i><b>address:port [ bind ] </b></i>
+</p><p><b>default:</b> <i>no</i>
+</p><p><b>context:</b> <i>server</i>
+</p><p>The directive specifies the address and port, on which the server accepts requests. It is possible to specify address or port only, besides, an address can be the server name, for example: <br />
+当服务器接收请求时，这条指令指定地址和端口。这个可能只知道地址或者端口，另外，地址可能是服务器名，例如：
+</p><p><style>/* GeSHi (C) 2004 - 2007 Nigel McNie (http://qbnz.com/highlighter) */
+.code .imp {font-weight: bold; color: red;}
+.code .kw1 {color: #b1b100;}
+.code .kw2 {color: #000000; font-weight: bold;}
+.code .kw3 {color: #000066;}
+.code .kw4 {color: #993333;}
+.code .co1 {color: #808080; font-style: italic;}
+.code .coMULTI {color: #808080; font-style: italic;}
+.code .es0 {color: #000099; font-weight: bold;}
+.code .br0 {color: #66cc66;}
+.code .st0 {color: #ff0000;}
+.code .me1 {color: #202020;}
+.code .me2 {color: #202020;}
+</p>
+</style><pre class="code"><span class="kw3">listen</span> <span class="nu0">127.0</span><span class="nu0">.0</span><span class="nu0">.1</span>:<span class="nu0">8000</span>;
+<span class="kw3">listen</span> <span class="nu0">127.0</span><span class="nu0">.0</span><span class="nu0">.1</span>;
+<span class="kw3">listen</span> <span class="nu0">8000</span>;
+<span class="kw3">listen</span> *:<span class="nu0">8000</span>;
+<span class="kw3">listen</span> localhost:<span class="nu0">8000</span>;</pre>
+<p>IPv6 address(&gt;=0.7.58) are set in square brackets:
+<style>/* GeSHi (C) 2004 - 2007 Nigel McNie (http://qbnz.com/highlighter) */
+.code .imp {font-weight: bold; color: red;}
+.code .kw1 {color: #b1b100;}
+.code .kw2 {color: #000000; font-weight: bold;}
+.code .kw3 {color: #000066;}
+.code .kw4 {color: #993333;}
+.code .co1 {color: #808080; font-style: italic;}
+.code .coMULTI {color: #808080; font-style: italic;}
+.code .es0 {color: #000099; font-weight: bold;}
+.code .br0 {color: #66cc66;}
+.code .st0 {color: #ff0000;}
+.code .me1 {color: #202020;}
+.code .me2 {color: #202020;}
+</p>
+</style><pre class="code"><span class="kw3">listen</span>  <span class="br0">&#91;</span>::<span class="br0">&#93;</span>:<span class="nu0">8000</span>; 
+<span class="kw3">listen</span>  <span class="br0">&#91;</span>fe80::<span class="nu0">1</span><span class="br0">&#93;</span>;</pre>
+<p>In directive listen it is possible to indicate the system call bind(2). <br />
+listen指令可能显示显示系统命令 bind.
+</p><p>bind -- indicates that it is necessary to make bind(2) separately for this pair of address:port. If several directives listen with identical port but with different addresses and one of the directives listen to all addresses for this port (*:port) then Nginx will make bind(2) only to *:port. In this case the address is determined by the system call getsockname().  <br />
+bind -- bind指令必须是绑定一对 地址：端口。如果多个指令监听不同地址的相同的端口，另一个指令监听所有地址的端口(*:端口号)，这样的话Nginx将指执行 bind的 *:端口号 .这样的话地址只能是系统命令getsockname()的值。
+</p>
+<h2>pop3_auth </h2>
+<p><b>syntax:</b> <i>pop3_auth</i> <i><b>[plain]  [apop]  [cram-md5] </b></i>
+</p><p><b>default:</b> <i>plain</i>
+</p><p><b>context:</b> <i>main, server</i>
+</p><p>With this directive you can set the permitted methods of authentication for POP3 clients: <br />
+使用这条指令你可以设置验证POP3客户端的验证方法:
+</p>
+<ul><li> plain - <a href="http://ietf.org/rfc/rfc1939.txt" class="external text" title="http://ietf.org/rfc/rfc1939.txt" rel="nofollow">USER/PASS</a> , <a href="http://ietf.org/rfc/rfc2595.txt" class="external text" title="http://ietf.org/rfc/rfc2595.txt" rel="nofollow">AUTH PLAIN</a> , <a href="http://www3.ietf.org/proceedings/03jul/I-D/draft-murchison-sasl-login-00.txt" class="external text" title="http://www3.ietf.org/proceedings/03jul/I-D/draft-murchison-sasl-login-00.txt" rel="nofollow">AUTH LOGIN</a> 
+</li><li> apop - <a href="http://ietf.org/rfc/rfc1939.txt" class="external text" title="http://ietf.org/rfc/rfc1939.txt" rel="nofollow">APOP</a> 
+</li><li> cram-md5 - <a href="http://ietf.org/rfc/rfc2195.txt" class="external text" title="http://ietf.org/rfc/rfc2195.txt" rel="nofollow">AUTH CRAM-MD5</a> 
+</li></ul>
+<h2> pop3_capabilities </h2>
+<p><b>syntax:</b> <i>pop3_capabilities</i> <i><b>"capability1" ["capability2" .. "capabilityN"] </b></i>
+</p><p><b>default:</b> <i>"TOP" "USER" "UIDL"</i>
+</p><p><b>context:</b> <i>main, server</i>
+</p><p>With this directive you can set the list of <a href="http://ietf.org/rfc/rfc2449.txt" class="external text" title="http://ietf.org/rfc/rfc2449.txt" rel="nofollow">POP3 protocol</a>  extensions presented to the client upon issuing the POP3 command CAPA. <a href="http://ietf.org/rfc/rfc2595.txt" class="external text" title="http://ietf.org/rfc/rfc2595.txt" rel="nofollow">STLS </a>  is automatically added if you enable the  starttls  directive and <a href="http://ietf.org/rfc/rfc2449.txt" class="external text" title="http://ietf.org/rfc/rfc2449.txt" rel="nofollow">SASL</a>  is added by the directive <a href="#auth" title="">auth</a>. <br />
+使用这条指令你可以设置 <a href="http://ietf.org/rfc/rfc2449.txt" class="external text" title="http://ietf.org/rfc/rfc2449.txt" rel="nofollow">POP3 协议</a>  
+列表来扩展现有客户端上的POP3命令CAPA。 如果你启用了starttls指令STLS将会自动被添加，通过auth，SASL也将被添加。
+</p>
+<h2>protocol </h2>
+<p><b>syntax:</b> <i>protocol</i> <i><b>[ pop3 | imap | smtp ]&nbsp;;</b></i>
+</p><p><b>default:</b> <i>IMAP</i>
+</p><p><b>context:</b> <i>server</i>
+</p><p>This directive set the protocol for this server block.<br />
+这条指令设置了服务器块的协议
+</p>
+<h2>> server </h2>
+<p><b>syntax:</b> <i>server {...}</i>
+</p><p><b>default:</b> <i>no</i>
+</p><p><b>context:</b> <i>mail</i>
+</p><p>Directive assigns configuration for the virtual server. <br />
+指令指定虚拟服务器的配置
+</p><p>There is no clear separation of the virtual servers ip-based and name-based (the value of the line "Host" header in the request). <br />
+这里不区分基于IP的虚拟服务器和基于命名的虚拟服务器（Host指从请求头中获得）
+</p><p>Instead of this by directives listen are described all addresses and ports, on which it is necessary to assume connections for this server, and in directive server_name are indicated all names of servers.  Example configurations are described in tuning of virtual servers.<br />
+可以替代这个的listen指令描述了连接服务器的所有的地址和端口，和纸条指令的server_name显示了所有的服务器命名。例如 以下配置描述了虚拟服务器的调度
+</p>
+<h2> server_name </h2>
+<p><b>syntax:</b> <i>server_name name</i> <i><b>fqdn_server_host</b></i>
+</p><p><b>default:</b> <i>The name of the host, obtained through gethostname()</i>
+</p><p><b>context:</b> <i>mail, server</i>
+</p><p>Directive assigns the names of virtual server, for example:
+</p><p><style>/* GeSHi (C) 2004 - 2007 Nigel McNie (http://qbnz.com/highlighter) */
+.code .imp {font-weight: bold; color: red;}
+.code .kw1 {color: #b1b100;}
+.code .kw2 {color: #000000; font-weight: bold;}
+.code .kw3 {color: #000066;}
+.code .kw4 {color: #993333;}
+.code .co1 {color: #808080; font-style: italic;}
+.code .coMULTI {color: #808080; font-style: italic;}
+.code .es0 {color: #000099; font-weight: bold;}
+.code .br0 {color: #66cc66;}
+.code .st0 {color: #ff0000;}
+.code .me1 {color: #202020;}
+.code .me2 {color: #202020;}
+</p>
+</style><pre class="code"><span class="kw3">server</span> <span class="br0">&#123;</span>
+  <span class="kw3">server_name</span>   example.com  www.example.com;
+<span class="br0">&#125;</span></pre>
+<p>The first name becomes the basic name of server. By default the name of the machine (hostname) is used.  It is possible to use "*" for replacing the first part of the name: <br />
+第一个名称被默认为服务器的基本名词.被当作默认的机器名使用,这个也可能被*所代替。
+</p><p><style>/* GeSHi (C) 2004 - 2007 Nigel McNie (http://qbnz.com/highlighter) */
+.code .imp {font-weight: bold; color: red;}
+.code .kw1 {color: #b1b100;}
+.code .kw2 {color: #000000; font-weight: bold;}
+.code .kw3 {color: #000066;}
+.code .kw4 {color: #993333;}
+.code .co1 {color: #808080; font-style: italic;}
+.code .coMULTI {color: #808080; font-style: italic;}
+.code .es0 {color: #000099; font-weight: bold;}
+.code .br0 {color: #66cc66;}
+.code .st0 {color: #ff0000;}
+.code .me1 {color: #202020;}
+.code .me2 {color: #202020;}
+</p>
+</style><pre class="code"><span class="kw3">server</span> <span class="br0">&#123;</span>
+  <span class="kw3">server_name</span>   example.com  *.example.com;
+<span class="br0">&#125;</span></pre>
+<p>Two of the given name of the  above example can be combined into one: <br />
+2个给定的名词在以上的例子中被合并成一个
+</p><p><style>/* GeSHi (C) 2004 - 2007 Nigel McNie (http://qbnz.com/highlighter) */
+.code .imp {font-weight: bold; color: red;}
+.code .kw1 {color: #b1b100;}
+.code .kw2 {color: #000000; font-weight: bold;}
+.code .kw3 {color: #000066;}
+.code .kw4 {color: #993333;}
+.code .co1 {color: #808080; font-style: italic;}
+.code .coMULTI {color: #808080; font-style: italic;}
+.code .es0 {color: #000099; font-weight: bold;}
+.code .br0 {color: #66cc66;}
+.code .st0 {color: #ff0000;}
+.code .me1 {color: #202020;}
+.code .me2 {color: #202020;}
+</p>
+</style><pre class="code"><span class="kw3">server</span> <span class="br0">&#123;</span>
+  <span class="kw3">server_name</span>  .example.com;
+<span class="br0">&#125;</span></pre>
+<p>The basic name of server is used in an HTTP redirects, if no a "Host" header was in client request or that header does not match any assigned server_name. You can also use just "*" to force Nginx to use the "Host" header in the HTTP redirect (note that "*" cannot be used as the first name, but you can use a dummy name such as "_" instead): <br />
+HTTP重定向中使用了服务器基本名称，如果客户端请求中没有"host"头或者头中没知道server_name.你可以使用“＊”来强制Nginx在HTTP重定向中使用"Host"头（注释： "*"不能作为第一命名可以使用"_"代替）
+</p><p><style>/* GeSHi (C) 2004 - 2007 Nigel McNie (http://qbnz.com/highlighter) */
+.code .imp {font-weight: bold; color: red;}
+.code .kw1 {color: #b1b100;}
+.code .kw2 {color: #000000; font-weight: bold;}
+.code .kw3 {color: #000066;}
+.code .kw4 {color: #993333;}
+.code .co1 {color: #808080; font-style: italic;}
+.code .coMULTI {color: #808080; font-style: italic;}
+.code .es0 {color: #000099; font-weight: bold;}
+.code .br0 {color: #66cc66;}
+.code .st0 {color: #ff0000;}
+.code .me1 {color: #202020;}
+.code .me2 {color: #202020;}
+</p>
+</style><pre class="code"><span class="kw3">server</span> <span class="br0">&#123;</span>
+  <span class="kw3">server_name</span> example.com *;
+<span class="br0">&#125;</span>
+<span class="kw3">server</span> <span class="br0">&#123;</span>
+  <span class="kw3">server_name</span> _ *;
+<span class="br0">&#125;</span></pre>
+<hr />
+<h2>smtp_auth </h2>
+<p><b>syntax:</b> <i>smtp_auth</i> <i><b>[login]  [plain]  [cram-md5]&nbsp;;</b></i>
+</p><p><b>default:</b> <i>login plain</i>
+</p><p><b>context:</b> <i>main, server</i>
+</p><p>With this directive you can set the permitted methods of authentication for SMTP clients: <br />
+使用这个命令你可以设置SMTP客户端的验证方法
+</p>
+<ul><li> login - <a href="http://www3.ietf.org/proceedings/03jul/I-D/draft-murchison-sasl-login-00.txt" class="external text" title="http://www3.ietf.org/proceedings/03jul/I-D/draft-murchison-sasl-login-00.txt" rel="nofollow">AUTH LOGIN</a> 
+</li><li> plain - <a href="http://ietf.org/rfc/rfc2595.txt" class="external text" title="http://ietf.org/rfc/rfc2595.txt" rel="nofollow">AUTH PLAIN</a> 
+</li><li> cram-md5 - <a href="http://ietf.org/rfc/rfc2195.txt" class="external text" title="http://ietf.org/rfc/rfc2195.txt" rel="nofollow">AUTH CRAM-MD5</a> 
+</li></ul>
+<h2> smtp_capabilities</h2>
+<p><b>syntax:</b> <i>smtp_capabilities</i> <i><b>“capability1” [“capability2” .. “capabilityN”] </b></i>
+</p><p><b>default:</b> <i>no</i>
+</p><p><b>context:</b> <i>main, server</i>
+</p><p>With this directive you can set the list of SMTP protocol extensions presented to the client upon issuing the EHLO command. This list is automatically extended by the methods enabled with the directive <a href="#smtp_auth" title="">smtp_auth</a>. <br />
+使用这条指令你可以设置SMTP协议扩展现有的客户端通过使用EHLO命令.使用smtp_auth指令这个列表将被自动扩展。
+</p><p>The current list of standardized SMTP expansions is published on <a href="http://www.iana.org/assignments/mail-parameters" class="external text" title="http://www.iana.org/assignments/mail-parameters" rel="nofollow">www.iana.org</a> .
+现在标准的SMTP扩展列表发布在<a href="http://www.iana.org/assignments/mail-parameters" class="external text" title="http://www.iana.org/assignments/mail-parameters" rel="nofollow">www.iana.org</a>
+</p>
+<h2> so_keepalive</h2>
+<p><b>syntax:</b> <i>so_keepalive</i> <i><b>on|off</b></i>;
+</p><p><b>default:</b> <i>off</i>
+</p><p><b>context:</b> <i>main, server</i>
+</p><p>With this directive you can set the socket SO_KEEPALIVE option for the connection to the IMAP/POP3 backend. In FreeBSD the keepalive option is used for all connections and can be turned off through setsockopt no (see sysctl net.inet.tcp.always_keepalive). <br />
+通过使用这条指令你可以设置socket连接IMAP／POP3的SO——KEEPALIVE选项。在FREEBSD中这个 keepalive(保持存活) 选项在所有的连接中都有效并且可以使用setsockopt no来关闭。
+</p>
+<h2>timeout</h2>
+<p><b>syntax:</b> <i>timeout</i> <i><b>milliseconds;</b></i>
+</p><p><b>default:</b> <i>60000</i>
+</p><p><b>context:</b> <i>main, server</i>
+</p><p>With this directive you can set the time out for proxied connections to the back end.<br />
+使用这条指令你可以设置 代理连接的超时时间
+</p>
+</div>
+<!-- END CONTENT -->
+<div id="footer">
+<p><a href="#top">顶端</a></p>
+<p>中文化: <a href="../index.html" >Nginx中文文档</a> &nbsp;&middot;&nbsp; 制作: nginx.cn  (整理及部分翻译 )</p>
+</div>
+ 
+</body></html>

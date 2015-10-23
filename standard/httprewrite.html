@@ -1,0 +1,254 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>HttpRewrite模块-Nginx中文文档</title>
+<link rel="stylesheet" type="text/css" media="all" href="../userguide.css" />
+<script type="text/javascript" src="../nav/nav.js"></script>
+<script type="text/javascript" src="../nav/prototype.lite.js"></script>
+<script type="text/javascript" src="../nav/moo.fx.js"></script>
+<script type="text/javascript" src="../nav/user_guide_menu.js"></script>
+<meta name="robots" content="all" />
+</head>
+<body>
+<!-- START NAVIGATION -->
+<div id="nav2"><a name="top"></a><a href="../index.html" ><img src="../images/nav_toggle_darker.jpg" width="154" height="43" border="0" /></a></div>
+<div id="masthead">
+<table cellpadding="0" cellspacing="0" border="0" style="width:100%">
+<tr>
+<td><span id="sitename">Nginx中文文档</span></td>
+<td id="breadcrumb_right"><a href="../index.html">目录首页</a></td>
+</tr>
+</table>
+</div>
+<!-- END NAVIGATION -->
+<table cellpadding="0" cellspacing="0" border="0" style="width:100%">
+<tr>
+<td id="breadcrumb">
+<a href="../index.html" >&nbsp;&#8250;&nbsp;HttpRewrite模块
+</td>
+</tr>
+</table>
+<br clear="all" />
+<!-- START CONTENT -->
+<div id="content">
+<h1>HttpRewrite模块</h1>
+<p>This module makes it possible to change URI using regular expressions, and to redirect and select configuration depending on variables.
+</p><p>该模块允许使用正则表达式改变URI，并且根据变量来转向以及选择配置。
+</p><p>If the directives of this module are given at the server level, then they are carried out before the location of the request is determined. If in that selected location there are further rewrite directives, then they also are carried out. If the URI changed as a result of the execution of directives inside location, then location is again determined for the new URI.
+</p><p>如果在server级别设置该选项，那么他们将在location之前生效。如果在location还有更进一步的重写规则，location部分的规则依然会被执行。如果这个URI重写是因为location部分的规则造成的，那么location部分会再次被执行作为新的URI。
+</p><p>This cycle can be repeated up to 10 times, after which Nginx returns a 500 error.
+</p><p>这个循环会执行10次，然后Nginx会返回一个500错误。
+</p>
+<h2> Directives</h2>
+<ul><li> [#break break] 
+</li><li> [#if if] 
+</li><li> [#return return] 
+</li><li> [#rewrite rewrite] 
+</li><li> [#set set] 
+</li><li> [#uninitialized_variable_warn uninitialized_variable_warn] 
+</li></ul>
+<h2> break</h2>
+<p><b>语法:</b> <i>break</i>
+</p><p><b>默认值:</b> <i>none</i>
+</p><p><b>作用域:</b> <i>server, location, if</i>
+</p><p>Completes the current set of rules.
+作用是完成当前的规则列
+</p><p>示例:
+</p>
+<pre>
+if ($slow) {
+: limit_rate  10k;
+: break;
+}
+</pre>
+<h2> if</h2>
+<p><b>语法:</b> <i>if (condition) { ... }</i>
+</p><p><b>默认:</b> <i>none</i>
+</p><p><b>作用域:</b> <i>server, location</i>
+</p><p>Checks the truth of a condition.  If the condition evaluates to true, then the code indicated in the curly braces is carried out and the request is processed in accordance with the configuration within the following block.  Configuration inside directive if is inherited from the previous level.
+</p><p>They can be assigned as the condition:
+</p>
+<ul><li> the name of variable; false values are: empty string "", or any string starting with "0";
+</li><li> the comparison of variable with the line with using the <code>=</code> and <code>!=</code> operators;
+</li><li> pattern matching with regular expressions using the symbols <code>~*</code> and <code>~</code>:
+</li><li> <code>~</code> is case-sensitive match;
+</li><li> '~'符合，但是大小写敏感
+</li><li> <code>~*</code> specifies a case-insensitive match (firefox matches FireFox)
+</li><li>~*大小写不敏感的符合（firefox符合FireFox）
+</li><li> <code>!~  and  !~*</code> mean the opposite, "doesn't match"
+</li><li>!~和!~*代表相反，“不符合”
+</li><li> checking for the existence of a file using the <code>-f  and  !-f</code> operators;使用-f以及!-f检测一个文件是否存在
+</li><li> checking existence of a directory using the <code>-d  and  !-d</code> operators;使用-d以及!-d检测一个目录是否存在
+</li><li> checking existence of a file, directory or symbolic link using the <code>-e  and  !-e</code> operators;使用-e以及!-e检测是否存在一个文件，一个目录或者一个符号链接。
+</li></ul>
+<ul><li> checking whether a file is executable using the <code>-x and  !-x</code> operators.使用-x以及!-x检测一个文件是否可执行
+</li></ul>
+<p><br />
+Parts of the regular expressions can be in parentheses, whose value can then later be accessed in the <code>$1  to  >$9</code> variables.
+</p><p>Examples of use:
+</p>
+<pre>
+if ($http_user_agent ~ MSIE) {
+: rewrite  ^(.*)$  /msie/$1  break;
+}
+if ($http_cookie ~* &quot;id=([^;] +)(?:;|$)&quot; ) {
+: set  $id  $1;
+}
+if ($request_method = POST ) {
+: return 405;
+}
+if (!-f $request_filename) {
+: break;
+: proxy_pass  http://127.0.0.1;
+}
+if ($slow) {
+: limit_rate  10k;
+}
+if ($invalid_referer) {
+: return   403;
+}
+</pre>
+<p>The value of the built-in variable <code>$invalid_referer</code> is given by the directive valid_referers.
+</p><h2> return</h2>
+<p><b>语法:</b> <i>return code</i>
+</p><p><b>默认值:</b> <i>none</i>
+</p><p><b>作用域:</b> <i>server, location, if</i>
+</p><p>This directive concludes execution of the rules and returns the status code indicated to client.  It is possible to use the following values: 204, 400, 402-406, 408, 410, 411, 413, 416 and 500-504.  Furthermore, nonstandard code 444 closes the connection without sending any headers.
+</p><p>这个指令根据规则的执行情况，返回一个状态值给客户端。可使用值包括：204，400，402-406，408，410，411，413，416以及500-504。也可以发送非标准的444代码-未发送任何头信息下结束连接。
+</p><h2>rewrite</h2>
+<p><b>语法:</b> <i>rewrite regex replacement flag</i>
+</p><p><b>默认:</b> <i>none</i>
+</p><p><b>作用域:</b> <i>server, location, if</i>
+</p><p>This directive changes URI in accordance with the regular expression and the replacement string. Directives are carried out in order of appearance in the configuration file.
+</p><p>这个指令根据表达式来更改URI，或者修改字符串。指令根据配置文件中的顺序来执行。
+</p><p>Be aware that the rewrite regex only matches the relative path instead of the absolute URL. If you want to match the hostname, you should use an if condition, like so:
+</p><p>注意重写表达式只对相对路径有效。如果你想配对主机名，你应该使用if语句，如下：
+</p>
+<pre>
+if ($host ~* www\.(.*)) {
+: set $host_without_www $1;
+: rewrite ^(.*)$ http://$host_without_www$1 permanent; # $1 contains '/foo', not 'www.mydomain.com/foo'
+}
+</pre>
+<p>Flags make it possible to end the execution of rewrite directives.
+</p><p>If the replacement string begins with <code>http://</code> then the client will be redirected, and any further rewrite directives are terminated.
+</p><p>Flags can be any of the following:
+</p>
+<ul><li> last - completes processing of rewrite directives, after which searches for corresponding URI and location
+</li><li> break - completes processing of rewrite directives
+</li><li> redirect - returns temporary redirect with code 302; it is used if the substituting line begins with <code>http://</code>
+</li><li> permanent - returns permanent redirect with code 301
+</li></ul>
+<p>Note that if an redirect is relative (has no host part), then when redirecting Nginx uses the "Host" header if the header match name of  server_name   directive or the first name of <code>server_name</code> directive, if the header does not match or is absent.  If no <code>server_name</code> is set, then the local hostname is used.  If you want Nginx to always use the "Host" header, you can use a wildcard "*" <code>server_name</code> (but see the  restrictions on doing so).Example:
+</p>
+<pre>
+rewrite  ^(/download/.*)/media/(.*)\..*$  $1/mp3/$2.mp3  last;
+rewrite  ^(/download/.*)/audio/(.*)\..*$  $1/mp3/$2.ra   last;
+return   403;
+</pre>
+<p>But if we place these directives in location /download/, then it is necessary to replace flag "last" by "break", otherwise nginx will hit the 10 cycle limit and return error 500:
+</p>
+<pre>
+location /download/ {
+: rewrite  ^(/download/.*)/media/(.*)\..*$  $1/mp3/$2.mp3  break;
+: rewrite  ^(/download/.*)/audio/(.*)\..*$  $1/mp3/$2.ra   break;
+: return   403;
+}
+</pre>
+<p>If in the line of replacement arguments are indicated, then the rest of the request arguments are appended to them. To avoid having them appended, place a question mark as the last character:
+</p>
+<pre>
+: rewrite  ^/users/(.*)$  /show?user=$1?  last;
+</pre>
+<p>注: 对花括号( { 和 } )来说, 他们既能用在重定向的正则表达式里，也是用在配置文件里分割代码块, 为了避免冲突, 正则表达式里带花括号的话，应该用双引号（或者单引号）包围。比如，要将类似以下的url
+</p>
+<pre> 
+/photos/123456 
+</pre>
+<p>重定向到：
+</p>
+<pre> 
+/path/to/photos/12/1234/123456.png 
+</pre>
+<p>可以用以下方法 (注意双引号):
+</p>
+<pre>
+rewrite  &quot;/photos/([0-9] {2})([0-9] {2})([0-9] {2})&quot; /path/to/photos/$1/$1$2/$1$2$3.png; 
+</pre>
+<h2> set </h2>
+<p><b>syntax:</b> <i>set variable value</i>
+</p><p><b>default:</b> <i>none</i>
+</p><p><b>context:</b> <i>server, location, if</i>
+</p><p>Directive establishes value for the variable indicated. As the value it is possible to use a text, variables and their combination.
+</p><h2> uninitialized_variable_warn </h2>
+<p><b>syntax:</b> <i>uninitialized_variable_warn on|off</i>
+</p><p><b>default:</b> <i>uninitialized_variable_warn on</i>
+</p><p><b>context:</b> <i>http, server, location, if</i>
+</p><p>Enables or disables logging of warnings about noninitialized variables.
+</p><p>Internally, the rewrite directives are compiled at the time the configuration file is loaded into internal codes, usable during the request by the interpreter.
+</p><p>This interpreter is a simple stack virtual machine. For example, the directive:
+</p>
+<pre>
+location /download/ {
+: if ($forbidden) {
+: return   403;
+: }
+: if ($slow) {
+: limit_rate  10k;
+: }
+: rewrite  ^/(download/.*)/media/(.*)\..*$  /$1/mp3/$2.mp3  break;
+}
+</pre>
+<p>will be compiled into this sequence:
+</p>
+<pre>
+: variable $forbidden
+: checking to zero
+: recovery 403
+: completion of entire code
+: variable $slow
+: checking to zero
+: checkings of regular expression
+: copying &quot;/&quot;
+: copying $1
+: copying &quot;/mp3/&quot;
+: copying $2
+: copying &quot;..mpe&quot;
+: completion of regular expression
+: completion of entire sequence
+</pre>
+<p>Note that there is no code for directive limit_rate, since it does not refer to module ngx_http_rewrite_module. The "if" block exists in the same part of the configuration as the "location" directive.
+</p><p>If $slow is true, then what's inside the "if" block is evaluated, and in this configuration limit_rate it is equal to 10k.
+</p><p>Directive:
+</p>
+<pre>
+: rewrite  ^/(download/.*)/media/(.*)\..*$  /$1/mp3/$2.mp3  break;
+</pre>
+<p>It is possible to reduce the sequence, if in the regular expression we include the first slash inside the parentheses:
+</p>
+<pre>
+: rewrite  ^(/download/.*)/media/(.*)\..*$  $1/mp3/$2.mp3  break;
+</pre>
+<p>then the sequence will appear like this:
+</p>
+<pre>
+: checking regular expression
+: copying $1
+: copying &quot;/mp3/&quot;
+: copying $2
+: copying &quot;..mpe&quot;
+: completion of regular expression
+: completion of entire code
+</pre>
+<h2>References</h2>
+<p><a href="http://sysoev.ru/nginx/docs/http/ngx_http_rewrite_module.html" class="external text" title="http://sysoev.ru/nginx/docs/http/ngx_http_rewrite_module.html" rel="nofollow">Original Documentation</a>
+</p>
+</div>
+<!-- END CONTENT -->
+<div id="footer">
+<p><a href="#top">顶端</a></p>
+<p>中文化: <a href="../index.html" >Nginx中文文档</a> &nbsp;&middot;&nbsp; 制作: nginx.cn  (整理及部分翻译 )</p>
+</div>
+ 
+</body></html>

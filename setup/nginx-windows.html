@@ -1,0 +1,44 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>nginx在windows上的安装-Nginx中文手册</title>
+<link rel="stylesheet" type="text/css" media="all" href="../userguide.css" />
+<script type="text/javascript" src="../nav/nav.js"></script>
+<script type="text/javascript" src="../nav/prototype.lite.js"></script>
+<script type="text/javascript" src="../nav/moo.fx.js"></script>
+<script type="text/javascript" src="../nav/user_guide_menu.js"></script>
+<meta name="robots" content="all" />
+</head>
+<body>
+<!-- START NAVIGATION -->
+<div id="nav2"><a name="top"></a><a href="../index.html" ><img src="../images/nav_toggle_darker.jpg" width="154" height="43" border="0" /></a></div>
+<div id="masthead">
+<table cellpadding="0" cellspacing="0" border="0" style="width:100%">
+<tr>
+<td><span id="sitename">Nginx中文文档</span></td>
+<td id="breadcrumb_right"><a href="../index.html">目录首页</a></td>
+</tr>
+</table>
+</div>
+<!-- END NAVIGATION -->
+<table cellpadding="0" cellspacing="0" border="0" style="width:100%">
+<tr>
+<td id="breadcrumb">
+<a href="../index.html" >&nbsp;&#8250;&nbsp;nginx在windows上的安装
+</td>
+</tr>
+</table>
+<br clear="all" />
+<!-- START CONTENT -->
+<div id="content">
+<h1>nginx在windows上的安装</h1>
+写一下简单的安装方法<br />1.下载软件<br />需要的软件有nginx,php,mysql(如不需要可不安装)<br />nginx.org,<a href="http://www.php.net/" target="_blank" onclick="return checkUrl(this)" id="url_1">www.php.net</a>上面有得下<br />全部解压出来<br />php基本不用做任何修改（下载直接解压版本的）<br />2.配置nginx<br />只需修改一行（nginx/conf/nginx.conf）<br />&nbsp;&nbsp;fastcgi_param&nbsp;&nbsp;SCRIPT_FILENAME&nbsp;&nbsp;d:/nginx/html/$fastcgi_script_name;<br />找到大概这一行修改路径最好是绝对路径（相对路径可以自行探讨）<br />3.运行软件<br />先运行php<br />程序》运行》cmd<br />到php所在目录运行下面代码<br />php-cgi.exe -b 127.0.0.1:9000 -c php\php.ini<br />再运行nginx<br />到nginx所在目录<br />nginx.exe -c conf\nginx.conf<br />这样就ok了。<br /><br />win下可以使用NPMserv更强大<br /><br />by afen.cn<br /><br />
+</div>
+<!-- END CONTENT -->
+<div id="footer">
+<p><a href="#top">顶端</a></p>
+<p>中文化: <a href="../index.html" >Nginx中文文档</a> &nbsp;&middot;&nbsp; 制作: nginx.cn  (整理及部分翻译 )</p>
+</div>
+ 
+</body></html>

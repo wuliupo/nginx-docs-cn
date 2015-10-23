@@ -1,0 +1,167 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Geo模块-Nginx中文文档</title>
+<link rel="stylesheet" type="text/css" media="all" href="../userguide.css" />
+<script type="text/javascript" src="../nav/nav.js"></script>
+<script type="text/javascript" src="../nav/prototype.lite.js"></script>
+<script type="text/javascript" src="../nav/moo.fx.js"></script>
+<script type="text/javascript" src="../nav/user_guide_menu.js"></script>
+<meta name="robots" content="all" />
+</head>
+<body>
+<!-- START NAVIGATION -->
+<div id="nav2"><a name="top"></a><a href="../index.html" ><img src="../images/nav_toggle_darker.jpg" width="154" height="43" border="0" /></a></div>
+<div id="masthead">
+<table cellpadding="0" cellspacing="0" border="0" style="width:100%">
+<tr>
+<td><span id="sitename">Nginx中文文档</span></td>
+<td id="breadcrumb_right"><a href="../index.html">目录首页</a></td>
+</tr>
+</table>
+</div>
+<!-- END NAVIGATION -->
+<table cellpadding="0" cellspacing="0" border="0" style="width:100%">
+<tr>
+<td id="breadcrumb">
+<a href="../index.html" >&nbsp;&#8250;&nbsp;Geo模块
+</td>
+</tr>
+</table>
+<br clear="all" />
+<!-- START CONTENT -->
+<div id="content">
+<h1>Geo模块</h1>
+<h2>摘要</h2>
+<p>This module creates variables, whose values depend on the IP-address of the client.
+</p><p>Example configuration:
+<style>/* GeSHi (C) 2004 - 2007 Nigel McNie (http://qbnz.com/highlighter) */
+.code .imp {font-weight: bold; color: red;}
+.code .kw1 {color: #b1b100;}
+.code .kw2 {color: #000000; font-weight: bold;}
+.code .kw3 {color: #000066;}
+.code .kw4 {color: #993333;}
+.code .co1 {color: #808080; font-style: italic;}
+.code .coMULTI {color: #808080; font-style: italic;}
+.code .es0 {color: #000099; font-weight: bold;}
+.code .br0 {color: #66cc66;}
+.code .st0 {color: #ff0000;}
+.code .me1 {color: #202020;}
+.code .me2 {color: #202020;}
+</p>
+</style><pre class="code"><span class="kw12">geo</span>  <span class="re0">$geo</span>  <span class="br0">&#123;</span>
+  default          <span class="nu0">0</span>;
+  <span class="nu0">127.0</span><span class="nu0">.0</span><span class="nu0">.1</span>/<span class="nu0">32</span>     <span class="nu0">2</span>;
+  <span class="nu0">192.168</span><span class="nu0">.1</span><span class="nu0">.0</span>/<span class="nu0">24</span>   <span class="nu0">1</span>;
+  <span class="nu0">10.1</span><span class="nu0">.0</span><span class="nu0">.0</span>/<span class="nu0">16</span>      <span class="nu0">1</span>;
+<span class="br0">&#125;</span></pre>
+<h2>指令</h2>
+<h2>geo </h2>
+<p><b>syntax:</b> <i>geo [$ip_variable] $variable { ... }</i>
+</p><p><b>default:</b> none
+</p><p><b>context:</b> <i>http</i>
+</p><p>The directive describes the dependency of the value of a variable on the IP-address of a client. By default, the IP-address used for the lookup is $remote_addr, but since version 0.7.27 it is possible to specify which variable should be used.
+</p><p><style>/* GeSHi (C) 2004 - 2007 Nigel McNie (http://qbnz.com/highlighter) */
+.code .imp {font-weight: bold; color: red;}
+.code .kw1 {color: #b1b100;}
+.code .kw2 {color: #000000; font-weight: bold;}
+.code .kw3 {color: #000066;}
+.code .kw4 {color: #993333;}
+.code .co1 {color: #808080; font-style: italic;}
+.code .coMULTI {color: #808080; font-style: italic;}
+.code .es0 {color: #000099; font-weight: bold;}
+.code .br0 {color: #66cc66;}
+.code .st0 {color: #ff0000;}
+.code .me1 {color: #202020;}
+.code .me2 {color: #202020;}
+</p>
+</style><pre class="code"> <span class="kw12">geo</span>  <span class="re0">$arg_remote_addr</span> <span class="re0">$geo</span> <span class="br0">&#123;</span>
+   ...;
+ <span class="br0">&#125;</span></pre>
+<p>Addresses are assigned in the form CIDR. Furthermore, there are four special parameters:
+</p><p>Example of the description:
+</p>
+<ul><li> delete – deletes the specified network (0.7.23).
+</li><li> default - the value of variable, if the client address does not correspond to any assigned address. It is possible so to write instead of default 0.0.0.0/0.
+</li><li> include - text file with addresses and values information. Several files can be inluded like this.
+</li><li> proxy - specifies the address of proxy server (0.8.7+). NEED MORE DESCRIPTION...
+</li><li> ranges – specifies that the addresses specified are in the form of ranges (0.7.23). This directive must be the first.
+</li></ul>
+<p><style>/* GeSHi (C) 2004 - 2007 Nigel McNie (http://qbnz.com/highlighter) */
+.code .imp {font-weight: bold; color: red;}
+.code .kw1 {color: #b1b100;}
+.code .kw2 {color: #000000; font-weight: bold;}
+.code .kw3 {color: #000066;}
+.code .kw4 {color: #993333;}
+.code .co1 {color: #808080; font-style: italic;}
+.code .coMULTI {color: #808080; font-style: italic;}
+.code .es0 {color: #000099; font-weight: bold;}
+.code .br0 {color: #66cc66;}
+.code .st0 {color: #ff0000;}
+.code .me1 {color: #202020;}
+.code .me2 {color: #202020;}
+</p>
+</style><pre class="code"> <span class="kw12">geo</span>  <span class="re0">$country</span>  <span class="br0">&#123;</span>
+   default          no;
+   <span class="kw1">include</span>          conf/<span class="kw12">geo</span>.conf;
+   <span class="nu0">127.0</span><span class="nu0">.0</span><span class="nu0">.0</span>/<span class="nu0">24</span>     us;
+   <span class="nu0">127.0</span><span class="nu0">.0</span><span class="nu0">.1</span>/<span class="nu0">32</span>     ru;
+   <span class="nu0">10.1</span><span class="nu0">.0</span><span class="nu0">.0</span>/<span class="nu0">16</span>      ru;
+   <span class="nu0">192.168</span><span class="nu0">.1</span><span class="nu0">.0</span>/<span class="nu0">24</span>   uk;
+ <span class="br0">&#125;</span></pre>
+<p>In the file conf/geo.conf:
+<style>/* GeSHi (C) 2004 - 2007 Nigel McNie (http://qbnz.com/highlighter) */
+.code .imp {font-weight: bold; color: red;}
+.code .kw1 {color: #b1b100;}
+.code .kw2 {color: #000000; font-weight: bold;}
+.code .kw3 {color: #000066;}
+.code .kw4 {color: #993333;}
+.code .co1 {color: #808080; font-style: italic;}
+.code .coMULTI {color: #808080; font-style: italic;}
+.code .es0 {color: #000099; font-weight: bold;}
+.code .br0 {color: #66cc66;}
+.code .st0 {color: #ff0000;}
+.code .me1 {color: #202020;}
+.code .me2 {color: #202020;}
+</p>
+</style><pre class="code"> <span class="nu0">10.2</span><span class="nu0">.0</span><span class="nu0">.0</span>/<span class="nu0">16</span>      ru;
+ <span class="nu0">192.168</span><span class="nu0">.2</span><span class="nu0">.0</span>/<span class="nu0">24</span>   ru;</pre>
+<p>The value will be the the one with maximum agreement. For example, the IP address 127.0.0.1 will get the value "ru", but not "us".
+</p><p>Example with ranges:
+<style>/* GeSHi (C) 2004 - 2007 Nigel McNie (http://qbnz.com/highlighter) */
+.code .imp {font-weight: bold; color: red;}
+.code .kw1 {color: #b1b100;}
+.code .kw2 {color: #000000; font-weight: bold;}
+.code .kw3 {color: #000066;}
+.code .kw4 {color: #993333;}
+.code .co1 {color: #808080; font-style: italic;}
+.code .coMULTI {color: #808080; font-style: italic;}
+.code .es0 {color: #000099; font-weight: bold;}
+.code .br0 {color: #66cc66;}
+.code .st0 {color: #ff0000;}
+.code .me1 {color: #202020;}
+.code .me2 {color: #202020;}
+</p>
+</style><pre class="code"> <span class="kw12">geo</span>  <span class="re0">$country</span>  <span class="br0">&#123;</span>
+   ranges;
+   default                    no; 
+   <span class="nu0">127.0</span><span class="nu0">.0</span><span class="nu0">.0</span><span class="nu0">-127.0</span><span class="nu0">.0</span><span class="nu0">.0</span>        us;
+   <span class="nu0">127.0</span><span class="nu0">.0</span><span class="nu0">.1</span><span class="nu0">-127.0</span><span class="nu0">.0</span><span class="nu0">.1</span>        ru;
+   <span class="nu0">127.0</span><span class="nu0">.0</span><span class="nu0">.1</span><span class="nu0">-127.0</span><span class="nu0">.0</span><span class="nu0">.255</span>      us;
+   <span class="nu0">10.1</span><span class="nu0">.0</span><span class="nu0">.0</span><span class="nu0">-10.1</span><span class="nu0">.255</span><span class="nu0">.255</span>      ru;
+   <span class="nu0">192.168</span><span class="nu0">.1</span><span class="nu0">.0</span><span class="nu0">-192.168</span><span class="nu0">.1</span><span class="nu0">.255</span>  uk; 
+ <span class="br0">&#125;</span></pre>
+<h2>References </span></h2>
+<ul><li> <a href="http://doc.aiwaly.com/HWLoadbalancerCheckErrors" title="HWLoadbalancerCheckErrors">HWLoadbalancerCheckErrors</a>
+</li><li> <a href="http://www.ruby-forum.com/topic/125810" class="external text" title="http://www.ruby-forum.com/topic/125810" rel="nofollow">Creating geo.conf From MaxMind GeoIP Country Database</a> 
+</li><li> <a href="http://sysoev.ru/nginx/docs/http/ngx_http_geo_module.html" class="external text" title="http://sysoev.ru/nginx/docs/http/ngx_http_geo_module.html" rel="nofollow">Original Documentation</a>
+</li></ul>
+</div>
+<!-- END CONTENT -->
+<div id="footer">
+<p><a href="#top">顶端</a></p>
+<p>中文化: <a href="../index.html" >Nginx中文文档</a> &nbsp;&middot;&nbsp; 制作: nginx.cn  (整理及部分翻译 )</p>
+</div>
+ 
+</body></html>

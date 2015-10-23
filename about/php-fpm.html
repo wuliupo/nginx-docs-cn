@@ -1,0 +1,198 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>nginx php-fpm安装配置-Nginx中文文档</title>
+<link rel="stylesheet" type="text/css" media="all" href="../userguide.css" />
+<script type="text/javascript" src="../nav/nav.js"></script>
+<script type="text/javascript" src="../nav/prototype.lite.js"></script>
+<script type="text/javascript" src="../nav/moo.fx.js"></script>
+<script type="text/javascript" src="../nav/user_guide_menu.js"></script>
+<meta name="robots" content="all" />
+</head>
+<body>
+<!-- START NAVIGATION -->
+<div id="nav2"><a name="top"></a><a href="../index.html" ><img src="../images/nav_toggle_darker.jpg" width="154" height="43" border="0" /></a></div>
+<div id="masthead">
+<table cellpadding="0" cellspacing="0" border="0" style="width:100%">
+<tr>
+<td><span id="sitename">Nginx中文文档</span></td>
+<td id="breadcrumb_right"><a href="../index.html">目录首页</a></td>
+</tr>
+</table>
+</div>
+<!-- END NAVIGATION -->
+<table cellpadding="0" cellspacing="0" border="0" style="width:100%">
+<tr>
+<td id="breadcrumb">
+<a href="../index.html" >&nbsp;&#8250;&nbsp;nginx php-fpm安装配置
+</td>
+</tr>
+</table>
+<br clear="all" />
+<!-- START CONTENT -->
+<div id="content">
+<h1>nginx php-fpm安装配置</h1>
+<p>nginx本身不能处理PHP，它只是个web服务器，当接收到请求后，如果是php请求，则发给php解释器处理，并把结果返回给客户端。</p>
+<p>nginx一般是把请求发fastcgi管理进程处理，fascgi管理进程选择cgi子进程处理结果并返回被nginx</p>
+<p>本文以php-fpm为例介绍如何使nginx支持PHP</p>
+<p>一、编译安装php-fpm</p>
+<p><strong>什么是PHP-FPM</strong><br>
+<span id="more-231"></span></p>
+<p>PHP-FPM是一个PHP FastCGI管理器，是只用于PHP的,可以在 http://php-fpm.org/download下载得到.</p>
+<p>PHP-FPM其实是PHP源代码的一个补丁，旨在将FastCGI进程管理整合进PHP包中。必须将它patch到你的PHP源代码中，在编译安装PHP后才可以使用。</p>
+<p><span style="color: #ff0000;"><strong>新版PHP已经集成php-fpm了，不再是第三方的包了，推荐使用</strong></span>。PHP-FPM提供了更好的PHP进程管理方式，可以有效控制内存和进程、可以平滑重载PHP配置，比spawn-fcgi具有更多优点，所以被PHP官方收录了。在./configure的时候带 –enable-fpm参数即可开启PHP-FPM，其它参数都是配置php的，具体选项含义可以<a href="http://www.php.net/manual/en/configure.about.php" target="_blank">查看这里</a>。</p>
+<p>安装前准备<br>
+centos下执行</p>
+<pre class="prettyprint">yum -y install gcc automake autoconf libtool make
+
+yum -y install gcc gcc-c++ glibc
+
+yum -y install libmcrypt-devel mhash-devel libxslt-devel 
+libjpeg libjpeg-devel libpng libpng-devel freetype freetype-devel libxml2 libxml2-devel 
+zlib zlib-devel glibc glibc-devel glib2 glib2-devel bzip2 bzip2-devel 
+ncurses ncurses-devel curl curl-devel e2fsprogs e2fsprogs-devel 
+krb5 krb5-devel libidn libidn-devel openssl openssl-devel</pre>
+<p><strong>新版php-fpm安装(<span style="color: #ff0000;">推荐安装方式</span>)</strong></p>
+<pre class="prettyprint">wget http://cn2.php.net/distributions/php-5.4.7.tar.gz
+tar zvxf php-5.4.7.tar.gz
+cd php-5.4.7
+./configure --prefix=/usr/local/php  --enable-fpm --with-mcrypt 
+--enable-mbstring --disable-pdo --with-curl --disable-debug  --disable-rpath 
+--enable-inline-optimization --with-bz2  --with-zlib --enable-sockets 
+--enable-sysvsem --enable-sysvshm --enable-pcntl --enable-mbregex 
+--with-mhash --enable-zip --with-pcre-regex --with-mysql --with-mysqli 
+--with-gd --with-jpeg-dir
+
+make all install</pre>
+<p><del datetime="2013-09-13T04:38:03+00:00"><strong>旧版手动打补丁php-fpm安装（旧版程序已经没有了，大家新版的吧，这里做个展示）</strong><br>
+wget http://cn2.php.net/get/php-5.2.17.tar.gz<br>
+wget http://php-fpm.org/downloads/php-5.2.17-fpm-0.5.14.diff.gz<br>
+tar zvxf php-5.2.17.tar.gz<br>
+gzip -cd php-5.2.17-fpm-0.5.14.diff.gz | patch -d php-5.2.17 -p1<br>
+cd php-5.2.17<br>
+./configure --prefix=/usr/local/php -with-config-file-path=/usr/local/php/etc<br>
+-with-mysql=/usr/local/mysql<br>
+-with-mysqli=/usr/local/mysql/bin/mysql_config -with-openssl -enable-fpm -enable-mbstring<br>
+-with-freetype-dir -with-jpeg-dir -with-png-dir -with-zlib-dir -with-libxml-dir=/usr -enable-xml<br>
+-with-mhash -with-mcrypt -enable-pcntl -enable-sockets &nbsp;-with-bz2 -with-curl -with-curlwrappers<br>
+-enable-mbregex -with-gd -enable-gd-native-ttf -enable-zip -enable-soap -with-iconv -enable-bcmath<br>
+-enable-shmop -enable-sysvsem -enable-inline-optimization -with-ldap -with-ldap-sasl -enable-pdo<br>
+-with-pdo-mysql<br>
+make all install</del></p>
+<p>以上两种方式都可以安装php-fpm，安装后内容放在/usr/local/php目录下</p>
+<p><a href="1.png"><img class="alignnone size-medium wp-image-237" title="1" alt="" src="1-300x41.png" width="300" height="41"></a></p>
+<p>以上就完成了php-fpm的安装。</p>
+<p>下面是对php-fpm运行用户进行设置</p>
+<pre class="prettyprint">cd /usr/local/php
+cp etc/php-fpm.conf.default etc/php-fpm.conf
+vi etc/php-fpm.conf</pre>
+<p>修改<br>
+user = www-data<br>
+group = www-data</p>
+<p>如果www-data用户不存在，那么先添加www-data用户<br>
+groupadd www-data<br>
+useradd -g www-data www-data</p>
+<p>二、编译安装nginx</p>
+<p>然后按照<a href="about/install.html">&nbsp;安装nginx</a></p>
+<p>三、修改nginx配置文件以支持php-fpm</p>
+<p>nginx安装完成后，修改nginx配置文件为,<a href="nginx.conf_.txt">nginx.conf</a></p>
+<p>其中server段增加如下配置，注意标红内容配置，否则会出现No input file specified.错误</p>
+<p># pass the PHP scripts to FastCGI server listening on 127.0.0.1:9000<br>
+#<br>
+location ~ .php$ {<br>
+<span style="color: #ff0000;">root html;</span><br>
+fastcgi_pass 127.0.0.1:9000;<br>
+fastcgi_index index.php;<br>
+<span style="color: #ff0000;">fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;</span><br>
+include fastcgi_params;<br>
+}</p>
+<p>四、创建测试php文件</p>
+<p>创建php文件</p>
+<p>在/usr/local/nginx/html下创建index.php文件，输入如下内容</p>
+<pre class="prettyprint lang-php">&lt;?php
+    echo phpinfo();
+?&gt;</pre>
+<p>五、启动服务</p>
+<p>启动php-fpm和nginx</p>
+<pre class="prettyprint">/usr/local/php/sbin/php-fpm 
+#手动打补丁的启动方式/usr/local/php/sbin/php-fpm start
+
+sudo /usr/local/nginx/nginx</pre>
+<p>php-fpm关闭重启见文章结尾</p>
+<p>六、浏览器访问</p>
+<p>访问http://你的服务器ip/index.php，皆可以见到php信息了。</p>
+<p><a href="2.png"><img class="alignnone size-medium wp-image-236" title="2" alt="" src="2-300x120.png" width="300" height="120"></a></p>
+<p><span style="color: #ff0000;"><strong>安装php-fpm时可能遇到的错误：</strong></span></p>
+<p>1.<strong> php configure时出错</strong></p>
+<p>configure: error: XML configuration could not be found</p>
+<pre class="prettyprint">apt-get install libxml2 libxml2-dev &nbsp;(ubuntu下)
+yum -y install libxml2 libxml2-devel（centos下)</pre>
+<p>2.<strong> Please reinstall the BZip2 distribution</strong></p>
+<pre class="prettyprint">wget http://www.bzip.org/1.0.5/bzip2-1.0.5.tar.gz
+tar -zxvf bzip2-1.0.5.tar.gz
+cd bzip2-1.0.5
+make
+make install</pre>
+<p>3.&nbsp;<strong>php的配置文件中有一行--with-mysql=/usr</strong>。<br>
+安装的时候提示：<br>
+configure: error: Cannot find MySQL header files under yes.<br>
+Note that the MySQL client library is not bundled anymore.</p>
+<p>这是由于安装mysql时没有安装mysql头文件，或者是路径指定不正确,php找不到mysql的头文件引起的错误提示。<br>
+解决方法。<br>
+(1.) 查看你的系统有没有安装mysql header<br>
+find / -name mysql.h<br>
+如果有。请指定--with-mysql=/跟你的正常路径。<br>
+如果没有。请看下一步。<br>
+(2.)redhat安装<br>
+rpm -ivh MySQL-devel-4.1.12-1.i386.rpm<br>
+(3.)ubuntu安装<br>
+apt-get install libmysqlclient15-dev<br>
+(4.)最后一步php的配置选项添加--with-mysql=/usr即可！</p>
+<p>4.<strong>No input file specified.</strong></p>
+<p>location ~ .php$ {<br>
+root html;<br>
+fastcgi_pass 127.0.0.1:9000;<br>
+fastcgi_index index.php;<br>
+fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;<br>
+include fastcgi_params;<br>
+}</p>
+<p><span style="line-height: 1.714285714; font-size: 1rem;">5.&nbsp;<strong>如果php configure时缺库，可以先安装库(ubuntu下)</strong></span></p>
+<p>sudo apt-get install make bison flex gcc patch autoconf subversion locate<br>
+sudo apt-get install libxml2-dev libbz2-dev libpcre3-dev libssl-dev zlib1g-dev libmcrypt-dev libmhash-dev libmhash2 libcurl4-openssl-dev libpq-dev libpq5 libsyck0-dev</p>
+<p>6.&nbsp;<strong>mcrypt.h not found. Please reinstall libmcrypt</strong></p>
+<p>apt-get install libmcrypt-dev</p>
+<p>或者</p>
+<p>cd /usr/local/src<br>
+wget http://softlayer.dl.sourceforge.net/sourceforge/mcrypt/libmcrypt-2.5.8.tar.gz<br>
+tar -zxvf libmcrypt-2.5.8.tar.gz<br>
+cd /usr/local/src/libmcrypt-2.5.8<br>
+./configure --prefix=/usr/local<br>
+make<br>
+make install</p>
+<p><span style="line-height: 1.714285714; font-size: 1rem;">7. <strong>php-fpm 5.4.7 如何关闭 重启？</strong></span></p>
+<p>php 5.4.7 下的php-fpm 不再支持 php-fpm 以前具有的 /usr/local/php/sbin/php-fpm (start|stop|reload)等命令，需要使用信号控制：</p>
+<p>master进程可以理解以下信号</p>
+<p>INT, TERM 立刻终止 QUIT 平滑终止 USR1 重新打开日志文件 USR2 平滑重载所有worker进程并重新载入配置和二进制模块</p>
+<p>示例：</p>
+<p>php-fpm 关闭：</p>
+<p>kill -INT `cat /usr/local/php/var/run/php-fpm.pid`</p>
+<p>php-fpm 重启：</p>
+<p>kill -USR2 `cat /usr/local/php/var/run/php-fpm.pid`</p>
+<p>查看php-fpm进程数：</p>
+<p>ps aux | grep -c php-fpm</p>
+<p>8.命令行下执行php，提示找不到命令</p>
+<p>-bash: /usr/bin/php: No such file or directory</p>
+<p>vi /etc/profile</p>
+<p>在文件底部增加一行配置<br>
+export PATH=/usr/local/php/bin:$PATH</p>
+<p>保存退出</p>
+<p>source /etc/profile</p>
+</div>
+<!-- END CONTENT -->
+<div id="footer">
+<p><a href="#top">顶端</a></p>
+<p>中文化: <a href="../index.html" >Nginx中文文档</a> &nbsp;&middot;&nbsp; 制作: nginx.cn  (整理及部分翻译 )</p>
+</div>
+ 
+</body></html>

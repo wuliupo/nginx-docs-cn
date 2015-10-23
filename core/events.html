@@ -1,0 +1,136 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>指令-Nginx中文文档</title>
+<link rel="stylesheet" type="text/css" media="all" href="../userguide.css" />
+<script type="text/javascript" src="../nav/nav.js"></script>
+<script type="text/javascript" src="../nav/prototype.lite.js"></script>
+<script type="text/javascript" src="../nav/moo.fx.js"></script>
+<script type="text/javascript" src="../nav/user_guide_menu.js"></script>
+<meta name="robots" content="all" />
+</head>
+<body>
+<!-- START NAVIGATION -->
+<div id="nav2"><a name="top"></a><a href="../index.html" ><img src="../images/nav_toggle_darker.jpg" width="154" height="43" border="0" /></a></div>
+<div id="masthead">
+<table cellpadding="0" cellspacing="0" border="0" style="width:100%">
+<tr>
+<td><span id="sitename">Nginx中文文档</span></td>
+<td id="breadcrumb_right"><a href="../index.html">目录首页</a></td>
+</tr>
+</table>
+</div>
+<!-- END NAVIGATION -->
+<table cellpadding="0" cellspacing="0" border="0" style="width:100%">
+<tr>
+<td id="breadcrumb">
+<a href="../index.html" >&nbsp;&#8250;&nbsp;指令
+</td>
+</tr>
+</table>
+<br clear="all" />
+<!-- START CONTENT -->
+<div id="content">
+<h1>指令</h1>
+<h2> accept_mutex </h2>
+<p><b>Syntax:</b> <i>accept_mutex [ on | off ] </i>
+</p><p><b>Default:</b> <i>on</i>
+</p><p>nginx 使用连接互斥锁进行顺序的accept()系统调用.
+</p>
+<h2> accept_mutex_delay </h2>
+<p><b>Syntax:</b> <i>accept_mutex_delay Nms;</i>
+</p><p><b>Default:</b> <i>500ms</i>
+</p><p>如果一个进程没有互斥锁，它将延迟至少多长时间。默认情况下，延迟是500ms 。
+</p><p><br />
+</p>
+<h2> debug_connection </h2>
+<p><b>Syntax:</b> <i>debug_connection [ip | CIDR] </i>
+</p><p><b>Default:</b> <i>none</i>
+</p><p>Since 0.3.54 this option support CIDR address format
+</p><p>This option gives you the ability to write debug log only for the clients of this IP/NET. 
+</p><p>Several different directives are possible.
+</p><p>Example:
+<style>/* GeSHi (C) 2004 - 2007 Nigel McNie (http://qbnz.com/highlighter) */
+.code .imp {font-weight: bold; color: red;}
+.code .kw1 {color: #b1b100;}
+.code .kw2 {color: #000000; font-weight: bold;}
+.code .kw3 {color: #000066;}
+.code .kw4 {color: #993333;}
+.code .co1 {color: #808080; font-style: italic;}
+.code .coMULTI {color: #808080; font-style: italic;}
+.code .es0 {color: #000099; font-weight: bold;}
+.code .br0 {color: #66cc66;}
+.code .st0 {color: #ff0000;}
+.code .me1 {color: #202020;}
+.code .me2 {color: #202020;}
+</p>
+</style><pre class="code"><span class="kw1">error_log</span> /var/log/nginx/errors;
+<span class="kw2">events</span> <span class="br0">&#123;</span>
+  <span class="kw2">debug_connection</span>   <span class="nu0">192.168</span><span class="nu0">.1</span><span class="nu0">.1</span>;
+<span class="br0">&#125;</span></pre>
+<h2> devpoll_changes </h2>
+<h2> devpoll_events </h2>
+<h2> kqueue_events</h2>
+<h2> epoll_events </h2>
+<p><b>Syntax:</b> <i>devpoll_changes</i>
+</p><p><b>Default:</b> <i> </i>
+</p><p>These directives specify how many events may be passed to/from kernel, using appropriate method. 
+</p><p>The default <code>devpoll</code> values are 32, the rest are 512.
+</p>
+<h2> multi_accept </h2>
+<p><b>Syntax:</b> <i>multi_accept [ on | off ] </i>
+</p><p><b>Default:</b> <i>off</i>
+</p><p><code>multi_accept</code> tries to accept() as many connections as possible after nginx gets notification about a new connection.
+</p><p><br />
+</p><p><br />
+</p>
+<h2> rtsig_signo</h2>
+<p><b>Syntax:</b> <i>rtsig_signo</i>
+</p><p><b>Default:</b> <i> </i>
+</p><p>nginx uses two signals when the <code>rtsig</code> method is used. The directive specified the first signal number. The second is plus 1. 
+</p><p>By default <code>rtsig_signo</code> is SIGRTMIN+10 (40).
+</p><p><br />
+</p>
+<h2> rtsig_overflow_events </h2>
+<h2>  rtsig_overflow_test </h2>
+<h2>  rtsig_overflow_threshold </h2>
+<p><b>Syntax:</b> <i>rtsig_overflow_*</i>
+</p><p><b>Default:</b> <i> </i>
+</p><p>These directives specifies how to handle rtsig queue overflows. When overflow occurred nginx flushes rtsig queue, then it handles events switching between poll() and rtsig. poll() handles consecutively all unhandled events, while rtsig periodicaly drains queue to prevent a new overflow. When overflow is handled completely, nginx switches to rtsig method again.
+</p><p>The rtsig_overflow_events specifies the number of events to be passed via poll(). The default is 16.
+</p><p>The rtsig_overflow_test specifies after which number of events handled by poll() nginx will drains rtsig queue. The default is 32.
+</p><p>The rtsig_overflow_threshold works in Linux 2.4.x only. Before to drain rtsig queue nginx looks in a kernel how the queue is filled up
+</p><p>The default is 1/10. "rtsig_overflow_threshold 3" means 1/3.
+</p>
+<h2>  use </h2>
+<p><b>Syntax:</b> <i>use [ kqueue | rtsig | epoll | /dev/poll | select | poll | eventport ] </i>
+</p><p><b>Default:</b> <i> </i>
+</p><p><br />
+如果在<code>./configure</code>的时候指定了不止一种事件模型，那么可以设置其中一个，以便告诉nginx使用哪种事件模型。默认情况下nginx会在<code>./configure</code>时找出最适合系统的事件模型。
+</p><p>你可以在<a href="../general/optimizations.html" title="NginxOptimizations"> 这里</a> 查看可用的事件模型以及如何在<code>./configure</code>时激活
+</p>
+<h2>  worker_connections </h2>
+<p><b>Syntax:</b> <i>worker_connections number</i>
+</p><p><b>Default:</b> <i> </i>
+</p><p>通过worker_connections和worker_proceses可以计算出maxclients：
+</p>
+<pre>
+max_clients = worker_processes * worker_connections
+</pre>
+<p>作为反向代理，max_clients为：
+</p>
+<pre>
+max_clients = worker_processes * worker_connections/4
+</pre>
+<p>Since a browser opens 2 connections by default to a server and nginx uses the fds (file descriptors) from the same pool to connect to the upstream backend
+</p>
+<h1> References </h1>
+</div>
+<!-- END CONTENT -->
+<div id="footer">
+<p><a href="#top">顶端</a></p>
+<p>中文化: <a href="../index.html" >Nginx中文文档</a> &nbsp;&middot;&nbsp; 制作: nginx.cn  (整理及部分翻译 )</p>
+</div>
+ 
+</body></html>

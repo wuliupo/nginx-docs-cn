@@ -1,0 +1,167 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>HttpSSI模块-Nginx中文文档</title>
+<link rel="stylesheet" type="text/css" media="all" href="../userguide.css" />
+<script type="text/javascript" src="../nav/nav.js"></script>
+<script type="text/javascript" src="../nav/prototype.lite.js"></script>
+<script type="text/javascript" src="../nav/moo.fx.js"></script>
+<script type="text/javascript" src="../nav/user_guide_menu.js"></script>
+<meta name="robots" content="all" />
+</head>
+<body>
+<!-- START NAVIGATION -->
+<div id="nav2"><a name="top"></a><a href="../index.html" ><img src="../images/nav_toggle_darker.jpg" width="154" height="43" border="0" /></a></div>
+<div id="masthead">
+<table cellpadding="0" cellspacing="0" border="0" style="width:100%">
+<tr>
+<td><span id="sitename">Nginx中文文档</span></td>
+<td id="breadcrumb_right"><a href="../index.html">目录首页</a></td>
+</tr>
+</table>
+</div>
+<!-- END NAVIGATION -->
+<table cellpadding="0" cellspacing="0" border="0" style="width:100%">
+<tr>
+<td id="breadcrumb">
+<a href="../index.html" >&nbsp;&#8250;&nbsp;HttpSSI模块
+</td>
+</tr>
+</table>
+<br clear="all" />
+<!-- START CONTENT -->
+<div id="content">
+<h1>HttpSSI模块</h1>
+<p>此模块处理服务器端包含文件(ssi)的处理.
+列表中的命令当前并未完全支持.
+</p><p>__配置示例__
+</p>
+<pre>
+location / {
+: ssi  on;
+}
+</pre>
+<h2> Directives </h2>
+<ul><li> [#ssi ssi] 
+</li><li> [#ssi_silent_errors ssi_silent_errors] 
+</li><li> [#ssi_types ssi_types] 
+</li><li> [#ssi_value_length ssi_value_length] 
+</li></ul>
+<p><br />
+<h2> ssi </h2>
+<p><b>语法:</b> <i>ssi [ on | off ] </i>
+</p><p><b>默认值:</b> <i>ssi off</i>
+</p><p><b>作用域:</b> <i>http, server, location</i>
+在location作用域中将启用SSI文件处理.
+</p><h2> ssi_silent_errors </h2>
+<p><b>语法:</b> <i>ssi_silent_errors [on|off] </i>
+</p><p><b>默认值:</b> <i>ssi_silent_errors off</i>
+</p><p><b>作用域:</b> <i>http, server, location</i>
+</p><p>在处理SSI文件出错时不输出错误提示:"[an error occurred while processing the directive] "
+</p><h2> ssi_types</h2>
+<p><b>语法:</b> <i>ssi_types mime-type [mime-type ...] </i>
+</p><p><b>默认值:</b> <i>ssi_types text/html</i>
+</p><p><b>作用域:</b> <i>http, server, location</i>
+</p><p>Enables SSI processing for MIME-types in addition to "text/html" types.
+</p><h2> ssi_value_length</h2>
+<p><b>语法:</b> <i>ssi_value_length length</i>
+</p><p><b>默认值:</b> <i>ssi_value_length 256</i>
+</p><p><b>作用域:</b> <i>http, server, location</i>
+</p><p>定义SSI允许使用的参数长度
+</p>
+<h2>SSI 命令 </h2>
+<p>格式示例如下:
+</p>
+<pre>
+: &lt;!--#  command parameter1=value parameter2=value... --&gt;
+</pre>
+<p>支持的SSI 命令如下:
+</p>
+<ul><li> <code>block</code> — command describes the block, which can be used as a silencer in command <code>include</code>. Inside the block there can be commands <code>SSI</code>.
+</li><li> <i>name</i> — the name of the block.  For example: <pre>
+</li></ul>
+: &lt;!--# block name=&quot;one&quot; --&gt;
+: the silencer
+: &lt;!--# endblock --&gt;
+: </pre> 
+<ul><li> <code>config</code> — assigns some parameters with working SSI.
+</li><li> <i>errmsg</i> — the line, which is derived with the error during the SSI processing. By default, this string is used: "[an error occurred while processing the directive] "
+</li><li> <i>timefmt</i> — the time formatting string, as used in strftime(3). By default, this string is used: <pre>
+</li></ul>
+: &quot;%A,&nbsp;%d-%b-%Y&nbsp;%H:%M:%S&nbsp;%Z&quot;
+: </pre> To include time in seconds use the format "%s" as well.
+<ul><li> <code>echo</code> - print a variable
+</li><li> <i>var</i> — the name of the variable
+</li><li> <i>default</i> - if the variable is empty, display this string. Defaults to "none". Example: <pre>
+</li></ul>
+: &lt;!--# echo var=&quot;name&quot; default=&quot;no&quot; --&gt;
+: &lt;/code&gt; is the same as &lt;code&gt;
+: &lt;!--# if expr=&quot;$name&quot; --&gt;&lt;!--# echo var=&quot;name&quot; --&gt;&lt;!--# else --&gt;no&lt;!--# endif --&gt;
+: </pre>
+<ul><li> <code>if / elif / else / endif</code> — conditionally include text or other directives. Usage: 
+</li></ul>
+<dl><dd> 
+</dd><dd> ...
+</dd><dd> 
+</dd><dd> ...
+</dd><dd> 
+</dd><dd> ...
+</dd><dd> 
+</dd><dd>  Only one level of nesting is possible.
+</dd></dl>
+<ul><li> <i>expr</i> — the expression to evaluate. It can be a variable: <pre>
+</li></ul>
+<dl><dd> &lt;!--# if expr=&quot;$name&quot; --&gt;
+</dd><dd> &lt;/code&gt; A string comparison: &lt;code&gt;
+</dd><dd> &lt;!--# if expr=&quot;$name = text&quot; --&gt;
+</dd><dd> &lt;!--# if expr=&quot;$name&nbsp;!= text&quot; --&gt;
+</dd><dd> &lt;/code&gt; Or a regex match: &lt;code&gt;
+</dd><dd> &lt;!--# if expr=&quot;$name = /text/&quot; --&gt;
+</dd><dd> &lt;!--# if expr=&quot;$name&nbsp;!= /text/&quot; --&gt;
+</dd><dd> </pre> Если в text встречаются переменные, то производится подстановка их значений. 
+</dd></dl>
+<ul><li> &lt;code&gt;include — include a document from another source.
+</li><li> <i>file</i> — include a file, e.g. <pre>
+</li></ul>
+: &lt;!--# include file=&quot;footer.html&quot; --&gt;
+: </pre>
+<ul><li> <i>virtual</i> — include a request, e.g. <pre>
+</li></ul>
+<dl><dd> &lt;!--# include virtual=&quot;/remote/body.php?argument=value&quot; --&gt;
+</dd><dd> </pre> Multiple requests will be issued in parallel. If you need them issued sequentially, use the "wait" option.
+</dd></dl>
+<ul><li> <i>stub</i> — The name of the block to use as a default if the request is empty or returns an error. <pre>
+</li></ul>
+<dl><dd> &lt;!--# block name=&quot;one&quot; --&gt;&nbsp;&lt;!--# endblock --&gt;
+</dd><dd> &lt;!--# include virtual=&quot;/remote/body.php?argument=value&quot; stub=&quot;one&quot; --&gt;
+</dd><dd> </pre>
+</dd></dl>
+<ul><li> <i>wait</i> — when set to yes, the rest of the SSI will not be evaluated until the current request is finished. Example: <pre>
+</li></ul>
+<dl><dd> &lt;!--# include virtual=&quot;/remote/body.php?argument=value&quot; wait=&quot;yes&quot; --&gt;
+</dd><dd> </pre>
+</dd></dl>
+<ul><li> <code>set</code> - assign a variable.
+</li><li> var — the variable.
+</li><li> value — its value. If it contains variable names, these will be evaluated.
+</li></ul>
+<h2> 内置变量 </h2>
+<p>ngx_http_ssi_module 支持两种内置变量:
+</p>
+<ul><li> <code>$date_local</code> - 当前的本地时区时间.配置选项"timefmt"控制格式.
+</li><li> <code>$date_gmt</code> - 当前的GMT时间. 配置选项"timefmt"控制格式.
+</li></ul>
+<p><br />
+</p>
+<h2> 参考 </h2>
+<p><a href="http://sysoev.ru/nginx/docs/http/ngx_http_ssi_module.html" class="external text" title="http://sysoev.ru/nginx/docs/http/ngx_http_ssi_module.html" rel="nofollow">Original Documentation</a>
+</p>
+</div>
+<!-- END CONTENT -->
+<div id="footer">
+<p><a href="#top">顶端</a></p>
+<p>中文化: <a href="../index.html" >Nginx中文文档</a> &nbsp;&middot;&nbsp; 制作: nginx.cn  (整理及部分翻译 )</p>
+</div>
+ 
+</body></html>

@@ -1,0 +1,127 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Charset模块-Nginx中文文档</title>
+<link rel="stylesheet" type="text/css" media="all" href="../userguide.css" />
+<script type="text/javascript" src="../nav/nav.js"></script>
+<script type="text/javascript" src="../nav/prototype.lite.js"></script>
+<script type="text/javascript" src="../nav/moo.fx.js"></script>
+<script type="text/javascript" src="../nav/user_guide_menu.js"></script>
+<meta name="robots" content="all" />
+</head>
+<body>
+<!-- START NAVIGATION -->
+<div id="nav2"><a name="top"></a><a href="../index.html" ><img src="../images/nav_toggle_darker.jpg" width="154" height="43" border="0" /></a></div>
+<div id="masthead">
+<table cellpadding="0" cellspacing="0" border="0" style="width:100%">
+<tr>
+<td><span id="sitename">Nginx中文文档</span></td>
+<td id="breadcrumb_right"><a href="../index.html">目录首页</a></td>
+</tr>
+</table>
+</div>
+<!-- END NAVIGATION -->
+<table cellpadding="0" cellspacing="0" border="0" style="width:100%">
+<tr>
+<td id="breadcrumb">
+<a href="../index.html" >&nbsp;&#8250;&nbsp;Charset模块
+</td>
+</tr>
+</table>
+<br clear="all" />
+<!-- START CONTENT -->
+<div id="content">
+<h1>Charset模块</h1>
+<p>This module adds the text encoding to the "Content-Type indicated" response-header.
+</p><p>Furthermore, module can reencode data of one encoding into another. 
+It is necessary to note that the reencoding is accomplished only in one direction - from the server to the client, and only one-byte encodings can be reencoded.
+</p><p>Example configuration:
+<style>/* GeSHi (C) 2004 - 2007 Nigel McNie (http://qbnz.com/highlighter) */
+.code .imp {font-weight: bold; color: red;}
+.code .kw1 {color: #b1b100;}
+.code .kw2 {color: #000000; font-weight: bold;}
+.code .kw3 {color: #000066;}
+.code .kw4 {color: #993333;}
+.code .co1 {color: #808080; font-style: italic;}
+.code .coMULTI {color: #808080; font-style: italic;}
+.code .es0 {color: #000099; font-weight: bold;}
+.code .br0 {color: #66cc66;}
+.code .st0 {color: #ff0000;}
+.code .me1 {color: #202020;}
+.code .me2 {color: #202020;}
+</p>
+</style><pre class="code"><span class="kw9">charset</span>         windows<span class="nu0">-1251</span>;
+<span class="kw9">source_charset</span>  koi8-r;</pre>
+<h1>指令 </h1>
+<h2>charset </h2>
+<p><b>syntax:</b> <i>charset encoding|off</i>
+</p><p><b>default:</b> <i>charset off</i>
+</p><p><b>context:</b> <i>http, server, location, if in location</i>
+</p><p>The directive charset adds the line "Content-Type" into response-header with indicated encoding.
+If this encoding is differed from that indicated in directive source_charset, then reencoding is carried out. 
+The parameter "off" deactivate the insertation of the line "Content-Type" in the response-header.
+</p><p><br />
+</p>
+<h2> charset_map </h2>
+<p><b>syntax:</b> <i>charset_map  encoding1 encoding2 {...}</i>
+</p><p><b>default:</b> <i>no</i>
+</p><p><b>context:</b> <i>http, server, location</i>
+</p><p>The directive charset_map describes the table of reencoding from one encoding into another.
+A table for the inverse reencoding is created using the same data.
+The codes of symbols are assigned in hexadecimal form. If no recorded symbols are
+in the range 80-FF they will be substituted with '?'.
+</p><p>Example usage:
+<style>/* GeSHi (C) 2004 - 2007 Nigel McNie (http://qbnz.com/highlighter) */
+.code .imp {font-weight: bold; color: red;}
+.code .kw1 {color: #b1b100;}
+.code .kw2 {color: #000000; font-weight: bold;}
+.code .kw3 {color: #000066;}
+.code .kw4 {color: #993333;}
+.code .co1 {color: #808080; font-style: italic;}
+.code .coMULTI {color: #808080; font-style: italic;}
+.code .es0 {color: #000099; font-weight: bold;}
+.code .br0 {color: #66cc66;}
+.code .st0 {color: #ff0000;}
+.code .me1 {color: #202020;}
+.code .me2 {color: #202020;}
+</p>
+</style><pre class="code"><span class="kw9">charset_map</span>  koi8-r  windows<span class="nu0">-1251</span> <span class="br0">&#123;</span>
+  C0  FE&nbsp;; <span class="co1"># small yu</span>
+  C1  E0&nbsp;; <span class="co1"># small a</span>
+  C2  E1&nbsp;; <span class="co1"># small b</span>
+  C3  F6&nbsp;; <span class="co1"># small ts</span>
+  <span class="co1"># ...</span>
+<span class="br0">&#125;</span></pre>
+<p>The complete table of conversion from koi8-r into Windows-1251 is distributed with nginx and is located in file conf/koi-win.
+</p><p><br />
+</p>
+<h2> override_charset </h2>
+<p><b>syntax:</b> <i>override_charset on|off</i>
+</p><p><b>default:</b> <i>override_charset off</i>
+</p><p><b>context:</b> <i>http, server, location, if in location</i>
+</p><p>This directive determines, to carry out reencoding for the response, obtained from the proxied
+server or from FastCGI-server, if in the response-header a "Content-Type" header already is.
+If reencoding is permitted, then as the initial encoding the encoding, indicated in the obtained answer, is used. 
+</p><p>It is necessary to note that if the response was obtained in the subquery then, independent of directive override_charset,
+is always carried out reencoding from encoding of the response into encoding of basic demand. 
+</p><p><br />
+</p>
+<h2> source_charset </h2>
+<p><b>syntax:</b> <i>source_charset encoding</i>
+</p><p><b>default:</b> <i>no</i>
+</p><p><b>context:</b> <i>http, server, location, if in location</i>
+</p><p>The directive source_charset assigns the initial encoding of response. If this encoding is differed from that
+indicated in directive charset, then reencoding is carried out.
+</p>
+<h2>References </h2>
+<p><a href="http://sysoev.ru/nginx/docs/http/ngx_http_charset_module.html" class="external text" title="http://sysoev.ru/nginx/docs/http/ngx_http_charset_module.html" rel="nofollow">Original Documentation</a>
+</p>
+</div>
+<!-- END CONTENT -->
+<div id="footer">
+<p><a href="#top">顶端</a></p>
+<p>中文化: <a href="../index.html" >Nginx中文文档</a> &nbsp;&middot;&nbsp; 制作: nginx.cn  (整理及部分翻译 )</p>
+</div>
+ 
+</body></html>

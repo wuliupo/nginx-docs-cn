@@ -1,0 +1,123 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>HttpGeoIP-Nginx中文文档</title>
+<link rel="stylesheet" type="text/css" media="all" href="../userguide.css" />
+<script type="text/javascript" src="../nav/nav.js"></script>
+<script type="text/javascript" src="../nav/prototype.lite.js"></script>
+<script type="text/javascript" src="../nav/moo.fx.js"></script>
+<script type="text/javascript" src="../nav/user_guide_menu.js"></script>
+<meta name="robots" content="all" />
+</head>
+<body>
+<!-- START NAVIGATION -->
+<div id="nav2"><a name="top"></a><a href="../index.html" ><img src="../images/nav_toggle_darker.jpg" width="154" height="43" border="0" /></a></div>
+<div id="masthead">
+<table cellpadding="0" cellspacing="0" border="0" style="width:100%">
+<tr>
+<td><span id="sitename">Nginx中文文档</span></td>
+<td id="breadcrumb_right"><a href="../index.html">目录首页</a></td>
+</tr>
+</table>
+</div>
+<!-- END NAVIGATION -->
+<table cellpadding="0" cellspacing="0" border="0" style="width:100%">
+<tr>
+<td id="breadcrumb">
+<a href="../index.html" >&nbsp;&#8250;&nbsp;HttpGeoIP
+</td>
+</tr>
+</table>
+<br clear="all" />
+<!-- START CONTENT -->
+<div id="content">
+<h1>HttpGeoIP</h1>
+<p>This module creates ngx_http_geoip_module variables based on the IP-address of the client matched against the <a href="http://www.maxmind.com/" class="external text" title="http://www.maxmind.com/" rel="nofollow">MaxMind</a> GeoIP binary files. This module appeared in nginx version 0.8.6.
+</p>
+<p>
+本模块ngx_http_geoip_module的变量基于IP地址匹配<a href="http://www.maxmind.com/">MaxMind</a> GeoIP 二进制文件. 这个模块开始出现在nginx0.8.6。
+</p>
+<p>Precondition 首先
+</p><p>This module needs the geo databases and the library to read the database.
+</p><p>模块必需有geo数据库和读取数据库类
+</p>
+<pre>
+#下载免费的geo_city数据库
+wget http://geolite.maxmind.com/download/geoip/database/GeoLiteCity.dat.gz
+#下载免费的geo_coundty数据库
+wget http://geolite.maxmind.com/download/geoip/database/GeoLiteCountry/GeoIP.dat.gz
+#在debian中安装libgeoip:
+sudo apt-get install libgeoip-dev
+#其它系统，你可以下载并编译一个源文件
+wget http://geolite.maxmind.com/download/geoip/api/c/GeoIP.tar.gz
+</pre>
+<p>在centos可以用yum安装:
+</p>
+<pre>
+yum install geoip
+</pre>
+<p> 编译
+</p>
+<pre>
+./configure --with-http_geoip_module
+</pre>
+<p>例如
+<style>/* GeSHi (C) 2004 - 2007 Nigel McNie (http://qbnz.com/highlighter) */
+.code .imp {font-weight: bold; color: red;}
+.code .kw1 {color: #b1b100;}
+.code .kw2 {color: #000000; font-weight: bold;}
+.code .kw3 {color: #000066;}
+.code .kw4 {color: #993333;}
+.code .co1 {color: #808080; font-style: italic;}
+.code .coMULTI {color: #808080; font-style: italic;}
+.code .es0 {color: #000099; font-weight: bold;}
+.code .br0 {color: #66cc66;}
+.code .st0 {color: #ff0000;}
+.code .me1 {color: #202020;}
+.code .me2 {color: #202020;}
+</p>
+</style><pre class="code"><span class="kw3">http</span> <span class="br0">&#123;</span>
+    geoip_country  GeoIP.dat;
+    geoip_city     GeoLiteCity.dat;
+    ...</pre>
+<h2>指令</h2>
+<h2> geoip_country </h2>
+<p><b>syntax:</b> <i>geoip_country path/to/db.dat;</i>
+</p><p><b>default:</b> none
+</p><p><b>context:</b> <i>http</i>
+</p><p>The directive indicates the path to the .dat file used for determining the visitor's country from the IP-address of the client. When set the module makes available the following variables:
+</p><p>dat文件用于判断访问者IP中的国家。当前模块 下可用的变量 :
+</p>
+<ul><li> $geoip_country_code; -国家名的前两个字母, 如, "RU", "US".
+</li><li> $geoip_country_code3; - 国家名的前三个字母, 如, "RUS", "USA".
+</li><li> $geoip_country_name; -国家名称, 如, "Russian Federation", "United States".
+</li></ul>
+<p>If you only need the country's name, you can just set the geoip_country database(1.1M), while the geoip_city database is much bigger(43M) and all the databses will be cached in memory.
+</p><p>如果你只需要国家，你只需设置geoip_country数据库(1.1M), 但城市的ip数据库就比较大(43M)并且将加载到内存当缓存。
+</p>
+<h2>geoip_city </h2>
+<p><b>syntax:</b> <i>geoip_city path/to/db.dat;</i>
+</p><p><b>default:</b> none
+</p><p><b>context:</b> <i>http</i>
+</p><p>The directive indicates the path to the .dat file used for determining countries, regions and cities from IP-address of the client. When set the module makes available the following variables:
+</p><p>dat文件用于判断访问者IP中的国家、省，城市。当前模块 下可用的变量:
+</p>
+<ul><li> $geoip_city_country_code; -国家名的前两个字母, 如, "RU", "US".
+</li><li> $geoip_city_country_code3; - 国家名的前三个字母, 如, "RUS", "USA".
+</li><li> $geoip_city_country_name; -国家名称, 如, "Russian Federation", "United States".
+</li><li> $geoip_region; - 省，州或区名 (province, region, state, province, federal land, and the like), 如, "Moscow City", "DC".
+</li><li> $geoip_city; - 城市名称, 如, "Moscow", "Washington".
+</li><li> $geoip_postal_code; - 邮政编号. 
+</li></ul>
+<h2>References </h2>
+<p><a href="http://sysoev.ru/nginx/docs/http/ngx_http_geoip_module.html" class="external text" title="http://sysoev.ru/nginx/docs/http/ngx_http_geoip_module.html" rel="nofollow">Original Documentation</a>
+</p>
+</div>
+<!-- END CONTENT -->
+<div id="footer">
+<p><a href="#top">顶端</a></p>
+<p>中文化: <a href="../index.html" >Nginx中文文档</a> &nbsp;&middot;&nbsp; 制作: nginx.cn  (整理及部分翻译 )</p>
+</div>
+ 
+</body></html>

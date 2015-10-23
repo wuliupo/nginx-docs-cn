@@ -1,0 +1,83 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>HttpRealIp-Nginx中文文档</title>
+<link rel="stylesheet" type="text/css" media="all" href="../userguide.css" />
+<script type="text/javascript" src="../nav/nav.js"></script>
+<script type="text/javascript" src="../nav/prototype.lite.js"></script>
+<script type="text/javascript" src="../nav/moo.fx.js"></script>
+<script type="text/javascript" src="../nav/user_guide_menu.js"></script>
+<meta name="robots" content="all" />
+</head>
+<body>
+<!-- START NAVIGATION -->
+<div id="nav2"><a name="top"></a><a href="../index.html" ><img src="../images/nav_toggle_darker.jpg" width="154" height="43" border="0" /></a></div>
+<div id="masthead">
+<table cellpadding="0" cellspacing="0" border="0" style="width:100%">
+<tr>
+<td><span id="sitename">Nginx中文文档</span></td>
+<td id="breadcrumb_right"><a href="../index.html">目录首页</a></td>
+</tr>
+</table>
+</div>
+<!-- END NAVIGATION -->
+<table cellpadding="0" cellspacing="0" border="0" style="width:100%">
+<tr>
+<td id="breadcrumb">
+<a href="../index.html" >&nbsp;&#8250;&nbsp;HttpRealIp
+</td>
+</tr>
+</table>
+<br clear="all" />
+<!-- START CONTENT -->
+<div id="content">
+<h1>HttpRealIp</h1>
+<p>This module lets to change the client's IP address to value from request header (e. g. <code>X-Real-IP</code> or <code>X-Forwarded-For</code>).
+</p><p>It is useful if nginx works behind some proxy of L7 load balanver, and request come from local IP, but proxy add request header with client's IP. 
+</p><p>This module isn't built by default, enable it with the configure option 
+</p>
+<pre>--with-http_realip_module</pre>
+<p>User Note: "You will build a list of trusted proxies (see below) and the first IP in the header which is not trusted will be used as the client IP." Source: README of the Apache module <a href="http://web.warhound.org/mod_extract_forwarded/README" class="external text" title="http://web.warhound.org/mod_extract_forwarded/README" rel="nofollow">mod_extract</a> . Quite informative, about why and how this security feature is helpful.
+</p><p>Example:
+<style>/* GeSHi (C) 2004 - 2007 Nigel McNie (http://qbnz.com/highlighter) */
+.code .imp {font-weight: bold; color: red;}
+.code .kw1 {color: #b1b100;}
+.code .kw2 {color: #000000; font-weight: bold;}
+.code .kw3 {color: #000066;}
+.code .kw4 {color: #993333;}
+.code .co1 {color: #808080; font-style: italic;}
+.code .coMULTI {color: #808080; font-style: italic;}
+.code .es0 {color: #000099; font-weight: bold;}
+.code .br0 {color: #66cc66;}
+.code .st0 {color: #ff0000;}
+.code .me1 {color: #202020;}
+.code .me2 {color: #202020;}
+</p>
+</style><pre class="code"><span class="kw30">set_real_ip_from</span>   <span class="nu0">192.168</span><span class="nu0">.1</span><span class="nu0">.0</span>/<span class="nu0">24</span>;
+<span class="kw30">set_real_ip_from</span>   <span class="nu0">192.168</span><span class="nu0">.2</span><span class="nu0">.1</span>;
+<span class="kw30">real_ip_header</span>     X-Real-IP;</pre>
+<h2>指令</h2>
+<h2> set_real_ip_from </h2>
+<p><b>syntax:</b> <i>set_real_ip_from [the address|CIDR] </i>
+</p><p><b>default:</b> none
+</p><p><b>context:</b> <i>http, server, location</i>
+</p><p>This directive describes the trusted addresses, which transfer accurate address for the replacement.
+</p>
+<h2> real_ip_header </h2>
+<p><b>syntax:</b> <i>real_ip_header [X-Real-IP|X-Forwarded-For] </i>
+</p><p><b>default:</b> <i>real_ip_header X-Real-IP</i>
+</p><p><b>context:</b> <i>http, server, location</i>
+</p><p>This directive sets the name of the header used for transferring the replacement IP address.
+</p>
+<h2>References </h2>
+<p><a href="http://sysoev.ru/nginx/docs/http/ngx_http_realip_module.html" class="external text" title="http://sysoev.ru/nginx/docs/http/ngx_http_realip_module.html" rel="nofollow">Original Documentation</a>
+</p>
+</div>
+<!-- END CONTENT -->
+<div id="footer">
+<p><a href="#top">顶端</a></p>
+<p>中文化: <a href="../index.html" >Nginx中文文档</a> &nbsp;&middot;&nbsp; 制作: nginx.cn  (整理及部分翻译 )</p>
+</div>
+ 
+</body></html>

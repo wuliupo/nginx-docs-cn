@@ -1,0 +1,82 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>StubStatus模块-Nginx中文文档</title>
+<link rel="stylesheet" type="text/css" media="all" href="../userguide.css" />
+<script type="text/javascript" src="../nav/nav.js"></script>
+<script type="text/javascript" src="../nav/prototype.lite.js"></script>
+<script type="text/javascript" src="../nav/moo.fx.js"></script>
+<script type="text/javascript" src="../nav/user_guide_menu.js"></script>
+<meta name="robots" content="all" />
+</head>
+<body>
+<!-- START NAVIGATION -->
+<div id="nav2"><a name="top"></a><a href="../index.html" ><img src="../images/nav_toggle_darker.jpg" width="154" height="43" border="0" /></a></div>
+<div id="masthead">
+<table cellpadding="0" cellspacing="0" border="0" style="width:100%">
+<tr>
+<td><span id="sitename">Nginx中文文档</span></td>
+<td id="breadcrumb_right"><a href="../index.html">目录首页</a></td>
+</tr>
+</table>
+</div>
+<!-- END NAVIGATION -->
+<table cellpadding="0" cellspacing="0" border="0" style="width:100%">
+<tr>
+<td id="breadcrumb">
+<a href="../index.html" >&nbsp;&#8250;&nbsp;StubStatus模块
+</td>
+</tr>
+</table>
+<br clear="all" />
+<!-- START CONTENT -->
+<div id="content">
+<h1>StubStatus模块</h1>
+<p>这个模块能够获取Nginx自上次启动以来的工作状态
+</p><p>此模块非核心模块，需要在编译的时候手动添加编译参数 <code>--with-http_stub_status_module</code> 
+</p><p>__配置说明__
+</p>
+<pre>
+location /nginx_status {
+: # copied from http://blog.kovyrin.net/2006/04/29/monitoring-nginx-with-rrdtool/
+: stub_status on;
+: access_log   off;
+: allow SOME.IP.ADD.RESS;
+: deny all;
+}
+</pre>
+<h2> 指令 </h2>
+<ul><li> [#stub_status stub_status] 
+</li></ul>
+<h2> stub_status </h2>
+<p><b>语法:</b> <i>stub_status</i> on
+</p><p><b>默认值:</b> <i>None</i>
+</p><p><b>作用域:</b> <i>location</i>
+</p><p>创建一个 location 区域启用 stub_status
+</p><p>"stub status" 模块返回的状态信息跟 <a href="http://www.mathopd.org/" class="external text" title="http://www.mathopd.org/" rel="nofollow">mathopd's</a>  的状态信息很相似. 返回的状态信息如下：
+</p>
+<pre>
+Active connections: 291
+server accepts handled requests
+: 16630948 16630948 31070465
+Reading: 6 Writing: 179 Waiting: 106
+</pre>
+<p><code>active connections</code> -- 对后端发起的活动连接数
+</p><p><code>server accepts handled requests</code> -- nginx 总共处理了 16630948 个连接, 成功创建 16630948 次握手 (证明中间没有失败的), 总共处理了 31070465 个请求
+(平均每次握手处理了 1.8个数据请求)
+</p><p><code>reading</code> -- nginx 读取到客户端的Header信息数
+</p><p><code>writing</code> -- nginx 返回给客户端的Header信息数 
+</p><p><code>waiting</code> -- 开启 keep-alive 的情况下，这个值等于 <code>active - (reading + writing)</code>，意思就是Nginx说已经处理完正在等候下一次请求指令的驻留连接
+</p>
+<h2> Examples </h2>
+<p><a href="http://blog.kovyrin.net/2006/04/29/monitoring-nginx-with-rrdtool/" class="external free" title="http://blog.kovyrin.net/2006/04/29/monitoring-nginx-with-rrdtool/" rel="nofollow">http://blog.kovyrin.net/2006/04/29/monitoring-nginx-with-rrdtool/</a> <br /> <a href="http://dev.2xlp.com/svn/nginx_config/trunk/conf/_rrd/__README__.txt" class="external free" title="http://dev.2xlp.com/svn/nginx_config/trunk/conf/_rrd/__README__.txt" rel="nofollow">http://dev.2xlp.com/svn/nginx_config/trunk/conf/_rrd/__README__.txt</a>
+</p>
+</div>
+<!-- END CONTENT -->
+<div id="footer">
+<p><a href="#top">顶端</a></p>
+<p>中文化: <a href="../index.html" >Nginx中文文档</a> &nbsp;&middot;&nbsp; 制作: nginx.cn  (整理及部分翻译 )</p>
+</div>
+ 
+</body></html>

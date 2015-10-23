@@ -1,0 +1,130 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>MailSSL-Nginx中文文档</title>
+<link rel="stylesheet" type="text/css" media="all" href="../userguide.css" />
+<script type="text/javascript" src="../nav/nav.js"></script>
+<script type="text/javascript" src="../nav/prototype.lite.js"></script>
+<script type="text/javascript" src="../nav/moo.fx.js"></script>
+<script type="text/javascript" src="../nav/user_guide_menu.js"></script>
+<meta name="robots" content="all" />
+</head>
+<body>
+<!-- START NAVIGATION -->
+<div id="nav2"><a name="top"></a><a href="../index.html" ><img src="../images/nav_toggle_darker.jpg" width="154" height="43" border="0" /></a></div>
+<div id="masthead">
+<table cellpadding="0" cellspacing="0" border="0" style="width:100%">
+<tr>
+<td><span id="sitename">Nginx中文文档</span></td>
+<td id="breadcrumb_right"><a href="../index.html">目录首页</a></td>
+</tr>
+</table>
+</div>
+<!-- END NAVIGATION -->
+<table cellpadding="0" cellspacing="0" border="0" style="width:100%">
+<tr>
+<td id="breadcrumb">
+<a href="../index.html" >&nbsp;&#8250;&nbsp;MailSSL
+</td>
+</tr>
+</table>
+<br clear="all" />
+<!-- START CONTENT -->
+<div id="content">
+<h1>MailSSL</h1>
+<p>This module ensures SSL/TLS support for POP3/IMAP/SMTP. Configuration is practically identical to the configuration of the HTTP SSL module, but checking client certificates is not supported.
+<br />
+这个模块使得POP3／IMAP／SMTP可以使用SSL／TLS.配置已经定义了HTTP SSL模块，但是不支持客户端证书检测。
+</p>
+<h1> ssl </h2>
+<p><b>syntax:</b> <i>ssl</i> <i><b>on | off</b></i>
+</p><p><b>default:</b> <i>ssl off</i>
+</p><p><b>context:</b> <i>mail, server</i>
+</p><p>Enables SSL/TLS for this virtual server. <br />
+在虚拟服务器中启用SSL／TLS
+</p>
+<h2> ssl_certificate </h2>
+<p><b>syntax:</b> <i>ssl_certificate</i> <i><b>file</b></i>
+</p><p><b>default:</b> <i>cert.pem</i>
+</p><p><b>context:</b> <i>mail, server</i>
+</p><p>Indicates file with the certificate in PEM format for this virtual server. The same file can contain other certificates, and also secret key in PEM format.<br />
+显示虚拟服务器上的PEM格式的证书文件。同一文件可以包含其他的证书和包含PEM格式的安全码。
+</p>
+<h2> ssl_certificate_key </h2>
+<p><b>syntax:</b> <i>ssl_certificate_key</i> <i><b>file</b></i>
+</p><p><b>default:</b> <i>cert.pem</i>
+</p><p><b>context:</b> <i>mail, server</i>
+</p><p>Indicates file with the secret key in PEM format for this virtual server. <br />
+显示虚拟服务器中PEM格式的安全码文件
+</p>
+<h2>ssl_ciphers </h2>
+<p><b>syntax:</b> <i>ssl_ciphers file</i> <i><b>ciphers</b></i>
+</p><p><b>default:</b> <i>ALL:!ADH:RC4+RSA:+HIGH:+MEDIUM:+LOW:+SSLv2:+EXP</i>
+</p><p><b>context:</b> <i>mail, server</i>
+</p><p>Directive describes the permitted ciphers. Ciphers are assigned in the formats supported by OpenSSL. <br />
+指令描述了容许的SSL chiphers.chiphers都被使用了OpenSSL支持的格式.
+</p>
+<h2> ssl_prefer_server_ciphers  </h2>
+<p><b>syntax:</b> <i>ssl_prefer_server_ciphers</i> <i><b>on | off</b></i>
+</p><p><b>default:</b> <i>off</i>
+</p><p><b>context:</b> <i>mail, server</i>
+</p><p>Requires protocols SSLv3 and TLSv1 server ciphers be preferred over the client's ciphers. <br />
+需要SSLv3协议,TLSv1 服务器端米阿么优先于客户端密码
+</p>
+<h2>ssl_protocols </h2>
+<p><b>syntax:</b> <i>ssl_protocols</i> <i><b>[SSLv2]  [SSLv3]  [TLSv1] </b></i>
+</p><p><b>default:</b> <i>SSLv2 SSLv3 TLSv1</i>
+</p><p><b>context:</b> <i>mail, server</i>
+</p><p>Directive enables the protocols indicated.<br />
+指令显示协议
+</p>
+<h2> ssl_session_cache </h2>
+<p><b>syntax:</b> <i>ssl_session_cache</i> <i><b>[builtin[<code></code>:size  [shared:name:size] </b></i>
+</p><p><b>default:</b> <i>builtin:20480</i>
+</p><p><b>context:</b> <i>mail, server</i>
+</p><p>The directive sets the types and sizes of caches to store the SSL sessions.<br /> 
+指令设置了类型和存储SSL 会话的缓存的大小.<br />
+The cache types are:  <br />
+缓存类型为：
+</p>
+<ul><li> builtin -- the OpenSSL builtin cache, is used inside one worker process only. The cache size is assigned in the number of the sessions. <br />
+builtin -- OpenSSL内部缓存,这个只在内部工作进程中被使用.这个缓存大小等同于会话的个数。
+</li><li> shared -- the cache is shared between all worker processes. The size of cache is assigned in the bytes, 1 MB cache can contain about 4000 sessions. Each shared cache must have arbitrary name. Cache with the same name can be used in several virtual servers. <br />
+shared -- 这个缓存被所有工作进程共享.这个缓存大小用字节标识,1M缓存可以包含大约4000个会话。每个共享缓存都有专有的名称。相同名称的缓存可以被多个服务器使用。
+</li></ul>
+It is possible to use both types of cache simultaneously, for example: <br />
+可能同时使用2中类型的缓存，例如
+<pre>
+ssl_session_cache  builtin:1000  shared:SSL:10m;
+</pre>
+<p>However, the only shared cache usage without that builtin should be more effective.<br />
+然而，共享缓存只有在内部缓存之外使用才能产生更好的效果。
+</p>
+<h2> ssl_session_timeout  </h2>
+<p><b>syntax:</b> <i>ssl_session_timeout</i> <i><b>time</b></i>
+</p><p><b>default:</b> <i>5m</i>
+</p><p><b>context:</b> <i>mail, server</i>
+</p><p>Assigns the time during which the client can repeatedly use the parameters of the session, which is stored in the cache. <br />
+在使用中客户端重复使用的会话参数被存储在缓存中。
+</p>
+<h2>starttls </h2>
+<p><b>syntax:</b> <i>starttls <b>on | off | only</b></i>
+</p><p><b>default:</b> <i>off</i>
+</p><p><b>context:</b> <i>mail, server</i>
+</p>
+<ul><li> on - permit the use of commands STLS for POP3 and STARTTLS for IMAP/SMTP <br />
+on - 容许在POP3中的STLS命令和IMAP／SMPT中的STARTTLS命令
+</li><li> off - do not allow command STLS/STARTTLS <br />
+不容许 STLS／STARTTLS命令
+</li><li> only - announce STLS/STARTTLS support and require that clients use TLS encryption <br />
+only - 宣布支持 STLS／STARTTLS但是需要客户端使用TLS加密
+</li></ul>
+</div>
+<!-- END CONTENT -->
+<div id="footer">
+<p><a href="#top">顶端</a></p>
+<p>中文化: <a href="../index.html" >Nginx中文文档</a> &nbsp;&middot;&nbsp; 制作: nginx.cn  (整理及部分翻译 )</p>
+</div>
+ 
+</body></html>

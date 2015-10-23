@@ -1,0 +1,127 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>HttpUserId-Nginx中文文档</title>
+<link rel="stylesheet" type="text/css" media="all" href="../userguide.css" />
+<script type="text/javascript" src="../nav/nav.js"></script>
+<script type="text/javascript" src="../nav/prototype.lite.js"></script>
+<script type="text/javascript" src="../nav/moo.fx.js"></script>
+<script type="text/javascript" src="../nav/user_guide_menu.js"></script>
+<meta name="robots" content="all" />
+</head>
+<body>
+<!-- START NAVIGATION -->
+<div id="nav2"><a name="top"></a><a href="../index.html" ><img src="../images/nav_toggle_darker.jpg" width="154" height="43" border="0" /></a></div>
+<div id="masthead">
+<table cellpadding="0" cellspacing="0" border="0" style="width:100%">
+<tr>
+<td><span id="sitename">Nginx中文文档</span></td>
+<td id="breadcrumb_right"><a href="../index.html">目录首页</a></td>
+</tr>
+</table>
+</div>
+<!-- END NAVIGATION -->
+<table cellpadding="0" cellspacing="0" border="0" style="width:100%">
+<tr>
+<td id="breadcrumb">
+<a href="../index.html" >&nbsp;&#8250;&nbsp;HttpUserId
+</td>
+</tr>
+</table>
+<br clear="all" />
+<!-- START CONTENT -->
+<div id="content">
+<h1>HttpUserId</h1>
+<p>The module ngx_http_userid_module gives out cookies for identification of clients. 
+For logging it is possible to use variables <code>$uid_got</code> and <code>$uid_set</code>.
+Remark: keep in mind variables $uid_got and $uid_set are not accessible in SSI,
+because SSI filter module working before userid filter.  
+</p><p>This module is compatible with <a href="http://www.lexa.ru/programs/mod-uid-eng.html" class="external text" title="http://www.lexa.ru/programs/mod-uid-eng.html" rel="nofollow">mod_uid</a>  for Apache.
+</p><p>Example
+<style>/* GeSHi (C) 2004 - 2007 Nigel McNie (http://qbnz.com/highlighter) */
+.code .imp {font-weight: bold; color: red;}
+.code .kw1 {color: #b1b100;}
+.code .kw2 {color: #000000; font-weight: bold;}
+.code .kw3 {color: #000066;}
+.code .kw4 {color: #993333;}
+.code .co1 {color: #808080; font-style: italic;}
+.code .coMULTI {color: #808080; font-style: italic;}
+.code .es0 {color: #000099; font-weight: bold;}
+.code .br0 {color: #66cc66;}
+.code .st0 {color: #ff0000;}
+.code .me1 {color: #202020;}
+.code .me2 {color: #202020;}
+</p>
+</style><pre class="code"><span class="kw24">userid</span>          on;
+<span class="kw24">userid_name</span>     uid;
+<span class="kw24">userid_domain</span>   example.com;
+<span class="kw24">userid_path</span>     /;
+<span class="kw24">userid_expires</span>  365d;
+<span class="kw24">userid_p3p</span>      <span class="st0">'policyref=&quot;/w3c/p3p.xml&quot;, CP=&quot;CUR ADM OUR NOR STA NID&quot;'</span>;</pre>
+<h2>指令</h2>
+<h2> userid </h2>
+<p><b>syntax:</b> <i>userid [on|v1|log||off] </i>
+</p><p><b>default:</b> <i>userid off</i>
+</p><p><b>context:</b> <i>http, server, location</i>
+</p><p>Enables or disables issuing cookies and logging requested cookies:
+</p>
+<ul><li> on - enables version 2 cookies and logs them;
+</li><li> v1 - enables version 1 cookies and logs them;
+</li><li> log - do not send cookies, but write down incoming cookies to log;
+</li><li> off - do not send cookies, and don't write them to logs;
+</li></ul>
+<p><br />
+</p>
+<h2> userid_domain </h2>
+<p><b>syntax:</b> <i>userid_domain [ name | none ] </i>
+</p><p><b>default:</b> <i>userid_domain none</i>
+</p><p><b>context:</b> <i>http, server, location</i>
+</p><p>Assigns the domain for cookie. The parameter "none" doesn't issue domain for cookie.
+</p><p><br />
+</p>
+<h2>userid_expires </h2>
+<p><b>syntax:</b> <i>userid_expires [ time | max ] </i>
+</p><p><b>default:</b> <i>none</i>
+</p><p><b>context:</b> <i>http, server, location</i>
+</p><p>Sets the expiration time for the cookie.
+</p><p>The parameter set &amp; send-out browser expiration time for cookie. Value "max" assigns the time on 31 December, 2037, 23:55:55 gmt. This is the maximum time that older browsers understand.
+</p><p><br />
+</p>
+<h2>userid_name </h2>
+<p><b>syntax:</b> <i>userid_name name</i>
+</p><p><b>default:</b> <i>userid_name uid</i>
+</p><p><b>context:</b> <i>http, server, location</i>
+</p><p>Assigns name to cookie.
+</p><p><br />
+</p>
+<h2>userid_p3p </h2>
+<p><b>syntax:</b> <i>userid_p3p line</i>
+</p><p><b>default:</b> <i>none</i>
+</p><p><b>context:</b> <i>http, server, location</i>
+</p><p>Directive assigns value for the header P3P, which will sent together with cookie.
+</p>
+<h2>userid_path </h2>
+<p><b>syntax:</b> <i>userid_path path</i>
+</p><p><b>default:</b> <i>userid_path /</i>
+</p><p><b>context:</b> <i>http, server, location</i>
+</p><p>Sets the cookie path.
+</p>
+<h2> userid_service </h2>
+<p><b>syntax:</b> <i>userid_service number</i>
+</p><p><b>default:</b> <i>userid_service address</i>
+</p><p><b>context:</b> <i>http, server, location</i>
+</p><p>Directive assigns the IP address of the server which gave out cookie. 
+If not set, version 1 cookies set to zero, and for version 2 cookies the IP address of server.
+</p>
+<h2>References </h2>
+<p><a href="http://sysoev.ru/nginx/docs/http/ngx_http_userid_module.html" class="external text" title="http://sysoev.ru/nginx/docs/http/ngx_http_userid_module.html" rel="nofollow">Original Documentation</a>
+</p>
+</div>
+<!-- END CONTENT -->
+<div id="footer">
+<p><a href="#top">顶端</a></p>
+<p>中文化: <a href="../index.html" >Nginx中文文档</a> &nbsp;&middot;&nbsp; 制作: nginx.cn  (整理及部分翻译 )</p>
+</div>
+ 
+</body></html>

@@ -1,0 +1,44 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>nginx在ubuntu上的安装-Nginx中文手册</title>
+<link rel="stylesheet" type="text/css" media="all" href="../userguide.css" />
+<script type="text/javascript" src="../nav/nav.js"></script>
+<script type="text/javascript" src="../nav/prototype.lite.js"></script>
+<script type="text/javascript" src="../nav/moo.fx.js"></script>
+<script type="text/javascript" src="../nav/user_guide_menu.js"></script>
+<meta name="robots" content="all" />
+</head>
+<body>
+<!-- START NAVIGATION -->
+<div id="nav2"><a name="top"></a><a href="../index.html" ><img src="../images/nav_toggle_darker.jpg" width="154" height="43" border="0" /></a></div>
+<div id="masthead">
+<table cellpadding="0" cellspacing="0" border="0" style="width:100%">
+<tr>
+<td><span id="sitename">Nginx中文文档</span></td>
+<td id="breadcrumb_right"><a href="../index.html">目录首页</a></td>
+</tr>
+</table>
+</div>
+<!-- END NAVIGATION -->
+<table cellpadding="0" cellspacing="0" border="0" style="width:100%">
+<tr>
+<td id="breadcrumb">
+<a href="../index.html" >&nbsp;&#8250;&nbsp;nginx在ubuntu上的安装
+</td>
+</tr>
+</table>
+<br clear="all" />
+<!-- START CONTENT -->
+<div id="content">
+<h1>nginx在ubuntu上的安装</h1>
+1、安装Nginx<br />apt-get install nginx<br />（要最新版本下载下来编译吧）<br />装完应该能正常运行了。如果之前有装APACHE要改下端口。。。或者直接<br />apt-get remove apache2<br />/etc/init.d/nginx stop<br />/etc/init.d/nginx start<br />2、安装php-cgi<br />apt-get install php-cgi<br />（要自定义安装的编译吧）<br />3、改php-cgi的配置<br /><span onclick="sendmsg('pw_ajax.php','action=relatetag&tagname=Ubuntu',this.id)" style="cursor:pointer;border-bottom: 1px solid #FA891B;" id="rlt_2">Ubuntu</span>下是/etc/php5/cgi/php.ini<br />之前有安装过php的话会复制apache的配置文件<br />打开cgi.fix_pathinfo选项：<br />cgi.fix_pathinfo=1;<br />4、改Nginx的fastcgi传递参数<br />Ubuntu下是/etc/nginx/fastcgi_params<br />默认应该已经设置好了，内容差不多就下面那样：<br /><b>代码:</b>fastcgi_param  QUERY_STRING       $query_string;<br />fastcgi_param  REQUEST_METHOD     $request_method;<br />fastcgi_param  CONTENT_TYPE       $content_type;<br />fastcgi_param  CONTENT_LENGTH     $content_length;fastcgi_param  SCRIPT_NAME        $fastcgi_script_name;<br />fastcgi_param  REQUEST_URI        $request_uri;<br />fastcgi_param  DOCUMENT_URI       $document_uri;<br />fastcgi_param  DOCUMENT_ROOT      $document_root;<br />fastcgi_param  SERVER_PROTOCOL    $server_protocol;<br />fastcgi_param  GATEWAY_INTERFACE  CGI/1.1;<br />fastcgi_param  SERVER_SOFTWARE    nginx/$nginx_version;<br />fastcgi_param  REMOTE_ADDR        $remote_addr;<br />fastcgi_param  REMOTE_PORT        $remote_port;<br />fastcgi_param  SERVER_ADDR        $server_addr;<br />fastcgi_param  SERVER_PORT        $server_port;<br />fastcgi_param  SERVER_NAME        $server_name;<br /># PHP only, required if PHP was built with –enable-force-cgi-redirect<br />fastcgi_param  REDIRECT_STATUS    200;<br />5、创建VHost配置（这里只说Ubuntu下的，也就路径和包含文件目录的区别了）<br />在/etc/nginx/sites-available/下创建<span onclick="sendmsg('pw_ajax.php','action=relatetag&tagname=服务',this.id)" style="cursor:pointer;border-bottom: 1px solid #FA891B;" id="rlt_1">服务</span>器配置文件比如myserver<br />ln -n /etc/nginx/sites-available/myserver /etc/nginx/sites-enabled/myserver<br />其实懒的话直接创建在enabled里也没<span onclick="sendmsg('pw_ajax.php','action=relatetag&tagname=问题',this.id)" style="cursor:pointer;border-bottom: 1px solid #FA891B;" id="rlt_3">问题</span>－。－<br />内容填：<br /><b>代码:</b>server {<br />listen   80;<br />server_name myserver.com;<br />access_log  /var/log/nginx/myserver.access.log;location / {<br />root   /wwwroot/myserver;<br />index  index.php;<br />autoindex off;<br />}<br />location ~ \.php$ {<br />include /etc/nginx/fastcgi_params;<br />fastcgi_param SCRIPT_FILENAME /wwwroot/myserver/$fastcgi_script_name;<br />fastcgi_pass   127.0.0.1:9000;<br />fastcgi_index  index.php;<br />}<br /># redirect server error pages to the static page /50x.html<br />error_page   500 502 503 504  /50x.html;<br />location = /50x.html {<br />root   /var/www/nginx-default;<br />}<br /># deny access to .htaccess files, if Apache’s document root<br />location ~ /\.ht {<br />deny  all;<br />}<br />}<br />6、安装spawn-fcgi<br />下载可到这里，这东西已经独立出来了<br /><a href="http://redmine.lighttpd.net/projects/spawn-fcgi/wiki" target="_blank" onclick="return checkUrl(this)" id="url_1">http://redmine.lighttpd.net/projects/spawn-fcgi/wiki</a><br />下完后解压编译<br />sudo ./configure –prefix=/usr/local<br />sudo make<br />sudo make install<br />7、启动spaw-fcgi<br />sudo spawn-fcgi -a 127.0.0.1 -p 9000 -u www-data -g www-data -f /usr/bin/php5-cgi -F 10<br />哦，对后面10进程不爽的人可以取消或是加到100 <br />8、重启Nginx<br />/etc/init.d/nginx restart<br />9、定义下hosts就可以看结果啦<br />编辑/etc/hosts加入<br />127.0.0.1 myserver.com<br />然后打开浏览器就可以看结果啦～<br />有问题欢迎指出～～<br />
+</div>
+<!-- END CONTENT -->
+<div id="footer">
+<p><a href="#top">顶端</a></p>
+<p>中文化: <a href="../index.html" >Nginx中文文档</a> &nbsp;&middot;&nbsp; 制作: nginx.cn  (整理及部分翻译 )</p>
+</div>
+ 
+</body></html>
